@@ -1,0 +1,142 @@
+#-----------------------------------------------------------------------
+# R - https://github.com/github/gitignore/blob/main/R.gitignore
+#-----------------------------------------------------------------------
+
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+.Ruserdata
+
+# User-specific files
+.Rproj.user/
+.Renviron
+
+# RStudio files
+.rstudio-desktop/
+rsconnect/
+
+# Knitr and R Markdown cache and generated files
+*_cache/
+/cache/
+*.utf8.md
+*.knit.md
+*.log
+*.tex
+*.synctex.gz
+*.aux
+*.bbl
+*.blg
+*.toc
+
+# Package development files
+.Rbuildignore
+vignettes/*.html
+vignettes/*.pdf
+inst/doc/
+
+# Built package artifacts
+*.tar.gz
+*.zip
+*.Rcheck/
+
+# RStudio Connect folder
+rsconnect/
+
+#-----------------------------------------------------------------------
+# Python - https://github.com/github/gitignore/blob/main/Python.gitignore
+#-----------------------------------------------------------------------
+
+# Byte-compiled / optimized / C extensions
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+*.manifest
+*.spec
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+#-----------------------------------------------------------------------
+# OS and Editor specific
+#-----------------------------------------------------------------------
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+
+# VS Code
+.vscode/
+
+# JetBrains (PyCharm, etc.)
+.idea/
+
+#-----------------------------------------------------------------------
+# Project-specific
+#-----------------------------------------------------------------------
+
+# Compiled manuscript files from R Markdown
+manuscript/*.pdf
+manuscript/*.tex
+manuscript/*.html

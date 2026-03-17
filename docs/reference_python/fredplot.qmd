@@ -1,0 +1,29 @@
+# fredplot { #unifres.fredplot }
+
+```python
+fredplot(model, x, type='kde', lowess=False, frac=2 / 3, ax=None, **kwargs)
+```
+
+Create a Functional REsidual Density (FRED) plot.
+
+This plot shows the density of the functional residuals against a
+continuous predictor variable, which is useful for identifying
+model misspecifications like missing non-linear terms.
+
+## Parameters {.doc-section .doc-section-parameters}
+
+| Name     | Type                 | Description                                                                                                    | Default    |
+|----------|----------------------|----------------------------------------------------------------------------------------------------------------|------------|
+| model    | object               | A fitted model object from statsmodels.                                                                        | _required_ |
+| x        | np.ndarray           | The predictor variable to plot on the x-axis.                                                                  | _required_ |
+| type     | str                  | The type of density plot to generate. One of {"kde", "hex"}, by default "kde".                                 | `'kde'`    |
+| lowess   | bool                 | If True, add a LOWESS smooth to the plot, by default False.                                                    | `False`    |
+| frac     | float                | The fraction of data used when estimating each y-value of the LOWESS smooth, by default 2/3.                   | `2 / 3`    |
+| ax       | matplotlib.axes.Axes | An existing matplotlib Axes object to plot on. If None, a new figure and axes are created.                     | `None`     |
+| **kwargs | dict                 | Additional keyword arguments passed to the seaborn plotting function (e.g., `sns.kdeplot` or `sns.jointplot`). | `{}`       |
+
+## Returns {.doc-section .doc-section-returns}
+
+| Name   | Type                 | Description                                     |
+|--------|----------------------|-------------------------------------------------|
+|        | matplotlib.axes.Axes | The matplotlib Axes object containing the plot. |

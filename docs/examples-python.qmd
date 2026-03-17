@@ -1,0 +1,657 @@
+---
+title: "Python Examples"
+---
+
+This page provides comprehensive examples of using **unifres** with various model types in Python.
+
+## Example 1: Logistic Regression
+
+### Detecting Missing Polynomial Terms
+
+```python
+import numpy as np
+import statsmodels.api as sm
+from unifres import fresiduals, ffplot, fredplot
+import matplotlib.pyplot as plt
+
+# Generate data with a quadratic relationship
+np.random.seed(1217)
+n = 1000
+x = np.random.normal(size=n)
+z = 1 - 2*x + 3*x**2 + np.random.logistic(size=n)
+y = np.where(z > 0, 1, 0)
+
+# Fit incorrect model (missing x²)
+X_wrong = sm.add_constant(x)
+model_wrong = sm.GLM(y, X_wrong, family=sm.families.Binomial()).fit()
+
+# Fit correct model
+X_correct = sm.add_constant(np.column_stack([x, x**2]))
+model_correct = sm.GLM(y, X_correct, family=sm.families.Binomial()).fit()
+
+# Compare with function-function plots
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+ffplot(model_wrong, ax=axes[0])
+axes[0].set_title("Missing x²")
+ffplot(model_correct, ax=axes[1])
+axes[1].set_title("Correct Model")
+plt.tight_layout()
+plt.show()
+```
+
+### Using FRED Plots
+
+```python
+# FRED plots show where the model fails
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+fredplot(model_wrong, x, type="kde", ax=axes[0])
+axes[0].set_title("Wrong Model")
+
+fredplot(model_correct, x, type="kde", ax=axes[1])
+axes[1].set_title("Correct Model")
+
+plt.tight_layout()
+plt.show()
+```
+
+The wrong model shows a clear parabolic pattern in the FRED plot, indicating the missing quadratic term.
+
+---
+
+## Example 2: Poisson Regression
+
+### Count Data Analysis
+
+```python
+# Simulate count data
+np.random.seed(42)
+n = 500
+x1 = np.random.normal(size=n)
+x2 = np.random.normal(size=n)
+lambda_ = np.exp(1 + 0.5*x1 + 0.8*x2)
+y = np.random.poisson(lambda_)
+
+# Fit model
+X = sm.add_constant(np.column_stack([x1, x2]))
+model = sm.GLM(y, X, family=sm.families.Poisson()).fit()
+
+# Check model adequacy
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+ffplot(model, ax=axes[0, 0])
+axes[0, 0].set_title("Function-Function Plot")
+
+fredplot(model, x1, type="kde", ax=axes[0, 1])
+axes[0, 1].set_title("FRED: x1")
+
+fredplot(model, x2, type="kde", ax=axes[1, 0])
+axes[1, 0].set_title("FRED: x2")
+
+# Surrogate residual plot
+surr_res = fresiduals(model, type="surrogate")
+axes[1, 1].scatter(model.fittedvalues, surr_res, alpha=0.5)
+axes[1, 1].axhline(y=0.5, color='r', linestyle='--')
+axes[1, 1].set_xlabel("Fitted Values")
+axes[1, 1].set_ylabel("Surrogate Residuals")
+axes[1, 1].set_title("Surrogate Residuals vs Fitted")
+
+plt.tight_layout()
+plt.show()
+```
+
+### Detecting Overdispersion
+
+```python
+# Generate overdispersed count data
+np.random.seed(123)
+n = 500
+x = np.random.normal(size=n)
+mu = np.exp(1 + x)
+# Add overdispersion via negative binomial
+size = 2
+prob = size / (size + mu)
+y = np.random.negative_binomial(size, prob)
+
+# Fit Poisson (wrong)
+X = sm.add_constant(x)
+model_pois = sm.GLM(y, X, family=sm.families.Poisson()).fit()
+
+# Fit Negative Binomial (correct)
+model_nb = sm.GLM(y, X, family=sm.families.NegativeBinomial()).fit()
+
+# Compare
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+ffplot(model_pois, ax=axes[0])
+axes[0].set_title("Poisson")
+ffplot(model_nb, ax=axes[1])
+axes[1].set_title("Negative Binomial")
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Example 3: Negative Binomial Regression
+
+```python
+# Generate negative binomial data
+np.random.seed(2024)
+n = 400
+x = np.random.normal(size=n)
+mu = np.exp(1 + 0.5*x)
+size = 3
+prob = size / (size + mu)
+y = np.random.negative_binomial(size, prob)
+
+# Fit model using discrete NegativeBinomial
+X = sm.add_constant(x)
+model_nb = sm.NegativeBinomial(y, X).fit(disp=0)
+
+# Diagnostics
+fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+
+ffplot(model_nb, ax=axes[0])
+axes[0].set_title("Fn-Fn Plot")
+
+fredplot(model_nb, x, type="kde", ax=axes[1])
+axes[1].set_title("FRED Plot")
+
+# Compare surrogate to traditional residuals
+surr_res = fresiduals(model_nb, type="surrogate")
+pearson_res = model_nb.resid_pearson
+axes[2].scatter(surr_res, pearson_res, alpha=0.5)
+axes[2].set_xlabel("Surrogate Residuals")
+axes[2].set_ylabel("Pearson Residuals")
+axes[2].set_title("Residual Comparison")
+
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Example 4: Using Pandas DataFrames
+
+### Working with Real-World Data Structure
+
+```python
+import pandas as pd
+
+# Create a DataFrame
+np.random.seed(555)
+n = 500
+df = pd.DataFrame({
+    'x1': np.random.normal(size=n),
+    'x2': np.random.uniform(-1, 1, size=n),
+    'group': np.random.choice(['A', 'B', 'C'], size=n)
+})
+
+# Generate outcome
+eta = 1 + 0.5*df['x1'] - 0.3*df['x2']
+df['y'] = np.random.poisson(np.exp(eta))
+
+# Fit model using formula
+import statsmodels.formula.api as smf
+model = smf.glm('y ~ x1 + x2', data=df, family=sm.families.Poisson()).fit()
+
+# Diagnostics with DataFrame columns
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+ffplot(model, ax=axes[0, 0])
+axes[0, 0].set_title("Fn-Fn Plot")
+
+fredplot(model, df['x1'].values, ax=axes[0, 1])
+axes[0, 1].set_xlabel("x1")
+axes[0, 1].set_title("FRED: x1")
+
+fredplot(model, df['x2'].values, ax=axes[1, 0])
+axes[1, 0].set_xlabel("x2")
+axes[1, 0].set_title("FRED: x2")
+
+# Residuals by group
+surr_res = fresiduals(model, type="surrogate")
+for group in ['A', 'B', 'C']:
+    mask = df['group'] == group
+    axes[1, 1].scatter(df.loc[mask, 'x1'], surr_res[mask],
+                      label=group, alpha=0.5)
+axes[1, 1].axhline(y=0.5, color='gray', linestyle='--')
+axes[1, 1].set_xlabel("x1")
+axes[1, 1].set_ylabel("Surrogate Residuals")
+axes[1, 1].set_title("Residuals by Group")
+axes[1, 1].legend()
+
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Example 5: Model Comparison
+
+### Comparing Nested Models
+
+```python
+# Generate data
+np.random.seed(333)
+n = 800
+x1 = np.random.normal(size=n)
+x2 = np.random.normal(size=n)
+x3 = np.random.normal(size=n)
+
+# True model includes x1 and x2, but not x3
+eta = 1 + x1 + 0.5*x2
+y = np.random.binomial(1, 1/(1 + np.exp(-eta)))
+
+# Fit models
+X1 = sm.add_constant(x1)
+X2 = sm.add_constant(np.column_stack([x1, x2]))
+X3 = sm.add_constant(np.column_stack([x1, x2, x3]))
+
+model1 = sm.GLM(y, X1, family=sm.families.Binomial()).fit()
+model2 = sm.GLM(y, X2, family=sm.families.Binomial()).fit()
+model3 = sm.GLM(y, X3, family=sm.families.Binomial()).fit()
+
+# Visual comparison
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+
+ffplot(model1, ax=axes[0, 0])
+axes[0, 0].set_title("Model 1: x1 only")
+
+ffplot(model2, ax=axes[0, 1])
+axes[0, 1].set_title("Model 2: x1 + x2")
+
+ffplot(model3, ax=axes[0, 2])
+axes[0, 2].set_title("Model 3: x1 + x2 + x3")
+
+fredplot(model1, x1, type="kde", ax=axes[1, 0])
+axes[1, 0].set_title("M1 FRED")
+
+fredplot(model2, x1, type="kde", ax=axes[1, 1])
+axes[1, 1].set_title("M2 FRED")
+
+fredplot(model3, x1, type="kde", ax=axes[1, 2])
+axes[1, 2].set_title("M3 FRED")
+
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Example 6: Customizing Plots
+
+### Styling with Matplotlib
+
+```python
+# Fit a model
+np.random.seed(100)
+n = 500
+x = np.random.normal(size=n)
+y = np.random.binomial(1, 1/(1 + np.exp(-x)))
+X = sm.add_constant(x)
+model = sm.GLM(y, X, family=sm.families.Binomial()).fit()
+
+# Customize ffplot
+fig, ax = plt.subplots(figsize=(8, 6))
+ffplot(model, ax=ax, color='steelblue', linewidth=2)
+ax.set_xlabel("Theoretical", fontsize=12, fontweight='bold')
+ax.set_ylabel("Observed", fontsize=12, fontweight='bold')
+ax.set_title("Custom Function-Function Plot",
+             fontsize=14, fontweight='bold')
+ax.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# Customize fredplot
+fig, ax = plt.subplots(figsize=(10, 6))
+fredplot(model, x, type="kde", ax=ax,
+         lowess=True, frac=0.5,
+         fill=True, cmap='viridis')
+ax.set_xlabel("Predictor", fontsize=12)
+ax.set_ylabel("Functional Residual Density", fontsize=12)
+ax.set_title("Custom FRED Plot", fontsize=14, fontweight='bold')
+plt.tight_layout()
+plt.show()
+```
+
+### Using Seaborn Themes
+
+```python
+import seaborn as sns
+
+# Set seaborn style
+sns.set_style("whitegrid")
+sns.set_palette("husl")
+
+# Create plots with seaborn styling
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+ffplot(model, ax=axes[0])
+axes[0].set_title("Seaborn Styled Fn-Fn Plot", fontsize=12)
+
+fredplot(model, x, type="kde", ax=axes[1], lowess=True)
+axes[1].set_title("Seaborn Styled FRED Plot", fontsize=12)
+
+plt.tight_layout()
+plt.show()
+
+# Reset to default
+sns.reset_defaults()
+```
+
+---
+
+## Example 7: Large Datasets
+
+### Efficient Handling of Big Data
+
+```python
+# Large dataset
+np.random.seed(12345)
+n = 50000
+x = np.random.normal(size=n)
+y = np.random.binomial(1, 1/(1 + np.exp(-x)))
+X = sm.add_constant(x)
+model = sm.GLM(y, X, family=sm.families.Binomial()).fit()
+
+# Use subsampling for faster plotting
+ffplot(model, n=1000)  # Use only 1000 observations
+plt.title("Subsampled Fn-Fn Plot (n=1000)")
+plt.show()
+
+# For FRED plots, sample the data
+idx = np.random.choice(n, 5000, replace=False)
+fredplot(model, x[idx], type="kde")
+plt.title("FRED Plot (5000 samples)")
+plt.show()
+```
+
+---
+
+## Example 8: Extracting and Analyzing Residuals
+
+### Custom Analysis with Functional Residuals
+
+```python
+# Fit model
+np.random.seed(789)
+n = 300
+x = np.random.normal(size=n)
+y = np.random.poisson(np.exp(1 + 0.5*x))
+X = sm.add_constant(x)
+model = sm.GLM(y, X, family=sm.families.Poisson()).fit()
+
+# Get functional residuals
+fres_list = fresiduals(model, type="function")
+
+# Evaluate first functional residual at specific points
+t_vals = np.linspace(0, 1, 100)
+f1_vals = fres_list[0].cdf(t_vals)
+
+plt.figure(figsize=(10, 6))
+plt.plot(t_vals, f1_vals, linewidth=2)
+plt.plot([0, 1], [0, 1], 'r--', label='U(0,1)')
+plt.xlabel("t", fontsize=12)
+plt.ylabel("F(t)", fontsize=12)
+plt.title("First Functional Residual CDF", fontsize=14)
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()
+
+# Get surrogate residuals for custom analysis
+surr_res = fresiduals(model, type="surrogate")
+
+# Create custom DataFrame for analysis
+import pandas as pd
+df_res = pd.DataFrame({
+    'x': x,
+    'y': y,
+    'fitted': model.fittedvalues,
+    'surrogate': surr_res,
+    'probscale': fresiduals(model, type="probscale")
+})
+
+# Custom visualization
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+# Scatter plot with density
+axes[0, 0].hexbin(df_res['x'], df_res['surrogate'], gridsize=20, cmap='Blues')
+axes[0, 0].axhline(y=0.5, color='r', linestyle='--')
+axes[0, 0].set_xlabel("Predictor")
+axes[0, 0].set_ylabel("Surrogate Residual")
+axes[0, 0].set_title("Hexbin Plot")
+
+# Probability-scale residuals
+axes[0, 1].scatter(df_res['x'], df_res['probscale'], alpha=0.5)
+axes[0, 1].axhline(y=0, color='r', linestyle='--')
+axes[0, 1].set_xlabel("Predictor")
+axes[0, 1].set_ylabel("Probability-scale Residual")
+axes[0, 1].set_title("Probability-scale Residuals")
+
+# Residuals vs fitted
+axes[1, 0].scatter(df_res['fitted'], df_res['surrogate'], alpha=0.5)
+axes[1, 0].axhline(y=0.5, color='r', linestyle='--')
+axes[1, 0].set_xlabel("Fitted Values")
+axes[1, 0].set_ylabel("Surrogate Residual")
+axes[1, 0].set_title("Residuals vs Fitted")
+
+# Distribution of surrogate residuals
+axes[1, 1].hist(df_res['surrogate'], bins=30, edgecolor='black', alpha=0.7)
+axes[1, 1].axvline(x=0.5, color='r', linestyle='--', label='Expected Mean')
+axes[1, 1].set_xlabel("Surrogate Residual")
+axes[1, 1].set_ylabel("Frequency")
+axes[1, 1].set_title("Distribution of Residuals")
+axes[1, 1].legend()
+
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Example 9: Integration with Scikit-learn
+
+### Using with Scikit-learn Pipelines
+
+```python
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+
+# Generate data
+np.random.seed(2025)
+n = 500
+X_raw = np.random.normal(size=(n, 3))
+beta = np.array([0.5, -0.3, 0.8])
+eta = 1 + X_raw @ beta
+y = np.random.poisson(np.exp(eta))
+
+# Standardize features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_raw)
+
+# Fit statsmodels GLM with scaled features
+X_scaled_const = sm.add_constant(X_scaled)
+model = sm.GLM(y, X_scaled_const, family=sm.families.Poisson()).fit()
+
+# Diagnostics
+fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+
+ffplot(model, ax=axes[0])
+axes[0].set_title("Fn-Fn Plot")
+
+fredplot(model, X_scaled[:, 0], ax=axes[1])
+axes[1].set_xlabel("Standardized Feature 1")
+axes[1].set_title("FRED: Feature 1")
+
+# Compare predictions
+surr_res = fresiduals(model, type="surrogate")
+axes[2].scatter(model.fittedvalues, surr_res, alpha=0.5)
+axes[2].axhline(y=0.5, color='r', linestyle='--')
+axes[2].set_xlabel("Predicted Count")
+axes[2].set_ylabel("Surrogate Residual")
+axes[2].set_title("Residuals vs Predictions")
+
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Example 10: Diagnostic Workflow
+
+### Complete Model Checking Procedure
+
+```python
+def diagnostic_panel(model, x, title="Model Diagnostics"):
+    """
+    Create a comprehensive diagnostic panel for a fitted model.
+
+    Parameters:
+    -----------
+    model : statsmodels result object
+        Fitted GLM model
+    x : array-like
+        Primary predictor for FRED plots
+    title : str
+        Overall title for the panel
+    """
+    fig = plt.figure(figsize=(16, 12))
+    gs = fig.add_gridspec(3, 3, hspace=0.3, wspace=0.3)
+
+    # Function-function plot
+    ax1 = fig.add_subplot(gs[0, 0])
+    ffplot(model, ax=ax1)
+    ax1.set_title("Function-Function Plot")
+
+    # FRED plot
+    ax2 = fig.add_subplot(gs[0, 1])
+    fredplot(model, x, type="kde", ax=ax2)
+    ax2.set_title("FRED Plot (KDE)")
+
+    # FRED plot with hexbin
+    ax3 = fig.add_subplot(gs[0, 2])
+    fredplot(model, x, type="hex", ax=ax3)
+    ax3.set_title("FRED Plot (Hexbin)")
+
+    # Surrogate residuals vs predictor
+    ax4 = fig.add_subplot(gs[1, 0])
+    surr_res = fresiduals(model, type="surrogate")
+    ax4.scatter(x, surr_res, alpha=0.5)
+    ax4.axhline(y=0.5, color='r', linestyle='--')
+    ax4.set_xlabel("Predictor")
+    ax4.set_ylabel("Surrogate Residual")
+    ax4.set_title("Surrogate Residuals vs X")
+
+    # Surrogate residuals vs fitted
+    ax5 = fig.add_subplot(gs[1, 1])
+    ax5.scatter(model.fittedvalues, surr_res, alpha=0.5)
+    ax5.axhline(y=0.5, color='r', linestyle='--')
+    ax5.set_xlabel("Fitted Values")
+    ax5.set_ylabel("Surrogate Residual")
+    ax5.set_title("Residuals vs Fitted")
+
+    # Distribution of surrogate residuals
+    ax6 = fig.add_subplot(gs[1, 2])
+    ax6.hist(surr_res, bins=30, edgecolor='black', alpha=0.7)
+    ax6.axvline(x=0.5, color='r', linestyle='--')
+    ax6.set_xlabel("Surrogate Residual")
+    ax6.set_ylabel("Frequency")
+    ax6.set_title("Residual Distribution")
+
+    # Probability-scale residuals
+    ax7 = fig.add_subplot(gs[2, 0])
+    prob_res = fresiduals(model, type="probscale")
+    ax7.scatter(x, prob_res, alpha=0.5)
+    ax7.axhline(y=0, color='r', linestyle='--')
+    ax7.set_xlabel("Predictor")
+    ax7.set_ylabel("Probability-scale Residual")
+    ax7.set_title("Probability-scale Residuals")
+
+    # Model summary statistics
+    ax8 = fig.add_subplot(gs[2, 1:])
+    ax8.axis('off')
+    summary_text = f"""
+    Model Summary:
+    - AIC: {model.aic:.2f}
+    - BIC: {model.bic:.2f}
+    - Deviance: {model.deviance:.2f}
+    - Null Deviance: {model.null_deviance:.2f}
+    - Pseudo R²: {1 - model.deviance/model.null_deviance:.4f}
+    - Number of Observations: {model.nobs:.0f}
+    """
+    ax8.text(0.1, 0.5, summary_text, fontsize=12,
+             verticalalignment='center', family='monospace')
+
+    fig.suptitle(title, fontsize=16, fontweight='bold')
+    plt.show()
+
+# Example usage
+np.random.seed(999)
+n = 800
+x = np.random.normal(size=n)
+y = np.random.binomial(1, 1/(1 + np.exp(-x)))
+X = sm.add_constant(x)
+model = sm.GLM(y, X, family=sm.families.Binomial()).fit()
+
+diagnostic_panel(model, x, title="Logistic Regression Diagnostics")
+```
+
+---
+
+## Tips and Tricks
+
+### 1. Choosing Plot Types
+
+- **KDE plots**: Smoother, better for presentations
+- **Hex plots**: Faster for large datasets, shows density clearly
+- Try both and see which reveals patterns better
+
+### 2. Working with Multiple Predictors
+
+```python
+# Loop through predictors
+predictors = [x1, x2, x3]
+pred_names = ['X1', 'X2', 'X3']
+
+fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+for i, (pred, name) in enumerate(zip(predictors, pred_names)):
+    fredplot(model, pred, ax=axes[i], type="kde")
+    axes[i].set_title(f"FRED: {name}")
+plt.tight_layout()
+plt.show()
+```
+
+### 3. Saving High-Quality Figures
+
+```python
+# Create plot
+fig, ax = plt.subplots(figsize=(10, 6))
+ffplot(model, ax=ax)
+
+# Save with high DPI
+plt.savefig('ffplot.png', dpi=300, bbox_inches='tight')
+plt.savefig('ffplot.pdf', bbox_inches='tight')  # Vector format
+```
+
+### 4. Memory Efficiency
+
+For very large datasets, work with subsamples:
+
+```python
+# Sample indices
+n_sample = 5000
+idx = np.random.choice(len(x), n_sample, replace=False)
+
+# Use sampled data
+fredplot(model, x[idx], type="kde")
+```
+
+---
+
+## Next Steps
+
+- Explore [R Examples](examples-r.qmd) for R-specific implementations
+- Learn about the [Methodology](methodology.qmd) behind functional residuals
+- Check the [Python API Reference](reference_python/index.qmd) for detailed function documentation
+- Read the [Contributing Guide](contributing.qmd) to contribute new examples

@@ -1,0 +1,249 @@
+---
+title: "unifres: Unified Residual Diagnostics"
+---
+
+## Welcome
+
+**unifres** provides a unified framework for residual diagnostics in generalized linear models (GLMs) and beyond. Available in both **R** and **Python**, the package implements the functional residual methodology described in Liu, Lin, & Zhang (2025), offering powerful diagnostic tools that work seamlessly across discrete and continuous outcomes.
+
+## Why Functional Residuals?
+
+Traditional residual diagnostics struggle with discrete data:
+
+- **Binary outcomes**: Residuals can only take two values
+- **Count data**: Discrete nature creates artificial patterns
+- **Ordinal data**: Difficult to interpret traditional residuals
+
+**Functional residuals solve these problems** by representing the entire distribution of residual randomness, not just a single point estimate.
+
+## Key Features
+
+### 🎯 Unified Framework
+
+A single approach that works for:
+
+- **Binary** outcomes (logistic regression)
+- **Count** outcomes (Poisson, negative binomial)
+- **Ordinal** outcomes (proportional odds models)
+- **Zero-inflated** models
+- **Continuous** outcomes (as a special case)
+
+### 📊 Powerful Diagnostics
+
+Two main diagnostic plots:
+
+1. **Function-Function (Fn-Fn) Plots**: Assess overall model adequacy
+2. **Functional Residual Density (FRED) Plots**: Identify specific model failures
+
+### 🔧 Three Residual Types
+
+- **Functional**: Full distribution objects (R functions, Python scipy distributions)
+- **Surrogate**: Point residuals for traditional plots
+- **Probability-scale**: Centered residuals for interpretation
+
+### 🚀 Easy to Use
+
+```r
+# R
+library(unifres)
+fit <- glm(y ~ x, family = binomial)
+fresiduals(fit)
+ffplot(fit)
+fredplot(fit, x = x)
+```
+
+```python
+# Python
+from unifres import fresiduals, ffplot, fredplot
+model = sm.GLM(y, X, family=sm.families.Binomial()).fit()
+fresiduals(model)
+ffplot(model)
+fredplot(model, x)
+```
+
+## Quick Example
+
+### The Problem: Missing Quadratic Term
+
+```r
+# R Example
+set.seed(1217)
+n <- 1000
+x <- rnorm(n)
+z <- 1 - 2*x + 3*x^2 + rlogis(n)
+y <- ifelse(z > 0, 1, 0)
+
+# Wrong model (missing x²)
+fit_wrong <- glm(y ~ x, family = binomial)
+
+# Correct model
+fit_correct <- glm(y ~ x + I(x^2), family = binomial)
+
+# Compare
+par(mfrow = c(1, 2))
+ffplot(fit_wrong, main = "Wrong Model")
+ffplot(fit_correct, main = "Correct Model")
+```
+
+```python
+# Python Example
+import numpy as np
+import statsmodels.api as sm
+from unifres import ffplot
+
+np.random.seed(1217)
+n = 1000
+x = np.random.normal(size=n)
+z = 1 - 2*x + 3*x**2 + np.random.logistic(size=n)
+y = np.where(z > 0, 1, 0)
+
+# Wrong model
+X_wrong = sm.add_constant(x)
+model_wrong = sm.GLM(y, X_wrong, family=sm.families.Binomial()).fit()
+
+# Correct model
+X_correct = sm.add_constant(np.column_stack([x, x**2]))
+model_correct = sm.GLM(y, X_correct, family=sm.families.Binomial()).fit()
+
+# Compare
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+ffplot(model_wrong, ax=axes[0])
+axes[0].set_title("Wrong Model")
+ffplot(model_correct, ax=axes[1])
+axes[1].set_title("Correct Model")
+plt.show()
+```
+
+The function-function plot immediately reveals the model misspecification!
+
+## Installation
+
+::: {.panel-tabset}
+
+### R
+
+```r
+# Install from GitHub
+remotes::install_github("bgreenwell/unifres", subdir = "r/unifres")
+```
+
+### Python
+
+```bash
+# Install from GitHub
+pip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python
+```
+
+:::
+
+[→ Full Installation Guide](installation.qmd)
+
+## Get Started
+
+<div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 2rem 0;">
+
+<div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px;">
+<h3>📚 Quick Start</h3>
+<p>Learn the basics in 5 minutes</p>
+<a href="quickstart.qmd">Get Started →</a>
+</div>
+
+<div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px;">
+<h3>💻 Examples</h3>
+<p>Comprehensive examples for R and Python</p>
+<a href="examples-r.qmd">R Examples →</a><br>
+<a href="examples-python.qmd">Python Examples →</a>
+</div>
+
+<div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px;">
+<h3>📖 Methodology</h3>
+<p>Understand the theory behind functional residuals</p>
+<a href="methodology.qmd">Learn More →</a>
+</div>
+
+<div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px;">
+<h3>🔗 API Reference</h3>
+<p>Detailed function documentation</p>
+<a href="reference_r/index.qmd">R API →</a><br>
+<a href="reference_python/index.qmd">Python API →</a>
+</div>
+
+</div>
+
+## Supported Models
+
+### R Package
+
+- ✅ `glm()` - Binomial, Poisson, Quasi-Poisson families
+- ✅ `MASS::glm.nb()` - Negative Binomial
+- ✅ `mgcv::gam()` - Generalized Additive Models
+- ✅ `VGAM::vglm()` - Vector GLMs (ordinal regression)
+- ✅ `pscl::zeroinfl()` - Zero-Inflated Poisson
+
+### Python Package
+
+- ✅ `statsmodels.GLM` - Binomial, Poisson, Negative Binomial
+- ✅ `statsmodels.NegativeBinomial` - Discrete Negative Binomial
+- ✅ `statsmodels.OrderedModel` - Ordinal Regression
+
+## Citation
+
+If you use **unifres** in your research, please cite:
+
+> Liu, D., Lin, Z., & Zhang, H. (2025). A unified framework for residual diagnostics in generalized linear models and beyond. *Journal of the American Statistical Association*, 1–29. [https://doi.org/10.1080/01621459.2025.2504037](https://doi.org/10.1080/01621459.2025.2504037)
+
+```bibtex
+@article{liu2025unified,
+  title={A unified framework for residual diagnostics in generalized linear models and beyond},
+  author={Liu, Dungang and Lin, Zewei and Zhang, Heping},
+  journal={Journal of the American Statistical Association},
+  pages={1--29},
+  year={2025},
+  publisher={Taylor \& Francis},
+  doi={10.1080/01621459.2025.2504037}
+}
+```
+
+## Features at a Glance
+
+| Feature | R | Python |
+|---------|---|--------|
+| Functional Residuals | ✅ | ✅ |
+| Fn-Fn Plots | ✅ | ✅ |
+| FRED Plots | ✅ | ✅ |
+| Surrogate Residuals | ✅ | ✅ |
+| Probability-scale Residuals | ✅ | ✅ |
+| Binary Models | ✅ | ✅ |
+| Count Models | ✅ | ✅ |
+| Negative Binomial | ✅ | ✅ |
+| Ordinal Models | ✅ | ✅ |
+| Zero-Inflated Models | ✅ | ⏳ |
+| GAMs | ✅ | ⏳ |
+
+## Community
+
+- **GitHub**: [https://github.com/bgreenwell/unifres](https://github.com/bgreenwell/unifres)
+- **Issues**: [Report bugs or request features](https://github.com/bgreenwell/unifres/issues)
+- **Contributing**: [How to contribute](contributing.qmd)
+
+## Authors
+
+- **Brandon M. Greenwell** - [greenwell.brandon@gmail.com](mailto:greenwell.brandon@gmail.com)
+- **Dungang Liu** - [dungang.liu@uc.edu](mailto:dungang.liu@uc.edu)
+- **Zewei Lin** - [pqt19@txstate.edu](mailto:pqt19@txstate.edu)
+- **Brad Boehmke** - [bradleyboehmke@gmail.com](mailto:bradleyboehmke@gmail.com) (R package)
+- **Heping Zhang** - [heping.zhang@yale.edu](mailto:heping.zhang@yale.edu) (Python package)
+
+## License
+
+Both R and Python packages are licensed under GPL-3 or later.
+
+---
+
+<div style="text-align: center; margin-top: 3rem; padding: 2rem; background-color: #f8f9fa; border-radius: 8px;">
+
+### Ready to improve your model diagnostics?
+
+[Get Started](quickstart.qmd){.btn .btn-primary style="font-size: 1.2rem; padding: 0.75rem 2rem;"}
+
+</div>

@@ -1,0 +1,17 @@
+---
+title: "Python Reference"
+---
+
+The `unifres` Python package implements the unifying functional residual methodology for generalized linear models.
+
+See the navigation bar or the links below for the core functions and utilities:
+
+### Core Functions
+* [`fresiduals`](fresiduals.qmd)
+* [`fredplot`](fredplot.qmd)
+* [`ffplot`](ffplot.qmd)
+
+### Utilities
+* [`is_fitted`](utils.is_fitted.qmd)
+* [`unifend`](utils.unifend.qmd)
+* [`expand_endpoints`](utils.expand_endpoints.qmd)

@@ -1,0 +1,21 @@
+project:
+  title: Python Reference
+  dir: reference_python
+
+options:
+  package: unifres
+  out_index: index.qmd
+
+sections:
+  - title: Core Functions
+    desc: Functions for computing and visualizing functional residuals.
+    contents:
+      - fresiduals
+      - fredplot
+      - ffplot
+  - title: Utilities
+    desc: Internal utility functions.
+    contents:
+      - utils.is_fitted
+      - utils.unifend
+      - utils.expand_endpoints

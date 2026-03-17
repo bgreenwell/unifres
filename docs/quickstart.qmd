@@ -1,0 +1,244 @@
+---
+title: "Quick Start"
+---
+
+This guide will get you up and running with **unifres** in just a few minutes.
+
+## R Quick Start
+
+### Basic Example: Logistic Regression
+
+```{r}
+#| eval: false
+library(unifres)
+
+# Generate example data with a quadratic relationship
+set.seed(1217)
+n <- 1000
+x <- rnorm(n)
+z <- 1 - 2*x + 3*x^2 + rlogis(n)
+y <- ifelse(z > 0, 1, 0)
+
+# Fit two models: one wrong (missing quadratic), one correct
+fit_wrong <- glm(y ~ x, family = binomial)
+fit_correct <- glm(y ~ x + I(x^2), family = binomial)
+
+# Compute functional residuals
+fres_wrong <- fresiduals(fit_wrong)
+fres_correct <- fresiduals(fit_correct)
+
+# Create function-function plots to assess model fit
+par(mfrow = c(1, 2))
+ffplot(fit_wrong, main = "Wrong Model", type = "l")
+ffplot(fit_correct, main = "Correct Model", type = "l")
+```
+
+The function-function plot should show deviation from the diagonal for the wrong model and close adherence for the correct model.
+
+### Using Different Residual Types
+
+```{r}
+#| eval: false
+# Functional residuals (list of functions)
+fres_fun <- fresiduals(fit_correct, type = "function")
+plot(fres_fun[[1]])  # Plot first functional residual
+
+# Surrogate residuals (random samples)
+fres_surr <- fresiduals(fit_correct, type = "surrogate")
+plot(x, fres_surr)
+abline(h = 0.5, col = "red", lty = 2)
+
+# Probability-scale residuals
+fres_prob <- fresiduals(fit_correct, type = "probscale")
+plot(x, fres_prob)
+abline(h = 0, col = "red", lty = 2)
+```
+
+### Functional Residual Density Plots
+
+```{r}
+#| eval: false
+library(hexbin)
+
+# FRED plots help identify missing covariates or functional forms
+par(mfrow = c(1, 2))
+fredplot(fit_wrong, x = x, type = "hex", main = "Wrong Model")
+fredplot(fit_correct, x = x, type = "hex", main = "Correct Model")
+```
+
+The wrong model should show patterns in the FRED plot, while the correct model should show random scatter.
+
+---
+
+## Python Quick Start
+
+### Basic Example: Logistic Regression
+
+```python
+import numpy as np
+import statsmodels.api as sm
+from unifres import fresiduals, ffplot, fredplot
+import matplotlib.pyplot as plt
+
+# Generate example data with a quadratic relationship
+np.random.seed(1217)
+n = 1000
+x = np.random.normal(size=n)
+z = 1 - 2*x + 3*x**2 + np.random.logistic(size=n)
+y = np.where(z > 0, 1, 0)
+
+# Fit two models: one wrong (missing quadratic), one correct
+X_wrong = sm.add_constant(x)
+X_correct = sm.add_constant(np.column_stack([x, x**2]))
+
+model_wrong = sm.GLM(y, X_wrong, family=sm.families.Binomial()).fit()
+model_correct = sm.GLM(y, X_correct, family=sm.families.Binomial()).fit()
+
+# Create function-function plots
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+ffplot(model_wrong, ax=axes[0])
+axes[0].set_title("Wrong Model")
+ffplot(model_correct, ax=axes[1])
+axes[1].set_title("Correct Model")
+plt.tight_layout()
+plt.show()
+```
+
+### Using Different Residual Types
+
+```python
+# Functional residuals (list of scipy distribution objects)
+fres_fun = fresiduals(model_correct, type="function")
+t_vals = np.linspace(0, 1, 100)
+plt.plot(t_vals, fres_fun[0].cdf(t_vals))
+plt.xlabel("t")
+plt.ylabel("F(t)")
+plt.title("First Functional Residual")
+plt.show()
+
+# Surrogate residuals (random samples)
+fres_surr = fresiduals(model_correct, type="surrogate")
+plt.scatter(x, fres_surr, alpha=0.5)
+plt.axhline(y=0.5, color='r', linestyle='--')
+plt.xlabel("x")
+plt.ylabel("Surrogate Residual")
+plt.show()
+
+# Probability-scale residuals
+fres_prob = fresiduals(model_correct, type="probscale")
+plt.scatter(x, fres_prob, alpha=0.5)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel("x")
+plt.ylabel("Probability-scale Residual")
+plt.show()
+```
+
+### Functional Residual Density Plots
+
+```python
+# FRED plots help identify missing covariates or functional forms
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+fredplot(model_wrong, x, type="kde", ax=axes[0])
+axes[0].set_title("Wrong Model")
+
+fredplot(model_correct, x, type="kde", ax=axes[1])
+axes[1].set_title("Correct Model")
+
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Understanding the Output
+
+### Function-Function (Fn-Fn) Plots
+
+The `ffplot()` function creates a plot of the average functional residual against the theoretical CDF of a Uniform(0,1) distribution.
+
+**Interpretation:**
+- **Good fit**: Points follow the 45-degree line closely
+- **Poor fit**: Systematic deviations from the diagonal indicate model misspecification
+- This is analogous to a Q-Q plot but for functional residuals
+
+### Functional Residual Density (FRED) Plots
+
+The `fredplot()` function visualizes the density of functional residuals against a covariate.
+
+**Interpretation:**
+- **Good fit**: Random scatter with no patterns
+- **Poor fit**: Systematic patterns suggest:
+  - Missing covariates
+  - Incorrect functional form (e.g., missing polynomial terms)
+  - Incorrect link function
+
+### Residual Types Comparison
+
+| Type | R | Python | Use Case |
+|------|---|--------|----------|
+| **function** | List of R functions | List of scipy distributions | Full diagnostic information |
+| **surrogate** | Numeric vector | NumPy array | Traditional residual plots |
+| **probscale** | Numeric vector | NumPy array | Centered around 0 |
+
+---
+
+## Supported Models
+
+### R
+
+- `glm()` - Binomial, Poisson, Quasi-Poisson
+- `MASS::glm.nb()` - Negative Binomial
+- `mgcv::gam()` - Generalized Additive Models
+- `VGAM::vglm()` - Ordinal regression
+- `pscl::zeroinfl()` - Zero-inflated Poisson
+
+### Python
+
+- `statsmodels.GLM` - Binomial, Poisson, Negative Binomial
+- `statsmodels.NegativeBinomial` - Negative Binomial (discrete)
+- `statsmodels.OrderedModel` - Ordinal regression
+
+---
+
+## Next Steps
+
+- Explore [R Examples](examples-r.qmd) for detailed use cases
+- Explore [Python Examples](examples-python.qmd) for detailed use cases
+- Read about the [Methodology](methodology.qmd) behind functional residuals
+- Check the API reference: [R](reference_r/index.qmd) | [Python](reference_python/index.qmd)
+
+---
+
+## Common Patterns
+
+### Checking for Missing Quadratic Terms
+
+```{r}
+#| eval: false
+# If FRED plot shows a parabolic pattern, try adding x^2
+fredplot(fit, x = x)  # Shows parabola?
+fit2 <- update(fit, . ~ . + I(x^2))
+fredplot(fit2, x = x)  # Better?
+```
+
+### Comparing Multiple Models
+
+```{r}
+#| eval: false
+# Compare models side by side
+par(mfrow = c(2, 2))
+ffplot(model1, main = "Model 1")
+ffplot(model2, main = "Model 2")
+fredplot(model1, x = x, main = "Model 1")
+fredplot(model2, x = x, main = "Model 2")
+```
+
+### Working with Large Datasets
+
+```{r}
+#| eval: false
+# Subsample for faster plotting
+ffplot(fit, n = 1000)  # Use 1000 random observations
+fredplot(fit, x = x[1:1000])  # Plot first 1000 points
+```

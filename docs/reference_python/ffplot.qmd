@@ -1,0 +1,26 @@
+# ffplot { #unifres.ffplot }
+
+```python
+ffplot(model, resolution=101, n=None, ax=None, **kwargs)
+```
+
+Create a Function-Function (Fn-Fn) plot.
+
+This plot shows the average of the functional residuals against the
+theoretical CDF of a Uniform(0, 1) random variable.
+
+## Parameters {.doc-section .doc-section-parameters}
+
+| Name       | Type                 | Description                                                                       | Default    |
+|------------|----------------------|-----------------------------------------------------------------------------------|------------|
+| model      | object               | A fitted model object (e.g., from statsmodels) or a list of functional residuals. | _required_ |
+| resolution | int                  | The number of points between 0 and 1 to evaluate, by default 101.                 | `101`      |
+| n          | int                  | The number of functional residuals to subsample, by default None (use all).       | `None`     |
+| ax         | matplotlib.axes.Axes | An existing matplotlib Axes object to plot on.                                    | `None`     |
+| **kwargs   | dict                 | Additional keyword arguments passed to `ax.plot()`.                               | `{}`       |
+
+## Returns {.doc-section .doc-section-returns}
+
+| Name   | Type                 | Description                                     |
+|--------|----------------------|-------------------------------------------------|
+|        | matplotlib.axes.Axes | The matplotlib Axes object containing the plot. |

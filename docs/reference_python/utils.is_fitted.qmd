@@ -1,0 +1,21 @@
+# utils.is_fitted { #unifres.utils.is_fitted }
+
+```python
+utils.is_fitted(model)
+```
+
+Check if a model object has been fitted.
+
+This is determined by checking for the presence of a `params` attribute.
+
+## Parameters {.doc-section .doc-section-parameters}
+
+| Name   | Type   | Description                | Default    |
+|--------|--------|----------------------------|------------|
+| model  | object | The model object to check. | _required_ |
+
+## Returns {.doc-section .doc-section-returns}
+
+| Name   | Type   | Description                                              |
+|--------|--------|----------------------------------------------------------|
+|        | bool   | True if the model appears to be fitted, False otherwise. |

@@ -1,0 +1,29 @@
+# utils.unifend { #unifres.utils.unifend }
+
+```python
+utils.unifend(model, y=None)
+```
+
+Calculate the endpoints of the uniform residual distributions.
+
+For each observation, this function computes the lower and upper bounds of
+the predicted cumulative distribution function, P(Y < y) and P(Y <= y).
+
+## Parameters {.doc-section .doc-section-parameters}
+
+| Name   | Type       | Description                                                                                  | Default    |
+|--------|------------|----------------------------------------------------------------------------------------------|------------|
+| model  | object     | A fitted model object from the statsmodels library.                                          | _required_ |
+| y      | np.ndarray | The observed response variable. If not provided, it will be extracted from the model object. | `None`     |
+
+## Returns {.doc-section .doc-section-returns}
+
+| Name   | Type       | Description                                                                                                                                  |
+|--------|------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+|        | np.ndarray | An (n x 2) array where n is the number of observations. Each row contains the [lower, upper] endpoint for a residual's uniform distribution. |
+
+## Raises {.doc-section .doc-section-raises}
+
+| Name   | Type       | Description                                              |
+|--------|------------|----------------------------------------------------------|
+|        | ValueError | If the model type is not a recognized statsmodels model. |

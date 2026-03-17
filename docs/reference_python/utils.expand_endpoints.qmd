@@ -1,0 +1,22 @@
+# utils.expand_endpoints { #unifres.utils.expand_endpoints }
+
+```python
+utils.expand_endpoints(endpoints, resolution=101)
+```
+
+Expand endpoint pairs into a series of points for plotting.
+
+This is an internal convenience function used for creating density plots.
+
+## Parameters {.doc-section .doc-section-parameters}
+
+| Name       | Type       | Description                                                                     | Default    |
+|------------|------------|---------------------------------------------------------------------------------|------------|
+| endpoints  | np.ndarray | An (n x 2) array of [lower, upper] endpoints.                                   | _required_ |
+| resolution | int        | The number of points to interpolate between each endpoint pair, by default 101. | `101`      |
+
+## Returns {.doc-section .doc-section-returns}
+
+| Name   | Type       | Description                                      |
+|--------|------------|--------------------------------------------------|
+|        | np.ndarray | A flattened 1D array of the interpolated points. |

@@ -1,0 +1,430 @@
+---
+title: "R Examples"
+---
+
+This page provides comprehensive examples of using **unifres** with various model types in R.
+
+## Example 1: Logistic Regression
+
+### Detecting Missing Polynomial Terms
+
+```{r}
+#| eval: false
+library(unifres)
+
+# Generate data with a quadratic relationship
+set.seed(1217)
+n <- 1000
+x <- rnorm(n)
+z <- 1 - 2*x + 3*x^2 + rlogis(n)
+y <- ifelse(z > 0, 1, 0)
+
+# Fit incorrect model (missing x^2)
+fit_wrong <- glm(y ~ x, family = binomial)
+
+# Fit correct model
+fit_correct <- glm(y ~ x + I(x^2), family = binomial)
+
+# Compare with function-function plots
+par(mfrow = c(1, 2))
+ffplot(fit_wrong, type = "l", main = "Missing x²")
+ffplot(fit_correct, type = "l", main = "Correct Model")
+```
+
+### Using FRED Plots
+
+```{r}
+#| eval: false
+library(hexbin)
+
+# FRED plots show where the model fails
+par(mfrow = c(1, 2))
+fredplot(fit_wrong, x = x, type = "hex",
+         main = "Wrong Model", aspect = 1)
+fredplot(fit_correct, x = x, type = "hex",
+         main = "Correct Model", aspect = 1)
+```
+
+The wrong model shows a clear parabolic pattern in the FRED plot, indicating the missing quadratic term.
+
+---
+
+## Example 2: Poisson Regression
+
+### Count Data Analysis
+
+```{r}
+#| eval: false
+# Simulate count data
+set.seed(42)
+n <- 500
+x1 <- rnorm(n)
+x2 <- rnorm(n)
+lambda <- exp(1 + 0.5*x1 + 0.8*x2)
+y <- rpois(n, lambda = lambda)
+
+# Fit model
+fit <- glm(y ~ x1 + x2, family = poisson)
+
+# Check model adequacy
+par(mfrow = c(2, 2))
+ffplot(fit, type = "l", main = "Function-Function Plot")
+fredplot(fit, x = x1, type = "hex", main = "FRED: x1")
+fredplot(fit, x = x2, type = "hex", main = "FRED: x2")
+
+# Surrogate residual plot
+surr_res <- fresiduals(fit, type = "surrogate")
+plot(fitted(fit), surr_res,
+     xlab = "Fitted Values", ylab = "Surrogate Residuals")
+abline(h = 0.5, col = "red", lty = 2)
+```
+
+### Detecting Overdispersion
+
+```{r}
+#| eval: false
+# Generate overdispersed count data
+set.seed(123)
+n <- 500
+x <- rnorm(n)
+mu <- exp(1 + x)
+# Add overdispersion via negative binomial
+y <- rnegbin(n, mu = mu, theta = 2)
+
+# Fit Poisson (wrong)
+fit_pois <- glm(y ~ x, family = poisson)
+
+# Fit Quasi-Poisson (correct)
+fit_qpois <- glm(y ~ x, family = quasipoisson)
+
+# Compare
+par(mfrow = c(1, 2))
+ffplot(fit_pois, main = "Poisson")
+ffplot(fit_qpois, main = "Quasi-Poisson")
+```
+
+---
+
+## Example 3: Negative Binomial Regression
+
+```{r}
+#| eval: false
+library(MASS)
+
+# Generate negative binomial data
+set.seed(2024)
+n <- 400
+x <- rnorm(n)
+mu <- exp(1 + 0.5*x)
+y <- rnbinom(n, mu = mu, size = 3)
+
+# Fit model
+fit_nb <- glm.nb(y ~ x)
+
+# Diagnostics
+fres <- fresiduals(fit_nb)
+
+par(mfrow = c(1, 3))
+ffplot(fit_nb, type = "l", main = "Fn-Fn Plot")
+fredplot(fit_nb, x = x, type = "hex", main = "FRED Plot")
+
+# Compare to traditional deviance residuals
+dev_res <- residuals(fit_nb, type = "deviance")
+surr_res <- fresiduals(fit_nb, type = "surrogate")
+plot(surr_res, dev_res,
+     xlab = "Surrogate Residuals",
+     ylab = "Deviance Residuals")
+```
+
+---
+
+## Example 4: Generalized Additive Models (GAM)
+
+```{r}
+#| eval: false
+library(mgcv)
+
+# Generate data with non-linear relationship
+set.seed(777)
+n <- 500
+x <- runif(n, -3, 3)
+f <- function(x) sin(x) + 0.5*x
+eta <- f(x)
+mu <- exp(eta)
+y <- rpois(n, lambda = mu)
+
+# Fit GAM with smooth term
+fit_gam <- gam(y ~ s(x), family = poisson)
+
+# Fit incorrect GLM (linear)
+fit_glm <- glm(y ~ x, family = poisson)
+
+# Compare diagnostics
+par(mfrow = c(2, 2))
+ffplot(fit_glm, main = "GLM (Wrong)")
+ffplot(fit_gam, main = "GAM (Correct)")
+fredplot(fit_glm, x = x, type = "hex", main = "GLM FRED")
+fredplot(fit_gam, x = x, type = "hex", main = "GAM FRED")
+```
+
+---
+
+## Example 5: Ordinal Regression
+
+```{r}
+#| eval: false
+library(VGAM)
+
+# Generate ordinal outcome data
+set.seed(999)
+n <- 500
+x1 <- rnorm(n)
+x2 <- rnorm(n)
+
+# True latent variable
+z <- 1 + 0.8*x1 - 0.5*x2 + rlogis(n)
+
+# Create ordinal outcome with 4 categories
+y <- cut(z, breaks = c(-Inf, -1, 0, 1, Inf), labels = FALSE)
+
+# Fit proportional odds model
+fit_ord <- vglm(factor(y) ~ x1 + x2,
+                family = cumulative(parallel = TRUE))
+
+# Diagnostics
+par(mfrow = c(1, 3))
+ffplot(fit_ord, type = "l", main = "Fn-Fn Plot")
+fredplot(fit_ord, x = x1, type = "hex", main = "FRED: x1")
+fredplot(fit_ord, x = x2, type = "hex", main = "FRED: x2")
+
+# Check proportional odds assumption
+# If violated, try parallel = FALSE
+```
+
+---
+
+## Example 6: Zero-Inflated Models
+
+```{r}
+#| eval: false
+library(pscl)
+library(VGAM)
+
+# Generate zero-inflated count data
+set.seed(2025)
+n <- 500
+x <- rnorm(n)
+
+# Zero-inflation probability
+pi <- plogis(-1 + 0.5*x)
+# Count process
+lambda <- exp(1 + 0.8*x)
+
+# Generate outcome
+y <- ifelse(rbinom(n, 1, pi) == 1, 0, rpois(n, lambda))
+
+# Fit zero-inflated Poisson model
+fit_zip <- zeroinfl(y ~ x | x, dist = "poisson")
+
+# Diagnostics
+par(mfrow = c(1, 2))
+ffplot(fit_zip, type = "l", main = "ZIP Model")
+fredplot(fit_zip, x = x, type = "hex", main = "FRED Plot")
+
+# Compare to standard Poisson
+fit_pois <- glm(y ~ x, family = poisson)
+ffplot(fit_pois, main = "Standard Poisson")
+```
+
+---
+
+## Example 7: Model Comparison
+
+### Comparing Nested Models
+
+```{r}
+#| eval: false
+# Generate data
+set.seed(333)
+n <- 800
+x1 <- rnorm(n)
+x2 <- rnorm(n)
+x3 <- rnorm(n)
+
+# True model includes x1 and x2, but not x3
+eta <- 1 + x1 + 0.5*x2
+y <- rbinom(n, 1, plogis(eta))
+
+# Fit models
+fit1 <- glm(y ~ x1, family = binomial)
+fit2 <- glm(y ~ x1 + x2, family = binomial)
+fit3 <- glm(y ~ x1 + x2 + x3, family = binomial)
+
+# Visual comparison
+par(mfrow = c(2, 3))
+ffplot(fit1, main = "Model 1: x1 only")
+ffplot(fit2, main = "Model 2: x1 + x2")
+ffplot(fit3, main = "Model 3: x1 + x2 + x3")
+
+fredplot(fit1, x = x1, type = "hex", main = "M1 FRED")
+fredplot(fit2, x = x1, type = "hex", main = "M2 FRED")
+fredplot(fit3, x = x1, type = "hex", main = "M3 FRED")
+```
+
+---
+
+## Example 8: Customizing Plots
+
+### Function-Function Plots
+
+```{r}
+#| eval: false
+# Fit a model
+fit <- glm(y ~ x, family = binomial)
+
+# Customize ffplot
+ffplot(fit,
+       type = "p",              # Points instead of line
+       pch = 16,                # Solid circles
+       col = "steelblue",       # Custom color
+       cex = 0.5,               # Smaller points
+       ref.col = "red",         # Red reference line
+       ref.lwd = 2,             # Thicker reference line
+       ref.lty = "dashed",      # Dashed reference line
+       xlab = "Theoretical",
+       ylab = "Observed",
+       main = "Custom Fn-Fn Plot")
+```
+
+### FRED Plots
+
+```{r}
+#| eval: false
+# Customize fredplot with hex type
+library(hexbin)
+fredplot(fit, x = x,
+         type = "hex",
+         xbins = 30,                    # Number of hexagonal bins
+         colorkey = TRUE,               # Show legend
+         color.palette = heat.colors,   # Custom color scheme
+         smooth = TRUE,                 # Add LOESS smooth
+         smooth.col = "cyan",           # Cyan smooth line
+         smooth.lwd = 3,                # Thick smooth line
+         xlab = "Predictor",
+         ylab = "Functional Residual",
+         main = "Custom FRED Plot")
+
+# Customize with KDE type
+library(MASS)
+library(lattice)
+fredplot(fit, x = x,
+         type = "kde",
+         n = 50,                        # Grid resolution
+         color.palette = topo.colors,   # Custom colors
+         smooth = TRUE,
+         xlab = "Predictor",
+         main = "KDE FRED Plot")
+```
+
+---
+
+## Example 9: Large Datasets
+
+### Subsampling for Speed
+
+```{r}
+#| eval: false
+# Large dataset
+set.seed(12345)
+n <- 50000
+x <- rnorm(n)
+y <- rbinom(n, 1, plogis(x))
+fit <- glm(y ~ x, family = binomial)
+
+# Use subsampling for faster plotting
+ffplot(fit, n = 1000)  # Use only 1000 observations
+
+# For FRED plots, sample the data
+idx <- sample(n, 5000)
+fredplot(fit, x = x[idx], type = "hex")
+```
+
+---
+
+## Example 10: Extracting Residuals for Custom Analysis
+
+```{r}
+#| eval: false
+# Fit model
+fit <- glm(y ~ x, family = poisson)
+
+# Get functional residuals
+fres_list <- fresiduals(fit, type = "function")
+
+# Evaluate first functional residual at specific points
+t_vals <- seq(0, 1, by = 0.1)
+f1_vals <- sapply(t_vals, fres_list[[1]])
+
+# Get surrogate residuals for custom plots
+surr_res <- fresiduals(fit, type = "surrogate")
+
+# Custom analysis
+library(ggplot2)
+df <- data.frame(x = x, residual = surr_res)
+ggplot(df, aes(x = x, y = residual)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "loess", color = "red") +
+  geom_hline(yintercept = 0.5, linetype = "dashed") +
+  theme_minimal() +
+  labs(title = "Custom Surrogate Residual Plot")
+```
+
+---
+
+## Tips and Tricks
+
+### 1. Choosing Between Hex and KDE
+
+- **Hex plots**: Better for large datasets, clearer for discrete patterns
+- **KDE plots**: Smoother appearance, better for continuous relationships
+- Start with hex for exploratory analysis
+
+### 2. Interpreting FRED Plots
+
+- **Horizontal band**: Good model fit
+- **Curvature**: Missing polynomial terms
+- **Funneling**: Heteroscedasticity
+- **Gaps**: Zero-inflation or missing categories
+
+### 3. When to Use Each Residual Type
+
+- **function**: Full diagnostic capabilities, use for formal tests
+- **surrogate**: Quick checks, traditional residual plots
+- **probscale**: When you want residuals centered at 0
+
+### 4. Combining with Other Diagnostics
+
+```{r}
+#| eval: false
+# Comprehensive diagnostic panel
+par(mfrow = c(2, 3))
+
+# Functional residual diagnostics
+ffplot(fit, main = "Fn-Fn Plot")
+fredplot(fit, x = x, type = "hex", main = "FRED Plot")
+
+# Traditional diagnostics
+plot(fit, which = 1)  # Residuals vs Fitted
+plot(fit, which = 2)  # Q-Q Plot
+plot(fit, which = 3)  # Scale-Location
+plot(fit, which = 5)  # Residuals vs Leverage
+```
+
+---
+
+## Next Steps
+
+- Explore [Python Examples](examples-python.qmd) for Python-specific implementations
+- Learn about the [Methodology](methodology.qmd) behind functional residuals
+- Check the [R API Reference](reference_r/index.qmd) for detailed function documentation
+- Read the [Contributing Guide](contributing.qmd) to contribute new examples

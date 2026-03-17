@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "funres"
+version = "0.1.0"
+description = "A package for doing great things!"
+authors = ["Brandon Greenwell"]
+license = "GNU General Public License v3.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+matplotlib = "^3.10.1"
+numpy = "^2.2.4"
+pandas = "^2.2.3"
+scipy = "^1.15.2"
+seaborn = "^0.13.2"
+statsmodels = "^0.14.4"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

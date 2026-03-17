@@ -1,0 +1,72 @@
+quartodoc:
+  package: unifres
+  title: Python Reference
+  dir: reference_python
+
+  sections:
+    - title: Core Functions
+      desc: Functions for computing and visualizing functional residuals.
+      contents:
+        - fresiduals
+        - fredplot
+        - ffplot
+    - title: Utilities
+      desc: Internal utility functions.
+      contents:
+        - utils.is_fitted
+        - utils.unifend
+        - utils.expand_endpoints
+
+project:
+  type: website
+
+website:
+  title: "unifres: Unified Residuals"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - text: Get Started
+        menu:
+          - href: installation.qmd
+            text: Installation
+          - href: quickstart.qmd
+            text: Quick Start
+      - text: Examples
+        menu:
+          - href: examples-r.qmd
+            text: R Examples
+          - href: examples-python.qmd
+            text: Python Examples
+      - href: methodology.qmd
+        text: Methodology
+      - text: API Reference
+        menu:
+          - text: Python API
+            href: reference_python/index.qmd
+          - text: R API
+            href: reference_r/index.qmd
+      - href: contributing.qmd
+        text: Contributing
+    right:
+      - icon: github
+        href: https://github.com/bgreenwell/unifres
+  sidebar:
+    - title: "Get Started"
+      contents:
+        - installation.qmd
+        - quickstart.qmd
+    - title: "Examples"
+      contents:
+        - examples-r.qmd
+        - examples-python.qmd
+    - title: "Documentation"
+      contents:
+        - methodology.qmd
+        - contributing.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-copy: true

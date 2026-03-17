@@ -1,0 +1,31 @@
+# fresiduals { #unifres.fresiduals }
+
+```python
+fresiduals(model, type='function', y=None)
+```
+
+Computes functional residuals for a fitted model.
+
+This function can return the full functional residuals as distribution
+objects, or it can return point-based residuals derived from them
+(surrogate or probability-scale).
+
+## Parameters {.doc-section .doc-section-parameters}
+
+| Name   | Type       | Description                                                                                            | Default      |
+|--------|------------|--------------------------------------------------------------------------------------------------------|--------------|
+| model  | object     | A fitted model object from the statsmodels library.                                                    | _required_   |
+| type   | str        | The type of residual to compute. One of {"function", "surrogate", "probscale"}, by default "function". | `'function'` |
+| y      | np.ndarray | The observed response variable. If not provided, it will be extracted from the model object.           | `None`       |
+
+## Returns {.doc-section .doc-section-returns}
+
+| Name   | Type                                   | Description                                                                                                                                                                                    |
+|--------|----------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|        | Union\[List\[rv_frozen\], np.ndarray\] | - If `type="function"`, a list of `scipy.stats.uniform` objects,   one for each observation. - If `type="surrogate"` or `type="probscale"`, a NumPy array of   the calculated point residuals. |
+
+## Raises {.doc-section .doc-section-raises}
+
+| Name   | Type       | Description                           |
+|--------|------------|---------------------------------------|
+|        | ValueError | If the specified `type` is not valid. |

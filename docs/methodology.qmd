@@ -1,0 +1,265 @@
+---
+title: "Methodology"
+---
+
+## Overview
+
+Traditional residual diagnostics for generalized linear models (GLMs) face significant challenges when applied to discrete outcome data. The **unifres** package implements the unified functional residual framework described in Liu, Lin, & Zhang (2025), which addresses these limitations through a novel approach to residual analysis.
+
+## The Problem with Traditional Residuals
+
+### Limitations for Discrete Data
+
+Traditional residuals (Pearson, deviance, etc.) are **point statistics** that:
+
+1. **Cannot capture full residual randomness** for discrete outcomes
+2. **Lack interpretability** for binary and count data
+3. **Show patterns even for correct models** due to discrete data structure
+4. **Depend on specific link functions**, making comparisons difficult
+
+### Example: Binary Outcome
+
+For a logistic regression with outcome $Y \in \{0, 1\}$ and fitted probability $\hat{p}$:
+
+- Traditional residuals can only take two values
+- This creates artificial patterns in diagnostic plots
+- Makes it difficult to assess model adequacy
+
+---
+
+## Functional Residuals: The Solution
+
+### Core Concept
+
+Instead of point residuals, functional residuals represent the **entire distribution** of residual randomness:
+
+$$F_i(t) = P(U_i \leq t \mid Y_i)$$
+
+where $U_i$ is a uniform random variable capturing the residual for observation $i$.
+
+### Key Properties
+
+1. **Uniform Distribution**: Under a correctly specified model, $U_i \sim \text{Uniform}(0,1)$
+2. **Full Information**: Captures all residual randomness, not just a point estimate
+3. **Model-Free**: Works across all GLM families
+4. **Interpretable**: Direct probabilistic interpretation
+
+### Construction for Different Models
+
+#### Binary Outcomes (Logistic Regression)
+
+For $Y_i \in \{0, 1\}$ with fitted probability $\hat{p}_i$:
+
+**Endpoints**:
+- If $Y_i = 0$: $U_i \in [0, 1-\hat{p}_i]$
+- If $Y_i = 1$: $U_i \in [1-\hat{p}_i, 1]$
+
+#### Count Outcomes (Poisson Regression)
+
+For $Y_i \in \{0, 1, 2, ...\}$ with fitted rate $\hat{\lambda}_i$:
+
+**Endpoints**: $U_i \in [P(Y \leq y_i - 1), P(Y \leq y_i)]$
+
+---
+
+## Diagnostic Tools
+
+### 1. Function-Function (Fn-Fn) Plots
+
+The `ffplot()` function plots the average functional residual against the theoretical CDF:
+
+$$\bar{F}(t) = \frac{1}{n}\sum_{i=1}^n F_i(t) \quad \text{vs} \quad t$$
+
+**Interpretation**:
+- **Good fit**: $\bar{F}(t) \approx t$ (points follow diagonal)
+- **Poor fit**: Systematic deviations from diagonal
+- Analogous to Q-Q plots but for functional residuals
+
+**Mathematical Basis**:
+Under correct model specification: $\mathbb{E}[F_i(t)] = t$ for all $t \in [0,1]$
+
+### 2. Functional Residual Density (FRED) Plots
+
+The `fredplot()` function visualizes the density of functional residuals against covariates:
+
+**Construction**:
+1. Expand each $F_i$ into dense grid of points
+2. Create 2D density plot: covariate vs residual value
+3. Add LOESS smoother to detect patterns
+
+**Interpretation**:
+- **Good fit**: Uniform horizontal band
+- **Poor fit**: Patterns indicate:
+  - Curvature → Missing polynomial terms
+  - Funneling → Heteroscedasticity
+  - Gaps → Zero-inflation or structural issues
+
+### 3. Derived Residuals
+
+From functional residuals, we can derive point-based residuals:
+
+#### Surrogate Residuals
+
+Random sample from the functional residual distribution:
+
+$$r_i^{(s)} \sim F_i$$
+
+**Use**: Traditional residual plots, quick diagnostics
+
+#### Probability-Scale Residuals
+
+Expected value of the functional residual:
+
+$$r_i^{(p)} = \mathbb{E}[U_i] - 0.5$$
+
+where the mean is computed from the endpoints of $U_i$.
+
+**Use**: Centered at 0, similar to traditional residuals
+
+---
+
+## Advantages Over Traditional Methods
+
+### 1. Unified Framework
+
+**Single approach works for**:
+- Binary outcomes (logistic regression)
+- Count outcomes (Poisson, negative binomial)
+- Ordinal outcomes (proportional odds models)
+- Zero-inflated models
+- Continuous outcomes (as special case)
+
+### 2. Meaningful Interpretation
+
+- Residuals have **probabilistic interpretation**
+- Uniform(0,1) under null hypothesis
+- Easy to communicate to non-statisticians
+
+### 3. Better Power
+
+Functional residuals can detect departures that traditional methods miss:
+
+- Missing interaction terms
+- Incorrect link functions
+- Unmodeled heterogeneity
+
+### 4. Visual Clarity
+
+FRED plots provide clearer visual diagnostics than traditional residual plots for discrete data.
+
+---
+
+## Theoretical Foundation
+
+### Probability Integral Transform
+
+For continuous random variable $X$ with CDF $F$:
+$$F(X) \sim \text{Uniform}(0,1)$$
+
+For discrete outcomes, functional residuals extend this via interval representation.
+
+### Asymptotic Properties
+
+Under regularity conditions:
+
+1. **Consistency**: $\bar{F}(t) \xrightarrow{p} t$ for all $t$
+2. **Asymptotic Normality**: $\sqrt{n}(\bar{F}(t) - t)$ is asymptotically normal
+3. **Weak Convergence**: Enables formal hypothesis tests for model adequacy
+
+---
+
+## Comparison to Existing Methods
+
+| Method | Data Type | Interpretability | Power | Visualization |
+|--------|-----------|------------------|-------|---------------|
+| **Pearson** | All | Moderate | Low for discrete | Poor for discrete |
+| **Deviance** | All | Low | Moderate | Poor for discrete |
+| **Quantile** | Continuous | High | High | Good |
+| **Randomized Quantile** | Discrete | Moderate | Moderate | Moderate |
+| **Functional Residuals** | **All** | **High** | **High** | **Excellent** |
+
+---
+
+## Implementation Details
+
+### Resolution Parameter
+
+Both R and Python implementations use a `resolution` parameter (default 101):
+
+- Controls the grid density for expanding functional residuals
+- Higher resolution → smoother plots but slower computation
+- Recommendation: 51-201 depending on dataset size
+
+### Link Scale vs Probability Scale
+
+For surrogate residuals in R:
+
+- `link.scale = FALSE`: Residuals on probability scale [0,1]
+- `link.scale = TRUE`: Residuals on link scale (e.g., logit)
+
+Default is `TRUE` for consistency with traditional GLM residuals.
+
+### Computational Complexity
+
+- **Functional residuals**: $O(n)$ computation
+- **Fn-Fn plot**: $O(n \times r)$ where $r$ is resolution
+- **FRED plot**: $O(n \times r)$ plus density estimation
+
+For large datasets ($n > 10,000$), consider subsampling for visualization.
+
+---
+
+## Extended Applications
+
+### Beyond GLMs
+
+The framework extends to:
+
+1. **Generalized Additive Models (GAMs)** - R package supports `mgcv::gam()`
+2. **Zero-Inflated Models** - R package supports `pscl::zeroinfl()`
+3. **Ordinal Regression** - R package supports `VGAM::vglm()`
+
+### Future Extensions
+
+Potential applications include:
+
+- Survival models (censored data)
+- Mixed effects models
+- Time series models
+- Spatial models
+
+---
+
+## References
+
+**Primary Reference**:
+
+Liu, D., Lin, Z., & Zhang, H. (2025). A unified framework for residual diagnostics in generalized linear models and beyond. *Journal of the American Statistical Association*, 1–29.
+[https://doi.org/10.1080/01621459.2025.2504037](https://doi.org/10.1080/01621459.2025.2504037)
+
+**Related Work**:
+
+- Dunn, P. K., & Smyth, G. K. (1996). Randomized quantile residuals. *Journal of Computational and Graphical Statistics*, 5(3), 236-244.
+- Feng, C., Li, L., & Sadeghpour, A. (2020). A comparison of residual diagnosis tools for diagnosing regression models for count data. *BMC Medical Research Methodology*, 20, 1-21.
+
+---
+
+## Mathematical Notation
+
+| Symbol | Meaning |
+|--------|---------|
+| $Y_i$ | Observed outcome for observation $i$ |
+| $\hat{p}_i$ | Fitted probability (binary models) |
+| $\hat{\lambda}_i$ | Fitted rate (count models) |
+| $F_i(t)$ | Functional residual CDF for observation $i$ |
+| $U_i$ | Uniform random variable representing residual |
+| $r_i^{(s)}$ | Surrogate residual |
+| $r_i^{(p)}$ | Probability-scale residual |
+
+---
+
+## Next Steps
+
+- Try the [Quick Start](quickstart.qmd) examples
+- Explore detailed [R Examples](examples-r.qmd) and [Python Examples](examples-python.qmd)
+- Check the API reference: [R](reference_r/index.qmd) | [Python](reference_python/index.qmd)

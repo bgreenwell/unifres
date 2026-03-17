@@ -1,0 +1,29 @@
+---
+title: "R Reference"
+---
+
+The `unifres` R package provides three primary functions:
+
+### 1. `fresiduals()`
+
+Computes functional residuals, along with derived point-based (surrogate or probability-scale) residuals.
+
+```r
+fresiduals(object, type = c("function", "surrogate", "probscale"), link.scale = TRUE, ...)
+```
+
+### 2. `fredplot()`
+
+Generates a Functional REsidual Density (FRED) plot to diagnose model misspecifications like missing nonlinear effects.
+
+```r
+fredplot(object, x, type = c("kde", "hex"), lowess = FALSE, ...)
+```
+
+### 3. `ffplot()`
+
+Constructs a Function-Function (Fn-Fn) plot, comparing the average functional residual against the theoretical CDF of a Uniform(0, 1) variable.
+
+```r
+ffplot(object, resolution = 101, n = NULL, ...)
+```
