@@ -18,11 +18,13 @@ quartodoc:
         - utils.expand_endpoints
 
 execute:
-  cache: true
-  freeze: auto
-  warning: false
-  message: false
-  daemon: false
+  cache: true           # Cache results locally for faster re-rendering
+  echo: true            # Show code in output
+  output: true          # *** CRITICAL FIX: Enable output capture ***
+  warning: false        # Suppress warnings in output
+  message: false        # Suppress messages in output
+  error: false          # Don't fail build on example errors
+  daemon: false         # Don't use background daemon
 
 project:
   type: website
@@ -80,3 +82,6 @@ format:
     code-fold: false
     fig-width: 8
     fig-height: 5
+    fig-format: png           # NEW: Explicit PNG format
+    fig-dpi: 150              # NEW: Web-optimized resolution (use 300 for print)
+    embed-resources: false    # NEW: Store figures separately for browser caching

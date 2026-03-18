@@ -95,6 +95,8 @@ abline(h = 0.5, col = "red", lty = 2)
 #| message: false
 #| fig-width: 8
 #| fig-height: 5
+library(MASS)  # For rnegbin function
+
 # Generate overdispersed count data
 set.seed(123)
 n <- 500
