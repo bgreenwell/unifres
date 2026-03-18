@@ -48,23 +48,31 @@ def unifend(model: Any, y: Optional[np.ndarray] = None) -> np.ndarray:
     ValueError
         If the model type is not a recognized statsmodels model.
     """
-    typename = str(type(model))
-    if "statsmodels" not in typename:
-        raise ValueError("This function is only implemented for statsmodels models.")
+    # Basic check for statsmodels results object
+    if not hasattr(model, "model") or not hasattr(model, "predict"):
+        raise ValueError("This function expects a fitted statsmodels results object.")
 
     if y is None:
-        y = model.model.endog
+        y = np.asarray(model.model.endog)
+    else:
+        y = np.asarray(y)
+        if len(y) != len(model.fittedvalues):
+            raise ValueError(
+                f"Length of 'y' ({len(y)}) does not match model fitted values ({len(model.fittedvalues)})."
+            )
 
-    # Ordinal models
-    if "ordinal_model" in typename:
+    class_name = model.__class__.__name__
+
+    # Ordinal models (statsmodels.miscmodels.ordinal_model.OrderedResults)
+    if "OrderedResults" in class_name or "OrderedModel" in class_name:
         fv = model.predict()
         fv = np.hstack((np.zeros((fv.shape[0], 1)), fv))
         cumprobs = np.cumsum(fv, axis=1)
         lwr = cumprobs[np.arange(cumprobs.shape[0]), y]
         upr = cumprobs[np.arange(cumprobs.shape[0]), y + 1]
 
-    # General GLM models (covers Binomial and Poisson from sm.GLM)
-    elif "GLMResultsWrapper" in typename:
+    # GLM results
+    elif "GLMResults" in class_name:
         family_name = model.model.family.__class__.__name__
         fv = model.predict()
         if family_name == "Binomial":
@@ -74,7 +82,10 @@ def unifend(model: Any, y: Optional[np.ndarray] = None) -> np.ndarray:
             lwr = poisson.cdf(y - 1, mu=fv)
             upr = poisson.cdf(y, mu=fv)
         elif family_name == "NegativeBinomial":
-            alpha = model.model.family.alpha
+            alpha = getattr(model.model.family, "alpha", None)
+            if alpha is None:
+                # Some versions might store it differently
+                raise ValueError("Could not find 'alpha' for NegativeBinomial GLM.")
             size = 1.0 / alpha
             prob = size / (size + fv)
             lwr = nbinom.cdf(y - 1, n=size, p=prob)
@@ -82,25 +93,43 @@ def unifend(model: Any, y: Optional[np.ndarray] = None) -> np.ndarray:
         else:
             raise ValueError(f"GLM family not supported: {family_name}")
 
-    # Specific (non-GLM) Negative Binomial models
-    elif "NegativeBinomialResultsWrapper" in typename:
+    # Negative Binomial (Discrete)
+    elif "NegativeBinomialResults" in class_name:
         fv = model.predict()
-        # In statsmodels.discrete.discrete_model.NegativeBinomial,
-        # alpha is usually the last parameter
-        alpha = model.params[-1]
+        # For Discrete NegativeBinomial, alpha is typically a separate parameter
+        # but statsmodels provides it in different ways depending on version
+        if hasattr(model, "alpha"):
+            alpha = model.alpha
+        else:
+            # Fallback to last parameter as a last resort
+            alpha = model.params[-1]
         size = 1.0 / alpha
         prob = size / (size + fv)
         lwr = nbinom.cdf(y - 1, n=size, p=prob)
         upr = nbinom.cdf(y, n=size, p=prob)
 
-    # Specific (non-GLM) binary models
-    elif "BinaryResultsWrapper" in typename:
+    # Logit/Probit results
+    elif "BinaryResults" in class_name or "LogitResults" in class_name or "ProbitResults" in class_name:
         fv = model.predict()
         lwr = np.where(y == 1, 1 - fv, 0)
         upr = np.where(y == 1, 1, 1 - fv)
 
     else:
-        raise ValueError(f"Model type not recognized: {typename}")
+        # Final attempt: try to infer from family if it exists
+        if hasattr(model.model, "family"):
+             # delegate to GLM-like logic
+             family_name = model.model.family.__class__.__name__
+             fv = model.predict()
+             if family_name == "Binomial":
+                 lwr = np.where(y == 1, 1 - fv, 0)
+                 upr = np.where(y == 1, 1, 1 - fv)
+             elif family_name == "Poisson":
+                 lwr = poisson.cdf(y - 1, mu=fv)
+                 upr = poisson.cdf(y, mu=fv)
+             else:
+                 raise ValueError(f"Model class '{class_name}' with family '{family_name}' not supported.")
+        else:
+            raise ValueError(f"Model class not recognized: {class_name}")
 
     return np.column_stack((lwr, upr))
 

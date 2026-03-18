@@ -17,7 +17,7 @@ test_that("fresiduals works with binomial GLM", {
   expect_true(all(test_vals >= 0 & test_vals <= 1))
 
   # Test surrogate type
-  surr <- fresiduals(fit, type = "surrogate")
+  surr <- fresiduals(fit, type = "surrogate", link.scale = FALSE)
   expect_equal(length(surr), n)
   expect_true(all(surr >= 0 & surr <= 1))
 
@@ -39,7 +39,7 @@ test_that("fresiduals works with Poisson GLM", {
   expect_s3_class(fres, "unifres")
   expect_equal(length(fres), n)
 
-  surr <- fresiduals(fit, type = "surrogate")
+  surr <- fresiduals(fit, type = "surrogate", link.scale = FALSE)
   expect_equal(length(surr), n)
   expect_true(all(surr >= 0 & surr <= 1))
 })

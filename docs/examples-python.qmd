@@ -4,11 +4,18 @@ title: "Python Examples"
 
 This page provides comprehensive examples of using **unifres** with various model types in Python.
 
+```{python}
+#| include: false
+import matplotlib
+matplotlib.use('Agg')
+```
+
 ## Example 1: logistic regression
 
 ### Detecting missing polynomial terms
 
-```python
+```{python}
+#| warning: false
 import numpy as np
 import statsmodels.api as sm
 from unifres import fresiduals, ffplot, fredplot
@@ -41,7 +48,8 @@ plt.show()
 
 ### Using FRED plots
 
-```python
+```{python}
+#| warning: false
 # FRED plots show where the model fails
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
@@ -63,7 +71,8 @@ The wrong model shows a clear parabolic pattern in the FRED plot, indicating the
 
 ### Count data analysis
 
-```python
+```{python}
+#| warning: false
 # Simulate count data
 np.random.seed(42)
 n = 500
@@ -102,7 +111,8 @@ plt.show()
 
 ### Detecting overdispersion
 
-```python
+```{python}
+#| warning: false
 # Generate overdispersed count data
 np.random.seed(123)
 n = 500
@@ -134,7 +144,8 @@ plt.show()
 
 ## Example 3: negative binomial regression
 
-```python
+```{python}
+#| warning: false
 # Generate negative binomial data
 np.random.seed(2024)
 n = 400
@@ -175,7 +186,8 @@ plt.show()
 
 ### Working with real-world data structure
 
-```python
+```{python}
+#| warning: false
 import pandas as pd
 
 # Create a DataFrame
@@ -231,7 +243,8 @@ plt.show()
 
 ### Comparing nested models
 
-```python
+```{python}
+#| warning: false
 # Generate data
 np.random.seed(333)
 n = 800
@@ -283,7 +296,8 @@ plt.show()
 
 ### Styling with Matplotlib
 
-```python
+```{python}
+#| warning: false
 # Fit a model
 np.random.seed(100)
 n = 500
@@ -317,7 +331,8 @@ plt.show()
 
 ### Using Seaborn themes
 
-```python
+```{python}
+#| warning: false
 import seaborn as sns
 
 # Set seaborn style
@@ -346,7 +361,8 @@ sns.reset_defaults()
 
 ### Efficient handling of big data
 
-```python
+```{python}
+#| warning: false
 # Large dataset
 np.random.seed(12345)
 n = 50000
@@ -373,7 +389,8 @@ plt.show()
 
 ### Custom analysis with functional residuals
 
-```python
+```{python}
+#| warning: false
 # Fit model
 np.random.seed(789)
 n = 300
@@ -454,7 +471,8 @@ plt.show()
 
 ### Using with Scikit-learn pipelines
 
-```python
+```{python}
+#| warning: false
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 
@@ -502,7 +520,8 @@ plt.show()
 
 ### Complete model checking procedure
 
-```python
+```{python}
+#| warning: false
 def diagnostic_panel(model, x, title="Model Diagnostics"):
     """
     Create a comprehensive diagnostic panel for a fitted model.
@@ -609,7 +628,8 @@ diagnostic_panel(model, x, title="Logistic Regression Diagnostics")
 
 ### 2. Working with multiple predictors
 
-```python
+```{python}
+#| warning: false
 # Loop through predictors
 predictors = [x1, x2, x3]
 pred_names = ['X1', 'X2', 'X3']
@@ -624,7 +644,8 @@ plt.show()
 
 ### 3. Saving high-quality figures
 
-```python
+```{python}
+#| warning: false
 # Create plot
 fig, ax = plt.subplots(figsize=(10, 6))
 ffplot(model, ax=ax)
@@ -638,7 +659,8 @@ plt.savefig('ffplot.pdf', bbox_inches='tight')  # Vector format
 
 For very large datasets, work with subsamples:
 
-```python
+```{python}
+#| warning: false
 # Sample indices
 n_sample = 5000
 idx = np.random.choice(len(x), n_sample, replace=False)

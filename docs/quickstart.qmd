@@ -9,7 +9,10 @@ This guide will get you up and running with **unifres** in just a few minutes.
 ### Basic example: logistic regression
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 5
 library(unifres)
 
 # Generate example data with a quadratic relationship
@@ -38,7 +41,10 @@ The function-function plot should show deviation from the diagonal for the wrong
 ### Using different residual types
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 5
 # Functional residuals (list of functions)
 fres_fun <- fresiduals(fit_correct, type = "function")
 plot(fres_fun[[1]])  # Plot first functional residual
@@ -57,7 +63,10 @@ abline(h = 0, col = "red", lty = 2)
 ### Functional residual density plots
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 5
 library(hexbin)
 
 # FRED plots help identify missing covariates or functional forms
@@ -72,9 +81,16 @@ The wrong model should show patterns in the FRED plot, while the correct model s
 
 ## Python quick start
 
+```{python}
+#| include: false
+import matplotlib
+matplotlib.use('Agg')
+```
+
 ### Basic example: logistic regression
 
-```python
+```{python}
+#| warning: false
 import numpy as np
 import statsmodels.api as sm
 from unifres import fresiduals, ffplot, fredplot
@@ -106,7 +122,8 @@ plt.show()
 
 ### Using different residual types
 
-```python
+```{python}
+#| warning: false
 # Functional residuals (list of scipy distribution objects)
 fres_fun = fresiduals(model_correct, type="function")
 t_vals = np.linspace(0, 1, 100)
@@ -135,7 +152,8 @@ plt.show()
 
 ### Functional residual density plots
 
-```python
+```{python}
+#| warning: false
 # FRED plots help identify missing covariates or functional forms
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
@@ -215,7 +233,10 @@ The `fredplot()` function visualizes the density of functional residuals against
 ### Checking for missing quadratic terms
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 5
 # If FRED plot shows a parabolic pattern, try adding x^2
 fredplot(fit, x = x)  # Shows parabola?
 fit2 <- update(fit, . ~ . + I(x^2))
@@ -225,7 +246,10 @@ fredplot(fit2, x = x)  # Better?
 ### Comparing multiple models
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 8
 # Compare models side by side
 par(mfrow = c(2, 2))
 ffplot(model1, main = "Model 1")
@@ -237,7 +261,8 @@ fredplot(model2, x = x, main = "Model 2")
 ### Working with large datasets
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
 # Subsample for faster plotting
 ffplot(fit, n = 1000)  # Use 1000 random observations
 fredplot(fit, x = x[1:1000])  # Plot first 1000 points

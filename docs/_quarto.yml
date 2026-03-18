@@ -17,6 +17,13 @@ quartodoc:
         - utils.unifend
         - utils.expand_endpoints
 
+execute:
+  cache: true
+  freeze: auto
+  warning: false
+  message: false
+  daemon: false
+
 project:
   type: website
 
@@ -70,3 +77,6 @@ format:
     theme: cosmo
     toc: true
     code-copy: true
+    code-fold: false
+    fig-width: 8
+    fig-height: 5

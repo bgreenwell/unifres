@@ -128,7 +128,7 @@ and y-axes, respectively.}
 \link[hexbin:hexbinplot]{hexbin::hexbinplot()} (\code{type = "hex"}).}
 }
 \value{
-TBD.
+A \code{trellis} object (see \link[lattice:Lattice]{lattice::lattice}).
 }
 \description{
 Generates a functional residual-vs-predictor plot, visualizing the density of
@@ -153,4 +153,10 @@ gridExtra::grid.arrange(
   fredplot(good, x = x, type = "hex", aspect = 1),
   nrow = 1
 )
+}
+\references{
+Liu, D., Lin, Z., & Zhang, H. (2025). A unified framework for residual
+diagnostics in generalized linear models and beyond. \emph{Journal of the American
+Statistical Association}, 1–29.
+\doi{10.1080/01621459.2025.2504037}
 }

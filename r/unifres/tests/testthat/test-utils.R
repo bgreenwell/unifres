@@ -14,11 +14,11 @@ test_that("unifend works with binomial GLM", {
 
   # For y = 1, lower should be 1 - fitted, upper should be 1
   y1_indices <- which(y == 1)
-  expect_equal(uends[y1_indices, 2], rep(1, length(y1_indices)))
+  expect_equal(unname(uends[y1_indices, 2]), rep(1, length(y1_indices)))
 
   # For y = 0, lower should be 0, upper should be 1 - fitted
   y0_indices <- which(y == 0)
-  expect_equal(uends[y0_indices, 1], rep(0, length(y0_indices)))
+  expect_equal(unname(uends[y0_indices, 1]), rep(0, length(y0_indices)))
 })
 
 test_that("unifend works with Poisson GLM", {

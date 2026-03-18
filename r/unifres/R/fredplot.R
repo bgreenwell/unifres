@@ -66,7 +66,13 @@ x <- y <- NULL
 #' [lattice::levelplot()][lattice::levelplot] (`type = "kde"`) or
 #' [hexbin::hexbinplot()][hexbin::hexbinplot] (`type = "hex"`).
 #'
-#' @returns TBD.
+#' @returns A `trellis` object (see [lattice::lattice][lattice::lattice]).
+#'
+#' @references
+#' Liu, D., Lin, Z., & Zhang, H. (2025). A unified framework for residual
+#' diagnostics in generalized linear models and beyond. *Journal of the American
+#' Statistical Association*, 1–29.
+#' \doi{10.1080/01621459.2025.2504037}
 #'
 #' @examples
 #' # Generate data from a logistic regression model with quadratic form

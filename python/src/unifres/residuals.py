@@ -2,14 +2,13 @@ from typing import Any, List, Optional, Union
 
 import numpy as np
 from scipy.stats import uniform
-from scipy.stats._distn_infrastructure import rv_frozen
 
 from .utils import unifend
 
 
 def fresiduals(
     model: Any, type: str = "function", y: Optional[np.ndarray] = None
-) -> Union[List[rv_frozen], np.ndarray]:
+) -> Union[List[Any], np.ndarray]:
     """Computes functional residuals for a fitted model.
 
     This function can return the full functional residuals as distribution
@@ -29,7 +28,7 @@ def fresiduals(
 
     Returns
     -------
-    Union[List[rv_frozen], np.ndarray]
+    Union[List[Any], np.ndarray]
         - If `type="function"`, a list of `scipy.stats.uniform` objects,
           one for each observation.
         - If `type="surrogate"` or `type="probscale"`, a NumPy array of

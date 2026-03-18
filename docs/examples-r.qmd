@@ -9,7 +9,10 @@ This page provides comprehensive examples of using **unifres** with various mode
 ### Detecting missing polynomial terms
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 5
 library(unifres)
 
 # Generate data with a quadratic relationship
@@ -34,7 +37,10 @@ ffplot(fit_correct, type = "l", main = "Correct Model")
 ### Using FRED plots
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 5
 library(hexbin)
 
 # FRED plots show where the model fails
@@ -54,7 +60,10 @@ The wrong model shows a clear parabolic pattern in the FRED plot, indicating the
 ### Count data analysis
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 8
 # Simulate count data
 set.seed(42)
 n <- 500
@@ -82,7 +91,10 @@ abline(h = 0.5, col = "red", lty = 2)
 ### Detecting overdispersion
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 5
 # Generate overdispersed count data
 set.seed(123)
 n <- 500
@@ -108,7 +120,10 @@ ffplot(fit_qpois, main = "Quasi-Poisson")
 ## Example 3: negative binomial regression
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| fig-width: 12
+#| fig-height: 5
 library(MASS)
 
 # Generate negative binomial data
@@ -141,7 +156,10 @@ plot(surr_res, dev_res,
 ## Example 4: generalized additive models (GAM)
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| fig-width: 8
+#| fig-height: 8
 library(mgcv)
 
 # Generate data with non-linear relationship
@@ -172,7 +190,11 @@ fredplot(fit_gam, x = x, type = "hex", main = "GAM FRED")
 ## Example 5: ordinal regression
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| cache: true
+#| fig-width: 12
+#| fig-height: 5
 library(VGAM)
 
 # Generate ordinal outcome data
@@ -206,7 +228,11 @@ fredplot(fit_ord, x = x2, type = "hex", main = "FRED: x2")
 ## Example 6: zero-inflated models
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| cache: true
+#| fig-width: 8
+#| fig-height: 5
 library(pscl)
 library(VGAM)
 
@@ -243,7 +269,11 @@ ffplot(fit_pois, main = "Standard Poisson")
 ### Comparing nested models
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| cache: true
+#| fig-width: 12
+#| fig-height: 8
 # Generate data
 set.seed(333)
 n <- 800
@@ -278,7 +308,11 @@ fredplot(fit3, x = x1, type = "hex", main = "M3 FRED")
 ### Function-function plots
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| cache: true
+#| fig-width: 8
+#| fig-height: 5
 # Fit a model
 fit <- glm(y ~ x, family = binomial)
 
@@ -299,7 +333,11 @@ ffplot(fit,
 ### FRED plots
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| cache: true
+#| fig-width: 8
+#| fig-height: 5
 # Customize fredplot with hex type
 library(hexbin)
 fredplot(fit, x = x,
@@ -333,7 +371,11 @@ fredplot(fit, x = x,
 ### Subsampling for speed
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| cache: true
+#| fig-width: 8
+#| fig-height: 5
 # Large dataset
 set.seed(12345)
 n <- 50000
@@ -354,7 +396,11 @@ fredplot(fit, x = x[idx], type = "hex")
 ## Example 10: extracting residuals for custom analysis
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| cache: true
+#| fig-width: 8
+#| fig-height: 5
 # Fit model
 fit <- glm(y ~ x, family = poisson)
 
@@ -405,7 +451,11 @@ ggplot(df, aes(x = x, y = residual)) +
 ### 4. Combining with other diagnostics
 
 ```{r}
-#| eval: false
+#| warning: false
+#| message: false
+#| cache: true
+#| fig-width: 12
+#| fig-height: 8
 # Comprehensive diagnostic panel
 par(mfrow = c(2, 3))
 

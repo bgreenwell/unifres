@@ -56,12 +56,14 @@ probability scale (\code{FALSE}). Default is \code{TRUE}.}
 \item{...}{Additional optional arguments. Currently ignored.}
 }
 \value{
-Either a list of functions (\code{type = "function"}) that also inherits
-from class \code{"unifres"} or a numeric vector of residuals (\code{type = "surrogate"}
-or \code{type = "probscale"}).
+If \code{type = "function"}, an object of class \code{"unifres"} which is a list
+of cumulative distribution functions (CDFs). If \code{type = "surrogate"} or
+\code{type = "probscale"}, a numeric vector of residuals.
 }
 \description{
-Computes the function residual described in \url{TBD}.
+Computes the functional residuals described in Liu et al. (2025). Functional
+residuals capture the entire distribution of residual randomness for each
+observation, providing a unified framework for discrete and continuous outcomes.
 }
 \examples{
 # Generate data from a logistic regression model with quadratic form

@@ -1,5 +1,6 @@
 from typing import Any, Optional, List, Union
 
+import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -44,7 +45,7 @@ def fredplot(
         figure and axes are created.
     **kwargs : dict, optional
         Additional keyword arguments passed to the seaborn plotting function
-        (e.g., `sns.kdeplot` or `sns.jointplot`).
+        (e.g., `sns.kdeplot` or `ax.hexbin`).
 
     Returns
     -------
@@ -63,32 +64,28 @@ def fredplot(
     df["y"] = np.where(df["y"] >= 1, 1 - 1e-10, df["y"])
 
     if type == "kde":
-        # --- Start of updated logic ---
         try:
             sns.kdeplot(data=df, x="x", y="y", ax=ax, **kwargs)
         except AttributeError as e:
             if "'QuadContourSet' object has no attribute 'collections'" in str(e):
-                print(
-                    "Warning: A known compatibility issue between seaborn and "
+                warnings.warn(
+                    "A known compatibility issue between seaborn and "
                     "matplotlib was detected. The plot may be incomplete. "
-                    "Consider upgrading seaborn and matplotlib."
+                    "Consider upgrading seaborn and matplotlib.",
+                    RuntimeWarning
                 )
                 # Retry without trying to create a legend, which is often the trigger
                 kwargs.pop("label", None)
                 sns.kdeplot(data=df, x="x", y="y", ax=ax, **kwargs)
             else:
-                raise e  # Re-raise other AttributeErrors
-        # --- End of updated logic ---
+                raise e
 
     elif type == "hex":
-        if ax is not None:
-            print(
-                "Warning: 'hex' type creates its own figure; provided 'ax' is ignored."
-            )
-        g = sns.jointplot(data=df, x="x", y="y", kind="hex", **kwargs)
-        g.ax_marg_x.remove()
-        g.ax_marg_y.remove()
-        ax = g.ax_joint
+        # If ax is provided, we use ax.hexbin directly to avoid jointplot figure creation
+        gridsize = kwargs.pop("gridsize", 20)
+        cmap = kwargs.pop("cmap", "YlGnBu")
+        hb = ax.hexbin(df["x"], df["y"], gridsize=gridsize, cmap=cmap, **kwargs)
+        # plt.colorbar(hb, ax=ax) # optional
     else:
         raise ValueError("Invalid type. Choose either 'kde' or 'hex'.")
 

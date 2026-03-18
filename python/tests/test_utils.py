@@ -117,14 +117,41 @@ class TestUtilsFunctions(unittest.TestCase):
         self.assertAlmostEqual(expanded[0], 0.1)
         self.assertAlmostEqual(expanded[4], 0.2)
 
-    def test_expand_endpoints_default_resolution(self):
-        """Test expand_endpoints with default resolution"""
-        endpoints = np.array([[0.0, 1.0]])
-        expanded = expand_endpoints(endpoints)
+    def test_expand_endpoints_edge_cases(self):
+        """Test expand_endpoints with edge case inputs"""
+        # Empty array
+        empty = np.zeros((0, 2))
+        self.assertEqual(len(expand_endpoints(empty)), 0)
 
-        self.assertEqual(len(expanded), 101)  # default resolution
-        self.assertAlmostEqual(expanded[0], 0.0)
-        self.assertAlmostEqual(expanded[100], 1.0)
+        # Single row
+        single = np.array([[0.0, 1.0]])
+        self.assertEqual(len(expand_endpoints(single, resolution=2)), 2)
+
+    def test_unifend_boundary_cases(self):
+        """Test unifend with perfect predictions or boundary data"""
+        # Binomial with perfect prediction (fitted = 1 or 0)
+        # We'll simulate this with a small set
+        y = np.array([1, 0])
+        x = np.array([100, -100])
+        exog = sm.add_constant(x)
+        # Using Logit because GLM might struggle with perfect separation
+        model = sm.Logit(y, exog).fit(disp=0)
+        
+        uends = unifend(model)
+        # Should handle fitted values very close to 1 or 0
+        self.assertEqual(uends.shape, (2, 2))
+        self.assertTrue(np.all(uends >= 0) and np.all(uends <= 1))
+
+    def test_unifend_mismatched_y(self):
+        """Test unifend with mismatched y length"""
+        mu = np.exp(1 + self.x)
+        y = np.random.poisson(mu)
+        exog = sm.add_constant(self.x)
+        model = sm.GLM(y, exog, family=sm.families.Poisson()).fit()
+
+        with self.assertRaises(ValueError):
+            # Providing y with wrong length
+            unifend(model, y=np.array([1, 2, 3]))
 
 
 if __name__ == '__main__':

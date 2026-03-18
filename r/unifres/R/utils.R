@@ -1,14 +1,10 @@
-#' @noRd
-#' @keywords internal
+#' @export
 unifend <- function(object, y = NULL, fill = FALSE, ...) {
   UseMethod("unifend")
 }
 
 
-#' @noRd
-#' @keywords internal
-#' @note
-#' Support for generalized linear models (GLMs) fit via the core stats package.
+#' @export
 unifend.glm <- function(object, y = NULL, ...) {
 
   # Extract needed components
@@ -59,8 +55,8 @@ unifend.glm <- function(object, y = NULL, ...) {
 }
 
 
-#' @noRd
-#' @keywords internal
+#' @export
+#' @method unifend negbin
 #' @note
 #' Support for GLMs with negative binomial family fit via the
 #' [MASS](https://cran.r-project.org/package=MASS) package.
@@ -82,8 +78,8 @@ unifend.negbin <- function(object, y = NULL, ...) {
 }
 
 
-#' @noRd
-#' @keywords internal
+#' @export
+#' @method unifend vglm
 #' @note
 #' Support for vector generalized linear models (VGLMs)  and vector generalized
 #' additive models (VGAMs) fit via the
@@ -106,16 +102,22 @@ unifend.vglm <- function(object, ...) {
 }
 
 
-#' @noRd
-#' @keywords internal
+#' @export
+#' @method unifend gam
+#' @note
+#' Support for generalized additive models (GAMs) fit via the
+#' [mgcv](https://cran.r-project.org/package=mgcv) package.
 unifend.gam <- function(object, ...) {
   # This should just work since mgcv models also inherit from class glm
   unifend.glm(object, ...)
 }
 
 
-#' @noRd
-#' @keywords internal
+#' @export
+#' @method unifend zeroinfl
+#' @note
+#' Support for zero-inflated models fit via the
+#' [pscl](https://cran.r-project.org/package=pscl) package.
 unifend.zeroinfl <- function(object, y = NULL, ...) {
   if (!requireNamespace("VGAM", quietly = TRUE)) {
     stop("Package \"VGAM\" is required for this function to work. ",
@@ -153,7 +155,7 @@ expand <- function(endpoints, resolution = 101, flat = FALSE) {
       (resolution - 1) * (i - 1)
   }
   if (isTRUE(flat)) {
-    z <- as.vector(z)
+    z <- as.vector(t(z))
   }
   return(z)
 }

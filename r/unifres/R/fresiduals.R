@@ -1,6 +1,8 @@
 #' Function residuals
 #'
-#' Computes the function residual described in [TBD]().
+#' Computes the functional residuals described in Liu et al. (2025). Functional
+#' residuals capture the entire distribution of residual randomness for each
+#' observation, providing a unified framework for discrete and continuous outcomes.
 #'
 #' @param object A fitted model object. Currently supported model types include:
 #' * [glm][stats::glm] - generalized linear models from the core __stats__
@@ -25,9 +27,9 @@
 #'
 #' @param ... Additional optional arguments. Currently ignored.
 #'
-#' @return Either a list of functions (`type = "function"`) that also inherits
-#' from class `"unifres"` or a numeric vector of residuals (`type = "surrogate"`
-#' or `type = "probscale"`).
+#' @return If `type = "function"`, an object of class `"unifres"` which is a list
+#' of cumulative distribution functions (CDFs). If `type = "surrogate"` or
+#' `type = "probscale"`, a numeric vector of residuals.
 #'
 #' @references
 #' Liu, D., Lin, Z., & Zhang, H. (2025). A unified framework for residual
