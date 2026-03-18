@@ -29,9 +29,15 @@ jobs:
         with:
           r-version: 'release'
 
-      - name: Install R packages
+      - name: Install R dependencies
         run: |
-          install.packages(c("knitr", "rmarkdown"))
+          install.packages(c("knitr", "rmarkdown", "remotes", "devtools"))
+          install.packages(c("MASS", "mgcv", "VGAM", "pscl", "hexbin", "lattice", "ggplot2"))
+        shell: Rscript {0}
+
+      - name: Install unifres R package
+        run: |
+          remotes::install_local("r/unifres", dependencies = TRUE, force = TRUE)
         shell: Rscript {0}
 
       - name: Set up Python
@@ -41,6 +47,10 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
+
+      - name: Install unifres Python package
+        run: |
+          uv pip install --system ./python
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
