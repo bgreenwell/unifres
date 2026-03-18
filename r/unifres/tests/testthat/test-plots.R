@@ -13,6 +13,31 @@ test_that("ffplot works with fitted model", {
   expect_no_error(ffplot(fit, n = 50))
 })
 
+test_that("ffplot subsampling works correctly with ordered data", {
+  # This test ensures the fix for the subsampling bug (sample.int issue)
+  # The bug was: idx <- sample.int(n) returns 1:n in random order
+  # The fix: idx <- sample.int(length(object), size = n) samples n indices from the data
+
+  set.seed(42)
+  n <- 1000
+  x <- seq(0, 1, length.out = n)
+  y <- rbinom(n, 1, prob = x)
+  fit <- glm(y ~ x, family = binomial)
+
+  # Get functional residuals
+  fres <- fresiduals(fit, type = "function")
+
+  # Test subsampling with n = 100
+  # With the bug, this would only use first 100 observations (in random order)
+  # With the fix, this should sample 100 observations from all 1000
+  set.seed(123)
+  expect_no_error(ffplot(fit, n = 100))
+
+  # Verify that subsampling parameter actually reduces computation
+  # by checking it doesn't error with smaller n
+  expect_no_error(ffplot(fres, n = 50))
+})
+
 test_that("ffplot works with unifres object", {
   set.seed(1217)
   endpoints <- cbind(

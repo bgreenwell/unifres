@@ -6,9 +6,9 @@ title: "Methodology"
 
 Traditional residual diagnostics for generalized linear models (GLMs) face significant challenges when applied to discrete outcome data. The **unifres** package implements the unified functional residual framework described in Liu, Lin, & Zhang (2025), which addresses these limitations through a novel approach to residual analysis.
 
-## The Problem with Traditional Residuals
+## The problem with traditional residuals
 
-### Limitations for Discrete Data
+### Limitations for discrete data
 
 Traditional residuals (Pearson, deviance, etc.) are **point statistics** that:
 
@@ -17,7 +17,7 @@ Traditional residuals (Pearson, deviance, etc.) are **point statistics** that:
 3. **Show patterns even for correct models** due to discrete data structure
 4. **Depend on specific link functions**, making comparisons difficult
 
-### Example: Binary Outcome
+### Example: binary outcome
 
 For a logistic regression with outcome $Y \in \{0, 1\}$ and fitted probability $\hat{p}$:
 
@@ -27,9 +27,9 @@ For a logistic regression with outcome $Y \in \{0, 1\}$ and fitted probability $
 
 ---
 
-## Functional Residuals: The Solution
+## Functional residuals: the solution
 
-### Core Concept
+### Core concept
 
 Instead of point residuals, functional residuals represent the **entire distribution** of residual randomness:
 
@@ -37,16 +37,16 @@ $$F_i(t) = P(U_i \leq t \mid Y_i)$$
 
 where $U_i$ is a uniform random variable capturing the residual for observation $i$.
 
-### Key Properties
+### Key properties
 
 1. **Uniform Distribution**: Under a correctly specified model, $U_i \sim \text{Uniform}(0,1)$
 2. **Full Information**: Captures all residual randomness, not just a point estimate
 3. **Model-Free**: Works across all GLM families
 4. **Interpretable**: Direct probabilistic interpretation
 
-### Construction for Different Models
+### Construction for different models
 
-#### Binary Outcomes (Logistic Regression)
+#### Binary outcomes (logistic regression)
 
 For $Y_i \in \{0, 1\}$ with fitted probability $\hat{p}_i$:
 
@@ -54,7 +54,7 @@ For $Y_i \in \{0, 1\}$ with fitted probability $\hat{p}_i$:
 - If $Y_i = 0$: $U_i \in [0, 1-\hat{p}_i]$
 - If $Y_i = 1$: $U_i \in [1-\hat{p}_i, 1]$
 
-#### Count Outcomes (Poisson Regression)
+#### Count outcomes (Poisson regression)
 
 For $Y_i \in \{0, 1, 2, ...\}$ with fitted rate $\hat{\lambda}_i$:
 
@@ -62,7 +62,7 @@ For $Y_i \in \{0, 1, 2, ...\}$ with fitted rate $\hat{\lambda}_i$:
 
 ---
 
-## Diagnostic Tools
+## Diagnostic tools
 
 ### 1. Function-Function (Fn-Fn) Plots
 
@@ -94,11 +94,11 @@ The `fredplot()` function visualizes the density of functional residuals against
   - Funneling → Heteroscedasticity
   - Gaps → Zero-inflation or structural issues
 
-### 3. Derived Residuals
+### 3. Derived residuals
 
 From functional residuals, we can derive point-based residuals:
 
-#### Surrogate Residuals
+#### Surrogate residuals
 
 Random sample from the functional residual distribution:
 
@@ -106,21 +106,21 @@ $$r_i^{(s)} \sim F_i$$
 
 **Use**: Traditional residual plots, quick diagnostics
 
-#### Probability-Scale Residuals
+#### Probability-scale residuals
 
 Expected value of the functional residual:
 
-$$r_i^{(p)} = \mathbb{E}[U_i] - 0.5$$
+$$r_i^{(p)} = 2\mathbb{E}[U_i] - 1$$
 
-where the mean is computed from the endpoints of $U_i$.
+which centers the residuals at 0 with range [-1, 1].
 
 **Use**: Centered at 0, similar to traditional residuals
 
 ---
 
-## Advantages Over Traditional Methods
+## Advantages over traditional methods
 
-### 1. Unified Framework
+### 1. Unified framework
 
 **Single approach works for**:
 - Binary outcomes (logistic regression)
@@ -129,13 +129,13 @@ where the mean is computed from the endpoints of $U_i$.
 - Zero-inflated models
 - Continuous outcomes (as special case)
 
-### 2. Meaningful Interpretation
+### 2. Meaningful interpretation
 
 - Residuals have **probabilistic interpretation**
 - Uniform(0,1) under null hypothesis
 - Easy to communicate to non-statisticians
 
-### 3. Better Power
+### 3. Better power
 
 Functional residuals can detect departures that traditional methods miss:
 
@@ -143,22 +143,22 @@ Functional residuals can detect departures that traditional methods miss:
 - Incorrect link functions
 - Unmodeled heterogeneity
 
-### 4. Visual Clarity
+### 4. Visual clarity
 
 FRED plots provide clearer visual diagnostics than traditional residual plots for discrete data.
 
 ---
 
-## Theoretical Foundation
+## Theoretical foundation
 
-### Probability Integral Transform
+### Probability integral transform
 
 For continuous random variable $X$ with CDF $F$:
 $$F(X) \sim \text{Uniform}(0,1)$$
 
 For discrete outcomes, functional residuals extend this via interval representation.
 
-### Asymptotic Properties
+### Asymptotic properties
 
 Under regularity conditions:
 
@@ -168,7 +168,7 @@ Under regularity conditions:
 
 ---
 
-## Comparison to Existing Methods
+## Comparison to existing methods
 
 | Method | Data Type | Interpretability | Power | Visualization |
 |--------|-----------|------------------|-------|---------------|
@@ -180,9 +180,9 @@ Under regularity conditions:
 
 ---
 
-## Implementation Details
+## Implementation details
 
-### Resolution Parameter
+### Resolution parameter
 
 Both R and Python implementations use a `resolution` parameter (default 101):
 
@@ -190,7 +190,7 @@ Both R and Python implementations use a `resolution` parameter (default 101):
 - Higher resolution → smoother plots but slower computation
 - Recommendation: 51-201 depending on dataset size
 
-### Link Scale vs Probability Scale
+### Link scale vs probability scale
 
 For surrogate residuals in R:
 
@@ -199,7 +199,7 @@ For surrogate residuals in R:
 
 Default is `TRUE` for consistency with traditional GLM residuals.
 
-### Computational Complexity
+### Computational complexity
 
 - **Functional residuals**: $O(n)$ computation
 - **Fn-Fn plot**: $O(n \times r)$ where $r$ is resolution
@@ -209,7 +209,7 @@ For large datasets ($n > 10,000$), consider subsampling for visualization.
 
 ---
 
-## Extended Applications
+## Extended applications
 
 ### Beyond GLMs
 
@@ -219,7 +219,7 @@ The framework extends to:
 2. **Zero-Inflated Models** - R package supports `pscl::zeroinfl()`
 3. **Ordinal Regression** - R package supports `VGAM::vglm()`
 
-### Future Extensions
+### Future extensions
 
 Potential applications include:
 
@@ -244,7 +244,7 @@ Liu, D., Lin, Z., & Zhang, H. (2025). A unified framework for residual diagnosti
 
 ---
 
-## Mathematical Notation
+## Mathematical notation
 
 | Symbol | Meaning |
 |--------|---------|
@@ -258,7 +258,7 @@ Liu, D., Lin, Z., & Zhang, H. (2025). A unified framework for residual diagnosti
 
 ---
 
-## Next Steps
+## Next steps
 
 - Try the [Quick Start](quickstart.qmd) examples
 - Explore detailed [R Examples](examples-r.qmd) and [Python Examples](examples-python.qmd)

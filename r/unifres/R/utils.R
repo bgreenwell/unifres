@@ -139,6 +139,7 @@ unifend.zeroinfl <- function(object, y = NULL, ...) {
     "lwr" = VGAM::pzipois(y - 1, lambda = fv.count, pstr0 = fv.binary),
     "upr" = VGAM::pzipois(y, lambda = fv.count, pstr0 = fv.binary)
   )
+  return(res)
 }
 
 

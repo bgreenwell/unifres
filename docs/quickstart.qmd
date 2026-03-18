@@ -4,9 +4,9 @@ title: "Quick Start"
 
 This guide will get you up and running with **unifres** in just a few minutes.
 
-## R Quick Start
+## R quick start
 
-### Basic Example: Logistic Regression
+### Basic example: logistic regression
 
 ```{r}
 #| eval: false
@@ -35,7 +35,7 @@ ffplot(fit_correct, main = "Correct Model", type = "l")
 
 The function-function plot should show deviation from the diagonal for the wrong model and close adherence for the correct model.
 
-### Using Different Residual Types
+### Using different residual types
 
 ```{r}
 #| eval: false
@@ -54,7 +54,7 @@ plot(x, fres_prob)
 abline(h = 0, col = "red", lty = 2)
 ```
 
-### Functional Residual Density Plots
+### Functional residual density plots
 
 ```{r}
 #| eval: false
@@ -70,9 +70,9 @@ The wrong model should show patterns in the FRED plot, while the correct model s
 
 ---
 
-## Python Quick Start
+## Python quick start
 
-### Basic Example: Logistic Regression
+### Basic example: logistic regression
 
 ```python
 import numpy as np
@@ -104,7 +104,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-### Using Different Residual Types
+### Using different residual types
 
 ```python
 # Functional residuals (list of scipy distribution objects)
@@ -133,7 +133,7 @@ plt.ylabel("Probability-scale Residual")
 plt.show()
 ```
 
-### Functional Residual Density Plots
+### Functional residual density plots
 
 ```python
 # FRED plots help identify missing covariates or functional forms
@@ -151,7 +151,7 @@ plt.show()
 
 ---
 
-## Understanding the Output
+## Understanding the output
 
 ### Function-Function (Fn-Fn) Plots
 
@@ -173,7 +173,7 @@ The `fredplot()` function visualizes the density of functional residuals against
   - Incorrect functional form (e.g., missing polynomial terms)
   - Incorrect link function
 
-### Residual Types Comparison
+### Residual types comparison
 
 | Type | R | Python | Use Case |
 |------|---|--------|----------|
@@ -183,7 +183,7 @@ The `fredplot()` function visualizes the density of functional residuals against
 
 ---
 
-## Supported Models
+## Supported models
 
 ### R
 
@@ -201,7 +201,7 @@ The `fredplot()` function visualizes the density of functional residuals against
 
 ---
 
-## Next Steps
+## Next steps
 
 - Explore [R Examples](examples-r.qmd) for detailed use cases
 - Explore [Python Examples](examples-python.qmd) for detailed use cases
@@ -210,9 +210,9 @@ The `fredplot()` function visualizes the density of functional residuals against
 
 ---
 
-## Common Patterns
+## Common patterns
 
-### Checking for Missing Quadratic Terms
+### Checking for missing quadratic terms
 
 ```{r}
 #| eval: false
@@ -222,7 +222,7 @@ fit2 <- update(fit, . ~ . + I(x^2))
 fredplot(fit2, x = x)  # Better?
 ```
 
-### Comparing Multiple Models
+### Comparing multiple models
 
 ```{r}
 #| eval: false
@@ -234,7 +234,7 @@ fredplot(model1, x = x, main = "Model 1")
 fredplot(model2, x = x, main = "Model 2")
 ```
 
-### Working with Large Datasets
+### Working with large datasets
 
 ```{r}
 #| eval: false

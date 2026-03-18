@@ -2,9 +2,9 @@
 title: "Installation"
 ---
 
-## R Package
+## R package
 
-### From GitHub (Development Version)
+### From GitHub (development version)
 
 The recommended way to install the R package is from GitHub using the `remotes` package:
 
@@ -33,7 +33,7 @@ You can install all optional dependencies with:
 install.packages(c("hexbin", "lattice", "MASS", "mgcv", "VGAM", "pscl"))
 ```
 
-### Verify Installation
+### Verify installation
 
 After installation, verify that everything works:
 
@@ -53,7 +53,7 @@ ffplot(fit)
 
 ---
 
-## Python Package
+## Python package
 
 ### Using pip
 
@@ -63,7 +63,7 @@ Install directly from GitHub:
 pip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python
 ```
 
-### Using uv (Recommended)
+### Using uv (recommended)
 
 [uv](https://github.com/astral-sh/uv) is a fast Python package manager:
 
@@ -71,7 +71,7 @@ pip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python
 uv pip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python
 ```
 
-### From Source
+### From source
 
 Clone the repository and install in development mode:
 
@@ -95,7 +95,7 @@ The Python package requires:
 
 These are automatically installed when you install the package.
 
-### Verify Installation
+### Verify installation
 
 After installation, verify that everything works:
 
@@ -118,7 +118,7 @@ ffplot(model)
 
 ---
 
-## System Requirements
+## System requirements
 
 ### R
 - R >= 4.0.0
@@ -132,7 +132,7 @@ ffplot(model)
 
 ## Troubleshooting
 
-### R Package Issues
+### R package issues
 
 **Problem**: Error about missing suggested packages
 
@@ -148,7 +148,7 @@ install.packages(c("hexbin", "lattice", "MASS"))
 xcode-select --install
 ```
 
-### Python Package Issues
+### Python package issues
 
 **Problem**: Compilation errors during installation
 
@@ -169,11 +169,11 @@ pip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python
 
 ---
 
-## Development Installation
+## Development installation
 
 For contributors who want to modify the code:
 
-### R Development
+### R development
 
 ```r
 # Clone and install in dev mode
@@ -186,7 +186,7 @@ devtools::load_all()
 devtools::test()
 ```
 
-### Python Development
+### Python development
 
 ```bash
 # Clone and install in editable mode with dev dependencies

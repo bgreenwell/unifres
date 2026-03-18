@@ -4,9 +4,9 @@ title: "Python Examples"
 
 This page provides comprehensive examples of using **unifres** with various model types in Python.
 
-## Example 1: Logistic Regression
+## Example 1: logistic regression
 
-### Detecting Missing Polynomial Terms
+### Detecting missing polynomial terms
 
 ```python
 import numpy as np
@@ -39,7 +39,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-### Using FRED Plots
+### Using FRED plots
 
 ```python
 # FRED plots show where the model fails
@@ -59,9 +59,9 @@ The wrong model shows a clear parabolic pattern in the FRED plot, indicating the
 
 ---
 
-## Example 2: Poisson Regression
+## Example 2: Poisson regression
 
-### Count Data Analysis
+### Count data analysis
 
 ```python
 # Simulate count data
@@ -100,7 +100,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-### Detecting Overdispersion
+### Detecting overdispersion
 
 ```python
 # Generate overdispersed count data
@@ -132,7 +132,7 @@ plt.show()
 
 ---
 
-## Example 3: Negative Binomial Regression
+## Example 3: negative binomial regression
 
 ```python
 # Generate negative binomial data
@@ -171,9 +171,9 @@ plt.show()
 
 ---
 
-## Example 4: Using Pandas DataFrames
+## Example 4: using Pandas DataFrames
 
-### Working with Real-World Data Structure
+### Working with real-world data structure
 
 ```python
 import pandas as pd
@@ -227,9 +227,9 @@ plt.show()
 
 ---
 
-## Example 5: Model Comparison
+## Example 5: model comparison
 
-### Comparing Nested Models
+### Comparing nested models
 
 ```python
 # Generate data
@@ -279,7 +279,7 @@ plt.show()
 
 ---
 
-## Example 6: Customizing Plots
+## Example 6: customizing plots
 
 ### Styling with Matplotlib
 
@@ -315,7 +315,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-### Using Seaborn Themes
+### Using Seaborn themes
 
 ```python
 import seaborn as sns
@@ -342,9 +342,9 @@ sns.reset_defaults()
 
 ---
 
-## Example 7: Large Datasets
+## Example 7: large datasets
 
-### Efficient Handling of Big Data
+### Efficient handling of big data
 
 ```python
 # Large dataset
@@ -369,9 +369,9 @@ plt.show()
 
 ---
 
-## Example 8: Extracting and Analyzing Residuals
+## Example 8: extracting and analyzing residuals
 
-### Custom Analysis with Functional Residuals
+### Custom analysis with functional residuals
 
 ```python
 # Fit model
@@ -450,9 +450,9 @@ plt.show()
 
 ---
 
-## Example 9: Integration with Scikit-learn
+## Example 9: integration with Scikit-learn
 
-### Using with Scikit-learn Pipelines
+### Using with Scikit-learn pipelines
 
 ```python
 from sklearn.preprocessing import StandardScaler
@@ -498,9 +498,9 @@ plt.show()
 
 ---
 
-## Example 10: Diagnostic Workflow
+## Example 10: diagnostic workflow
 
-### Complete Model Checking Procedure
+### Complete model checking procedure
 
 ```python
 def diagnostic_panel(model, x, title="Model Diagnostics"):
@@ -599,15 +599,15 @@ diagnostic_panel(model, x, title="Logistic Regression Diagnostics")
 
 ---
 
-## Tips and Tricks
+## Tips and tricks
 
-### 1. Choosing Plot Types
+### 1. Choosing plot types
 
 - **KDE plots**: Smoother, better for presentations
 - **Hex plots**: Faster for large datasets, shows density clearly
 - Try both and see which reveals patterns better
 
-### 2. Working with Multiple Predictors
+### 2. Working with multiple predictors
 
 ```python
 # Loop through predictors
@@ -622,7 +622,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-### 3. Saving High-Quality Figures
+### 3. Saving high-quality figures
 
 ```python
 # Create plot
@@ -634,7 +634,7 @@ plt.savefig('ffplot.png', dpi=300, bbox_inches='tight')
 plt.savefig('ffplot.pdf', bbox_inches='tight')  # Vector format
 ```
 
-### 4. Memory Efficiency
+### 4. Memory efficiency
 
 For very large datasets, work with subsamples:
 
@@ -649,7 +649,7 @@ fredplot(model, x[idx], type="kde")
 
 ---
 
-## Next Steps
+## Next steps
 
 - Explore [R Examples](examples-r.qmd) for R-specific implementations
 - Learn about the [Methodology](methodology.qmd) behind functional residuals

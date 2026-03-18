@@ -39,7 +39,7 @@ ffplot.unifres <- function(object, resolution = 101, n = NULL, ref.col = 2,
                           ref.lwd = 1, ref.lty = "dashed", ...) {
   tvals <- seq(from = 0, to = 1, length = resolution)
   if (!is.null(n)) {
-    idx <- sample.int(n, replace = FALSE)
+    idx <- sample.int(length(object), size = n, replace = FALSE)
     object <- object[idx]
   }
   Ft <- vapply(tvals, FUN.VALUE = numeric(1), FUN = function(tval) {
@@ -57,7 +57,7 @@ ffplot.default <- function(object, resolution = 101, n = NULL, ref.col = 1,
   tvals <- seq(from = 0, to = 1, length = resolution)
   fres <- fresiduals(object, type = "function")
   if (!is.null(n)) {
-    idx <- sample.int(n, replace = FALSE)
+    idx <- sample.int(length(fres), size = n, replace = FALSE)
     fres <- fres[idx]
   }
   Ft <- vapply(tvals, FUN.VALUE = numeric(1), FUN = function(tval) {

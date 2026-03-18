@@ -4,15 +4,15 @@ title: "Contributing"
 
 We welcome contributions to **unifres**! Whether you're reporting bugs, suggesting features, improving documentation, or contributing code, your help is appreciated.
 
-## Quick Links
+## Quick links
 
 - **GitHub Repository**: [https://github.com/bgreenwell/unifres](https://github.com/bgreenwell/unifres)
 - **Issue Tracker**: [https://github.com/bgreenwell/unifres/issues](https://github.com/bgreenwell/unifres/issues)
 - **Full Contributing Guide**: [CONTRIBUTING.md](https://github.com/bgreenwell/unifres/blob/main/CONTRIBUTING.md)
 
-## Ways to Contribute
+## Ways to contribute
 
-### 1. Report Bugs
+### 1. Report bugs
 
 Found a bug? Please [open an issue](https://github.com/bgreenwell/unifres/issues/new) with:
 
@@ -22,7 +22,7 @@ Found a bug? Please [open an issue](https://github.com/bgreenwell/unifres/issues
 - **System information** (R/Python version, OS)
 - **Minimal reproducible example**
 
-### 2. Suggest Enhancements
+### 2. Suggest enhancements
 
 Have an idea for a new feature? [Create an issue](https://github.com/bgreenwell/unifres/issues/new) describing:
 
@@ -31,7 +31,7 @@ Have an idea for a new feature? [Create an issue](https://github.com/bgreenwell/
 - **Example use cases**
 - **Whether you'd like to implement it**
 
-### 3. Improve Documentation
+### 3. Improve documentation
 
 Documentation improvements are always welcome:
 
@@ -40,7 +40,7 @@ Documentation improvements are always welcome:
 - Write tutorials or vignettes
 - Improve website content
 
-### 4. Contribute Code
+### 4. Contribute code
 
 Ready to contribute code? Great!
 
@@ -74,9 +74,9 @@ pytest tests/ -v
 # Submit a pull request
 ```
 
-## Development Workflow
+## Development workflow
 
-### 1. Fork and Clone
+### 1. Fork and clone
 
 ```bash
 # Fork the repository on GitHub
@@ -85,7 +85,7 @@ git clone https://github.com/YOUR-USERNAME/unifres.git
 cd unifres
 ```
 
-### 2. Create a Branch
+### 2. Create a branch
 
 ```bash
 git checkout -b feature/your-feature-name
@@ -93,14 +93,14 @@ git checkout -b feature/your-feature-name
 git checkout -b fix/your-bug-fix
 ```
 
-### 3. Make Changes
+### 3. Make changes
 
 - Write clear, documented code
 - Add tests for new functionality
 - Follow existing code style
 - Update documentation as needed
 
-### 4. Test Your Changes
+### 4. Test your changes
 
 #### R Package:
 ```r
@@ -114,7 +114,7 @@ devtools::check()
 pytest tests/ -v --cov=unifres
 ```
 
-### 5. Commit and Push
+### 5. Commit and push
 
 ```bash
 git add .
@@ -122,16 +122,16 @@ git commit -m "Add feature: description of your changes"
 git push origin feature/your-feature-name
 ```
 
-### 6. Submit Pull Request
+### 6. Submit pull request
 
 - Go to your fork on GitHub
 - Click "New Pull Request"
 - Fill out the PR template
 - Link any related issues
 
-## Coding Standards
+## Coding standards
 
-### R Code Style
+### R code style
 
 - Follow the [tidyverse style guide](https://style.tidyverse.org/)
 - Use `<-` for assignment
@@ -139,7 +139,7 @@ git push origin feature/your-feature-name
 - Document with roxygen2
 - Include examples in documentation
 
-### Python Code Style
+### Python code style
 
 - Follow [PEP 8](https://pep8.org/)
 - Use type hints
@@ -147,9 +147,9 @@ git push origin feature/your-feature-name
 - NumPy-style docstrings
 - Include docstring examples
 
-## Testing Guidelines
+## Testing guidelines
 
-### Write Good Tests
+### Write good tests
 
 - Test all new functionality
 - Include edge cases
@@ -157,7 +157,7 @@ git push origin feature/your-feature-name
 - Aim for >80% coverage
 - Use descriptive test names
 
-### R Testing
+### R testing
 
 ```r
 test_that("fresiduals works with binomial GLM", {
@@ -173,7 +173,7 @@ test_that("fresiduals works with binomial GLM", {
 })
 ```
 
-### Python Testing
+### Python testing
 
 ```python
 def test_fresiduals_binomial():
@@ -189,9 +189,9 @@ def test_fresiduals_binomial():
     assert all(hasattr(f, 'cdf') for f in fres)
 ```
 
-## Documentation Standards
+## Documentation standards
 
-### R Documentation
+### R documentation
 
 Use roxygen2 with:
 - `@param` for parameters
@@ -200,7 +200,7 @@ Use roxygen2 with:
 - `@export` for public functions
 - `@references` for citations
 
-### Python Documentation
+### Python documentation
 
 Use NumPy-style docstrings with:
 - Parameters section
@@ -209,7 +209,7 @@ Use NumPy-style docstrings with:
 - Notes section (if needed)
 - References section
 
-## Pull Request Checklist
+## Pull request checklist
 
 Before submitting a PR, ensure:
 
@@ -221,14 +221,14 @@ Before submitting a PR, ensure:
 - [ ] No decrease in code coverage
 - [ ] PR description clearly explains changes
 
-## Code Review Process
+## Code review process
 
 1. Maintainers will review your PR
 2. They may request changes
 3. Make requested changes and push to your branch
 4. Once approved, maintainers will merge
 
-## Getting Help
+## Getting help
 
 Need help contributing?
 
@@ -243,7 +243,7 @@ All contributors will be recognized in:
 - DESCRIPTION file (for significant contributions)
 - Release notes
 
-## Code of Conduct
+## Code of conduct
 
 Be respectful and inclusive. We're all here to improve unifres together.
 

@@ -4,9 +4,9 @@ title: "R Examples"
 
 This page provides comprehensive examples of using **unifres** with various model types in R.
 
-## Example 1: Logistic Regression
+## Example 1: logistic regression
 
-### Detecting Missing Polynomial Terms
+### Detecting missing polynomial terms
 
 ```{r}
 #| eval: false
@@ -31,7 +31,7 @@ ffplot(fit_wrong, type = "l", main = "Missing x²")
 ffplot(fit_correct, type = "l", main = "Correct Model")
 ```
 
-### Using FRED Plots
+### Using FRED plots
 
 ```{r}
 #| eval: false
@@ -49,9 +49,9 @@ The wrong model shows a clear parabolic pattern in the FRED plot, indicating the
 
 ---
 
-## Example 2: Poisson Regression
+## Example 2: Poisson regression
 
-### Count Data Analysis
+### Count data analysis
 
 ```{r}
 #| eval: false
@@ -79,7 +79,7 @@ plot(fitted(fit), surr_res,
 abline(h = 0.5, col = "red", lty = 2)
 ```
 
-### Detecting Overdispersion
+### Detecting overdispersion
 
 ```{r}
 #| eval: false
@@ -105,7 +105,7 @@ ffplot(fit_qpois, main = "Quasi-Poisson")
 
 ---
 
-## Example 3: Negative Binomial Regression
+## Example 3: negative binomial regression
 
 ```{r}
 #| eval: false
@@ -138,7 +138,7 @@ plot(surr_res, dev_res,
 
 ---
 
-## Example 4: Generalized Additive Models (GAM)
+## Example 4: generalized additive models (GAM)
 
 ```{r}
 #| eval: false
@@ -169,7 +169,7 @@ fredplot(fit_gam, x = x, type = "hex", main = "GAM FRED")
 
 ---
 
-## Example 5: Ordinal Regression
+## Example 5: ordinal regression
 
 ```{r}
 #| eval: false
@@ -203,7 +203,7 @@ fredplot(fit_ord, x = x2, type = "hex", main = "FRED: x2")
 
 ---
 
-## Example 6: Zero-Inflated Models
+## Example 6: zero-inflated models
 
 ```{r}
 #| eval: false
@@ -238,9 +238,9 @@ ffplot(fit_pois, main = "Standard Poisson")
 
 ---
 
-## Example 7: Model Comparison
+## Example 7: model comparison
 
-### Comparing Nested Models
+### Comparing nested models
 
 ```{r}
 #| eval: false
@@ -273,9 +273,9 @@ fredplot(fit3, x = x1, type = "hex", main = "M3 FRED")
 
 ---
 
-## Example 8: Customizing Plots
+## Example 8: customizing plots
 
-### Function-Function Plots
+### Function-function plots
 
 ```{r}
 #| eval: false
@@ -296,7 +296,7 @@ ffplot(fit,
        main = "Custom Fn-Fn Plot")
 ```
 
-### FRED Plots
+### FRED plots
 
 ```{r}
 #| eval: false
@@ -328,9 +328,9 @@ fredplot(fit, x = x,
 
 ---
 
-## Example 9: Large Datasets
+## Example 9: large datasets
 
-### Subsampling for Speed
+### Subsampling for speed
 
 ```{r}
 #| eval: false
@@ -351,7 +351,7 @@ fredplot(fit, x = x[idx], type = "hex")
 
 ---
 
-## Example 10: Extracting Residuals for Custom Analysis
+## Example 10: extracting residuals for custom analysis
 
 ```{r}
 #| eval: false
@@ -381,28 +381,28 @@ ggplot(df, aes(x = x, y = residual)) +
 
 ---
 
-## Tips and Tricks
+## Tips and tricks
 
-### 1. Choosing Between Hex and KDE
+### 1. Choosing between hex and KDE
 
 - **Hex plots**: Better for large datasets, clearer for discrete patterns
 - **KDE plots**: Smoother appearance, better for continuous relationships
 - Start with hex for exploratory analysis
 
-### 2. Interpreting FRED Plots
+### 2. Interpreting FRED plots
 
 - **Horizontal band**: Good model fit
 - **Curvature**: Missing polynomial terms
 - **Funneling**: Heteroscedasticity
 - **Gaps**: Zero-inflation or missing categories
 
-### 3. When to Use Each Residual Type
+### 3. When to use each residual type
 
 - **function**: Full diagnostic capabilities, use for formal tests
 - **surrogate**: Quick checks, traditional residual plots
 - **probscale**: When you want residuals centered at 0
 
-### 4. Combining with Other Diagnostics
+### 4. Combining with other diagnostics
 
 ```{r}
 #| eval: false
@@ -422,7 +422,7 @@ plot(fit, which = 5)  # Residuals vs Leverage
 
 ---
 
-## Next Steps
+## Next steps
 
 - Explore [Python Examples](examples-python.qmd) for Python-specific implementations
 - Learn about the [Methodology](methodology.qmd) behind functional residuals

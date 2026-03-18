@@ -1,5 +1,27 @@
 # unifres (development version)
 
+## unifres 0.1.1
+
+*Patch release - 2025-03-18*
+
+### Bug Fixes
+
+#### R Package
+
+- **CRITICAL FIX**: Fixed `ffplot()` subsampling bug where `sample.int(n)` incorrectly sampled only the first `n` observations in random order instead of randomly sampling `n` observations from the entire dataset. This affected `ffplot.unifres()` and `ffplot.default()` when the `n` parameter was specified. For ordered data, this bug could lead to severe bias in diagnostic plots. Thanks to GEMINI audit for identifying this issue.
+
+- **FIX**: Added explicit `return(res)` statement to `unifend.zeroinfl()` for consistency with other methods in the same file and to follow best practices (previously relied on R's implicit return of last expression).
+
+### Documentation
+
+- **FIX**: Corrected probability-scale residual formula in methodology documentation from $r_i^{(p)} = \mathbb{E}[U_i] - 0.5$ to the correct formula $r_i^{(p)} = 2\mathbb{E}[U_i] - 1$, which properly reflects the implementation and gives residuals centered at 0 with range [-1, 1].
+
+- **STYLE**: Converted all documentation headings from Title Case to sentence case following modern documentation best practices, while preserving capitalization of proper nouns (Python, R, GitHub) and acronyms (GLM, GAM, FRED, API).
+
+### Testing
+
+- Added regression test for `ffplot()` subsampling with ordered data to prevent future regressions of the subsampling bug.
+
 ## unifres 0.1.0
 
 *Initial release - 2025-03-17*
