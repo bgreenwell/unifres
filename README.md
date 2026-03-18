@@ -285,7 +285,6 @@ pytest tests/ -v --cov=unifres
 - **Brandon M. Greenwell** - [greenwell.brandon@gmail.com](mailto:greenwell.brandon@gmail.com)
 - **Dungang Liu** - [dungang.liu@uc.edu](mailto:dungang.liu@uc.edu)
 - **Zewei Lin** - [pqt19@txstate.edu](mailto:pqt19@txstate.edu)
-- **Brad Boehmke** - [bradleyboehmke@gmail.com](mailto:bradleyboehmke@gmail.com) (R)
 - **Heping Zhang** - [heping.zhang@yale.edu](mailto:heping.zhang@yale.edu) (Python)
 
 ---

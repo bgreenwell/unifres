@@ -50,4 +50,3 @@ The Python package uses `uv` or `pip` for environment management.
 
 ### General
 - **Functional Parity:** When adding support for a new model family in one language, aim to implement the equivalent in the other to maintain project balance.
-- **Audit History:** See `COPILOT_AUDIT.md` for a historical record of significant architectural fixes and logic corrections (March 2026).

@@ -21,7 +21,6 @@ Useful links:
 Authors:
 \itemize{
   \item Zewei Lin \email{pqt19@txstate.edu}
-  \item Brad Boehmke \email{bradleyboehmke@gmail.com} (\href{https://orcid.org/0000-0002-3611-8516}{ORCID})
   \item Dungang Liu \email{dungang.liu@uc.edu}
 }
 

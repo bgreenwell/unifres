@@ -10,10 +10,6 @@ Authors@R: c(
   person("Zewei", "Lin",
          email = "pqt19@txstate.edu",
          role = c("aut")),
-  person("Brad", "Boehmke",
-         email = "bradleyboehmke@gmail.com",
-         role = c("aut"),
-         comment = c(ORCID = "0000-0002-3611-8516")),
   person("Dungang", "Liu",
          email = "dungang.liu@uc.edu",
          role = c("aut"))
