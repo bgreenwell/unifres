@@ -183,7 +183,7 @@ fredplot.matrix <- function(
 
   # Construct data frame for plotting
   y <- expand(object, resolution = resolution, flat = TRUE)
-  xnew <- rep(x, times = resolution)
+  xnew <- rep(x, each = resolution)
   scale <- match.arg(scale)
   df <- if (scale == "uniform") {
     data.frame("x" = xnew, "y" = y)
