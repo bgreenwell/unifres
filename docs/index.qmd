@@ -61,61 +61,6 @@ ffplot(model)
 fredplot(model, x)
 ```
 
-## Quick example
-
-### The problem: missing quadratic term
-
-```r
-# R Example
-set.seed(1217)
-n <- 1000
-x <- rnorm(n)
-z <- 1 - 2*x + 3*x^2 + rlogis(n)
-y <- ifelse(z > 0, 1, 0)
-
-# Wrong model (missing x²)
-fit_wrong <- glm(y ~ x, family = binomial)
-
-# Correct model
-fit_correct <- glm(y ~ x + I(x^2), family = binomial)
-
-# Compare
-par(mfrow = c(1, 2))
-ffplot(fit_wrong, main = "Wrong Model")
-ffplot(fit_correct, main = "Correct Model")
-```
-
-```python
-# Python Example
-import numpy as np
-import statsmodels.api as sm
-from unifres import ffplot
-
-np.random.seed(1217)
-n = 1000
-x = np.random.normal(size=n)
-z = 1 - 2*x + 3*x**2 + np.random.logistic(size=n)
-y = np.where(z > 0, 1, 0)
-
-# Wrong model
-X_wrong = sm.add_constant(x)
-model_wrong = sm.GLM(y, X_wrong, family=sm.families.Binomial()).fit()
-
-# Correct model
-X_correct = sm.add_constant(np.column_stack([x, x**2]))
-model_correct = sm.GLM(y, X_correct, family=sm.families.Binomial()).fit()
-
-# Compare
-fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-ffplot(model_wrong, ax=axes[0])
-axes[0].set_title("Wrong Model")
-ffplot(model_correct, ax=axes[1])
-axes[1].set_title("Correct Model")
-plt.show()
-```
-
-The function-function plot immediately reveals the model misspecification!
-
 ## Installation
 
 ::: {.panel-tabset}
@@ -152,7 +97,7 @@ pip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python
 <h3>💻 Examples</h3>
 <p>Comprehensive examples for R and Python</p>
 <a href="examples-r.qmd">R Examples →</a><br>
-<a href="examples-python.qmd">Python Examples →</a>
+<a href="examples-python.ipynb">Python Examples →</a>
 </div>
 
 <div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px;">

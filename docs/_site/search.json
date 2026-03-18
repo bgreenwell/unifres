@@ -20,8 +20,8 @@
     "objectID": "quickstart.html#r-quick-start",
     "href": "quickstart.html#r-quick-start",
     "title": "Quick Start",
-    "section": "R Quick Start",
-    "text": "R Quick Start\n\nBasic Example: Logistic Regression\n\nlibrary(unifres)\n\n# Generate example data with a quadratic relationship\nset.seed(1217)\nn &lt;- 1000\nx &lt;- rnorm(n)\nz &lt;- 1 - 2*x + 3*x^2 + rlogis(n)\ny &lt;- ifelse(z &gt; 0, 1, 0)\n\n# Fit two models: one wrong (missing quadratic), one correct\nfit_wrong &lt;- glm(y ~ x, family = binomial)\nfit_correct &lt;- glm(y ~ x + I(x^2), family = binomial)\n\n# Compute functional residuals\nfres_wrong &lt;- fresiduals(fit_wrong)\nfres_correct &lt;- fresiduals(fit_correct)\n\n# Create function-function plots to assess model fit\npar(mfrow = c(1, 2))\nffplot(fit_wrong, main = \"Wrong Model\", type = \"l\")\nffplot(fit_correct, main = \"Correct Model\", type = \"l\")\n\nThe function-function plot should show deviation from the diagonal for the wrong model and close adherence for the correct model.\n\n\nUsing Different Residual Types\n\n# Functional residuals (list of functions)\nfres_fun &lt;- fresiduals(fit_correct, type = \"function\")\nplot(fres_fun[[1]])  # Plot first functional residual\n\n# Surrogate residuals (random samples)\nfres_surr &lt;- fresiduals(fit_correct, type = \"surrogate\")\nplot(x, fres_surr)\nabline(h = 0.5, col = \"red\", lty = 2)\n\n# Probability-scale residuals\nfres_prob &lt;- fresiduals(fit_correct, type = \"probscale\")\nplot(x, fres_prob)\nabline(h = 0, col = \"red\", lty = 2)\n\n\n\nFunctional Residual Density Plots\n\nlibrary(hexbin)\n\n# FRED plots help identify missing covariates or functional forms\npar(mfrow = c(1, 2))\nfredplot(fit_wrong, x = x, type = \"hex\", main = \"Wrong Model\")\nfredplot(fit_correct, x = x, type = \"hex\", main = \"Correct Model\")\n\nThe wrong model should show patterns in the FRED plot, while the correct model should show random scatter.",
+    "section": "R quick start",
+    "text": "R quick start\n\nBasic example: logistic regression\n\nlibrary(unifres)\n\n# Generate example data with a quadratic relationship\nset.seed(1217)\nn &lt;- 1000\nx &lt;- rnorm(n)\nz &lt;- 1 - 2*x + 3*x^2 + rlogis(n)\ny &lt;- ifelse(z &gt; 0, 1, 0)\n\n# Fit two models: one wrong (missing quadratic), one correct\nfit_wrong &lt;- glm(y ~ x, family = binomial)\nfit_correct &lt;- glm(y ~ x + I(x^2), family = binomial)\n\n# Compute functional residuals\nfres_wrong &lt;- fresiduals(fit_wrong)\nfres_correct &lt;- fresiduals(fit_correct)\n\n# Create function-function plots to assess model fit\npar(mfrow = c(1, 2))\nffplot(fit_wrong, main = \"Wrong Model\", type = \"l\")\nffplot(fit_correct, main = \"Correct Model\", type = \"l\")\n\n\n\n\n\n\n\n\nThe function-function plot should show deviation from the diagonal for the wrong model and close adherence for the correct model.\n\n\nUsing different residual types\n\n# Functional residuals (list of functions)\nfres_fun &lt;- fresiduals(fit_correct, type = \"function\")\nplot(fres_fun[[1]])  # Plot first functional residual\n\n\n\n\n\n\n\n# Surrogate residuals (random samples)\nfres_surr &lt;- fresiduals(fit_correct, type = \"surrogate\")\nplot(x, fres_surr)\nabline(h = 0.5, col = \"red\", lty = 2)\n\n\n\n\n\n\n\n# Probability-scale residuals\nfres_prob &lt;- fresiduals(fit_correct, type = \"probscale\")\nplot(x, fres_prob)\nabline(h = 0, col = \"red\", lty = 2)\n\n\n\n\n\n\n\n\n\n\nFunctional residual density plots\n\nlibrary(hexbin)\n\n# FRED plots help identify missing covariates or functional forms\npar(mfrow = c(1, 2))\nfredplot(fit_wrong, x = x, type = \"hex\", main = \"Wrong Model\")\n\n\n\n\n\n\n\nfredplot(fit_correct, x = x, type = \"hex\", main = \"Correct Model\")\n\n\n\n\n\n\n\n\nThe wrong model should show patterns in the FRED plot, while the correct model should show random scatter.",
     "crumbs": [
       "Quick Start"
     ]
@@ -30,8 +30,8 @@
     "objectID": "quickstart.html#python-quick-start",
     "href": "quickstart.html#python-quick-start",
     "title": "Quick Start",
-    "section": "Python Quick Start",
-    "text": "Python Quick Start\n\nBasic Example: Logistic Regression\nimport numpy as np\nimport statsmodels.api as sm\nfrom unifres import fresiduals, ffplot, fredplot\nimport matplotlib.pyplot as plt\n\n# Generate example data with a quadratic relationship\nnp.random.seed(1217)\nn = 1000\nx = np.random.normal(size=n)\nz = 1 - 2*x + 3*x**2 + np.random.logistic(size=n)\ny = np.where(z &gt; 0, 1, 0)\n\n# Fit two models: one wrong (missing quadratic), one correct\nX_wrong = sm.add_constant(x)\nX_correct = sm.add_constant(np.column_stack([x, x**2]))\n\nmodel_wrong = sm.GLM(y, X_wrong, family=sm.families.Binomial()).fit()\nmodel_correct = sm.GLM(y, X_correct, family=sm.families.Binomial()).fit()\n\n# Create function-function plots\nfig, axes = plt.subplots(1, 2, figsize=(12, 5))\nffplot(model_wrong, ax=axes[0])\naxes[0].set_title(\"Wrong Model\")\nffplot(model_correct, ax=axes[1])\naxes[1].set_title(\"Correct Model\")\nplt.tight_layout()\nplt.show()\n\n\nUsing Different Residual Types\n# Functional residuals (list of scipy distribution objects)\nfres_fun = fresiduals(model_correct, type=\"function\")\nt_vals = np.linspace(0, 1, 100)\nplt.plot(t_vals, fres_fun[0].cdf(t_vals))\nplt.xlabel(\"t\")\nplt.ylabel(\"F(t)\")\nplt.title(\"First Functional Residual\")\nplt.show()\n\n# Surrogate residuals (random samples)\nfres_surr = fresiduals(model_correct, type=\"surrogate\")\nplt.scatter(x, fres_surr, alpha=0.5)\nplt.axhline(y=0.5, color='r', linestyle='--')\nplt.xlabel(\"x\")\nplt.ylabel(\"Surrogate Residual\")\nplt.show()\n\n# Probability-scale residuals\nfres_prob = fresiduals(model_correct, type=\"probscale\")\nplt.scatter(x, fres_prob, alpha=0.5)\nplt.axhline(y=0, color='r', linestyle='--')\nplt.xlabel(\"x\")\nplt.ylabel(\"Probability-scale Residual\")\nplt.show()\n\n\nFunctional Residual Density Plots\n# FRED plots help identify missing covariates or functional forms\nfig, axes = plt.subplots(1, 2, figsize=(12, 5))\n\nfredplot(model_wrong, x, type=\"kde\", ax=axes[0])\naxes[0].set_title(\"Wrong Model\")\n\nfredplot(model_correct, x, type=\"kde\", ax=axes[1])\naxes[1].set_title(\"Correct Model\")\n\nplt.tight_layout()\nplt.show()",
+    "section": "Python quick start",
+    "text": "Python quick start\n\nBasic example: logistic regression\n\nimport numpy as np\nimport statsmodels.api as sm\nfrom unifres import fresiduals, ffplot, fredplot\nimport matplotlib.pyplot as plt\n\n# Generate example data with a quadratic relationship\nnp.random.seed(1217)\nn = 1000\nx = np.random.normal(size=n)\nz = 1 - 2*x + 3*x**2 + np.random.logistic(size=n)\ny = np.where(z &gt; 0, 1, 0)\n\n# Fit two models: one wrong (missing quadratic), one correct\nX_wrong = sm.add_constant(x)\nX_correct = sm.add_constant(np.column_stack([x, x**2]))\n\nmodel_wrong = sm.GLM(y, X_wrong, family=sm.families.Binomial()).fit()\nmodel_correct = sm.GLM(y, X_correct, family=sm.families.Binomial()).fit()\n\n# Create function-function plots\nfig, axes = plt.subplots(1, 2, figsize=(12, 5))\nffplot(model_wrong, ax=axes[0])\naxes[0].set_title(\"Wrong Model\")\nffplot(model_correct, ax=axes[1])\naxes[1].set_title(\"Correct Model\")\nplt.tight_layout()\nplt.show()\n\n\n\n\n\n\n\n\n\n\nUsing different residual types\n\n# Functional residuals (list of scipy distribution objects)\nfres_fun = fresiduals(model_correct, type=\"function\")\nt_vals = np.linspace(0, 1, 100)\nplt.plot(t_vals, fres_fun[0].cdf(t_vals))\nplt.xlabel(\"t\")\nplt.ylabel(\"F(t)\")\nplt.title(\"First Functional Residual\")\nplt.show()\n\n\n\n\n\n\n\n# Surrogate residuals (random samples)\nfres_surr = fresiduals(model_correct, type=\"surrogate\")\nplt.scatter(x, fres_surr, alpha=0.5)\nplt.axhline(y=0.5, color='r', linestyle='--')\nplt.xlabel(\"x\")\nplt.ylabel(\"Surrogate Residual\")\nplt.show()\n\n\n\n\n\n\n\n# Probability-scale residuals\nfres_prob = fresiduals(model_correct, type=\"probscale\")\nplt.scatter(x, fres_prob, alpha=0.5)\nplt.axhline(y=0, color='r', linestyle='--')\nplt.xlabel(\"x\")\nplt.ylabel(\"Probability-scale Residual\")\nplt.show()\n\n\n\n\n\n\n\n\n\n\nFunctional residual density plots\n\n# FRED plots help identify missing covariates or functional forms\nfig, axes = plt.subplots(1, 2, figsize=(12, 5))\n\nfredplot(model_wrong, x, type=\"kde\", ax=axes[0])\naxes[0].set_title(\"Wrong Model\")\n\nfredplot(model_correct, x, type=\"kde\", ax=axes[1])\naxes[1].set_title(\"Correct Model\")\n\nplt.tight_layout()\nplt.show()",
     "crumbs": [
       "Quick Start"
     ]
@@ -40,8 +40,8 @@
     "objectID": "quickstart.html#understanding-the-output",
     "href": "quickstart.html#understanding-the-output",
     "title": "Quick Start",
-    "section": "Understanding the Output",
-    "text": "Understanding the Output\n\nFunction-Function (Fn-Fn) Plots\nThe ffplot() function creates a plot of the average functional residual against the theoretical CDF of a Uniform(0,1) distribution.\nInterpretation: - Good fit: Points follow the 45-degree line closely - Poor fit: Systematic deviations from the diagonal indicate model misspecification - This is analogous to a Q-Q plot but for functional residuals\n\n\nFunctional Residual Density (FRED) Plots\nThe fredplot() function visualizes the density of functional residuals against a covariate.\nInterpretation: - Good fit: Random scatter with no patterns - Poor fit: Systematic patterns suggest: - Missing covariates - Incorrect functional form (e.g., missing polynomial terms) - Incorrect link function\n\n\nResidual Types Comparison\n\n\n\n\n\n\n\n\n\nType\nR\nPython\nUse Case\n\n\n\n\nfunction\nList of R functions\nList of scipy distributions\nFull diagnostic information\n\n\nsurrogate\nNumeric vector\nNumPy array\nTraditional residual plots\n\n\nprobscale\nNumeric vector\nNumPy array\nCentered around 0",
+    "section": "Understanding the output",
+    "text": "Understanding the output\n\nFunction-Function (Fn-Fn) Plots\nThe ffplot() function creates a plot of the average functional residual against the theoretical CDF of a Uniform(0,1) distribution.\nInterpretation: - Good fit: Points follow the 45-degree line closely - Poor fit: Systematic deviations from the diagonal indicate model misspecification - This is analogous to a Q-Q plot but for functional residuals\n\n\nFunctional Residual Density (FRED) Plots\nThe fredplot() function visualizes the density of functional residuals against a covariate.\nInterpretation: - Good fit: Random scatter with no patterns - Poor fit: Systematic patterns suggest: - Missing covariates - Incorrect functional form (e.g., missing polynomial terms) - Incorrect link function\n\n\nResidual types comparison\n\n\n\n\n\n\n\n\n\nType\nR\nPython\nUse Case\n\n\n\n\nfunction\nList of R functions\nList of scipy distributions\nFull diagnostic information\n\n\nsurrogate\nNumeric vector\nNumPy array\nTraditional residual plots\n\n\nprobscale\nNumeric vector\nNumPy array\nCentered around 0",
     "crumbs": [
       "Quick Start"
     ]
@@ -50,8 +50,8 @@
     "objectID": "quickstart.html#supported-models",
     "href": "quickstart.html#supported-models",
     "title": "Quick Start",
-    "section": "Supported Models",
-    "text": "Supported Models\n\nR\n\nglm() - Binomial, Poisson, Quasi-Poisson\nMASS::glm.nb() - Negative Binomial\nmgcv::gam() - Generalized Additive Models\nVGAM::vglm() - Ordinal regression\npscl::zeroinfl() - Zero-inflated Poisson\n\n\n\nPython\n\nstatsmodels.GLM - Binomial, Poisson, Negative Binomial\nstatsmodels.NegativeBinomial - Negative Binomial (discrete)\nstatsmodels.OrderedModel - Ordinal regression",
+    "section": "Supported models",
+    "text": "Supported models\n\nR\n\nglm() - Binomial, Poisson, Quasi-Poisson\nMASS::glm.nb() - Negative Binomial\nmgcv::gam() - Generalized Additive Models\nVGAM::vglm() - Ordinal regression\npscl::zeroinfl() - Zero-inflated Poisson\n\n\n\nPython\n\nstatsmodels.GLM - Binomial, Poisson, Negative Binomial\nstatsmodels.NegativeBinomial - Negative Binomial (discrete)\nstatsmodels.OrderedModel - Ordinal regression",
     "crumbs": [
       "Quick Start"
     ]
@@ -60,8 +60,8 @@
     "objectID": "quickstart.html#next-steps",
     "href": "quickstart.html#next-steps",
     "title": "Quick Start",
-    "section": "Next Steps",
-    "text": "Next Steps\n\nExplore R Examples for detailed use cases\nExplore Python Examples for detailed use cases\nRead about the Methodology behind functional residuals\nCheck the API reference: R | Python",
+    "section": "Next steps",
+    "text": "Next steps\n\nExplore R Examples for detailed use cases\nExplore Python Examples for detailed use cases\nRead about the Methodology behind functional residuals\nCheck the API reference: R | Python",
     "crumbs": [
       "Quick Start"
     ]
@@ -70,8 +70,8 @@
     "objectID": "quickstart.html#common-patterns",
     "href": "quickstart.html#common-patterns",
     "title": "Quick Start",
-    "section": "Common Patterns",
-    "text": "Common Patterns\n\nChecking for Missing Quadratic Terms\n\n# If FRED plot shows a parabolic pattern, try adding x^2\nfredplot(fit, x = x)  # Shows parabola?\nfit2 &lt;- update(fit, . ~ . + I(x^2))\nfredplot(fit2, x = x)  # Better?\n\n\n\nComparing Multiple Models\n\n# Compare models side by side\npar(mfrow = c(2, 2))\nffplot(model1, main = \"Model 1\")\nffplot(model2, main = \"Model 2\")\nfredplot(model1, x = x, main = \"Model 1\")\nfredplot(model2, x = x, main = \"Model 2\")\n\n\n\nWorking with Large Datasets\n\n# Subsample for faster plotting\nffplot(fit, n = 1000)  # Use 1000 random observations\nfredplot(fit, x = x[1:1000])  # Plot first 1000 points",
+    "section": "Common patterns",
+    "text": "Common patterns\n\nChecking for missing quadratic terms\n\n# Generate data\nset.seed(1217)\nx &lt;- rnorm(100)\ny &lt;- rbinom(100, 1, plogis(x + x^2))\nfit &lt;- glm(y ~ x, family = binomial)\n\n# If FRED plot shows a parabolic pattern, try adding x^2\nfredplot(fit, x = x)  # Shows parabola?\n\n\n\n\n\n\n\nfit2 &lt;- update(fit, . ~ . + I(x^2))\nfredplot(fit2, x = x)  # Better?\n\n\n\n\n\n\n\n\n\n\nComparing multiple models\n\n# Generate data and fit two models\nset.seed(42)\nx &lt;- rnorm(100)\ny &lt;- rbinom(100, 1, plogis(0.5 + 0.8*x))\nmodel1 &lt;- glm(y ~ 1, family = binomial)\nmodel2 &lt;- glm(y ~ x, family = binomial)\n\n# Compare models side by side\npar(mfrow = c(2, 2))\nffplot(model1, main = \"Model 1\")\nffplot(model2, main = \"Model 2\")\nfredplot(model1, x = x, main = \"Model 1\")\nfredplot(model2, x = x, main = \"Model 2\")\n\n\n\n\n\n\n\n\n\n\nWorking with large datasets\n\n# Large dataset\nset.seed(42)\nn &lt;- 2000\nx &lt;- rnorm(n)\ny &lt;- rpois(n, exp(0.5 + 0.3*x))\nfit &lt;- glm(y ~ x, family = poisson)\n\n# Subsample for faster plotting\nffplot(fit, n = 1000)  # Use 1000 random observations\n\n\n\n\n\n\n\nfredplot(fit, x = x[1:1000])  # Plot first 1000 points",
     "crumbs": [
       "Quick Start"
     ]
@@ -90,8 +90,8 @@
     "objectID": "examples-r.html#example-1-logistic-regression",
     "href": "examples-r.html#example-1-logistic-regression",
     "title": "R Examples",
-    "section": "Example 1: Logistic Regression",
-    "text": "Example 1: Logistic Regression\n\nDetecting Missing Polynomial Terms\n\nlibrary(unifres)\n\n# Generate data with a quadratic relationship\nset.seed(1217)\nn &lt;- 1000\nx &lt;- rnorm(n)\nz &lt;- 1 - 2*x + 3*x^2 + rlogis(n)\ny &lt;- ifelse(z &gt; 0, 1, 0)\n\n# Fit incorrect model (missing x^2)\nfit_wrong &lt;- glm(y ~ x, family = binomial)\n\n# Fit correct model\nfit_correct &lt;- glm(y ~ x + I(x^2), family = binomial)\n\n# Compare with function-function plots\npar(mfrow = c(1, 2))\nffplot(fit_wrong, type = \"l\", main = \"Missing x²\")\nffplot(fit_correct, type = \"l\", main = \"Correct Model\")\n\n\n\nUsing FRED Plots\n\nlibrary(hexbin)\n\n# FRED plots show where the model fails\npar(mfrow = c(1, 2))\nfredplot(fit_wrong, x = x, type = \"hex\",\n         main = \"Wrong Model\", aspect = 1)\nfredplot(fit_correct, x = x, type = \"hex\",\n         main = \"Correct Model\", aspect = 1)\n\nThe wrong model shows a clear parabolic pattern in the FRED plot, indicating the missing quadratic term.",
+    "section": "Example 1: logistic regression",
+    "text": "Example 1: logistic regression\n\nDetecting missing polynomial terms\n\nlibrary(unifres)\n\n# Generate data with a quadratic relationship\nset.seed(1217)\nn &lt;- 1000\nx &lt;- rnorm(n)\nz &lt;- 1 - 2*x + 3*x^2 + rlogis(n)\ny &lt;- ifelse(z &gt; 0, 1, 0)\n\n# Fit incorrect model (missing x^2)\nfit_wrong &lt;- glm(y ~ x, family = binomial)\n\n# Fit correct model\nfit_correct &lt;- glm(y ~ x + I(x^2), family = binomial)\n\n# Compare with function-function plots\npar(mfrow = c(1, 2))\nffplot(fit_wrong, type = \"l\", main = \"Missing x²\")\nffplot(fit_correct, type = \"l\", main = \"Correct Model\")\n\n\n\n\n\n\n\n\n\n\nUsing FRED plots\n\nlibrary(hexbin)\n\n# FRED plots show where the model fails\npar(mfrow = c(1, 2))\nfredplot(fit_wrong, x = x, type = \"hex\",\n         main = \"Wrong Model\", aspect = 1)\n\n\n\n\n\n\n\nfredplot(fit_correct, x = x, type = \"hex\",\n         main = \"Correct Model\", aspect = 1)\n\n\n\n\n\n\n\n\nThe wrong model shows a clear parabolic pattern in the FRED plot, indicating the missing quadratic term.",
     "crumbs": [
       "R Examples"
     ]
@@ -100,8 +100,8 @@
     "objectID": "examples-r.html#example-2-poisson-regression",
     "href": "examples-r.html#example-2-poisson-regression",
     "title": "R Examples",
-    "section": "Example 2: Poisson Regression",
-    "text": "Example 2: Poisson Regression\n\nCount Data Analysis\n\n# Simulate count data\nset.seed(42)\nn &lt;- 500\nx1 &lt;- rnorm(n)\nx2 &lt;- rnorm(n)\nlambda &lt;- exp(1 + 0.5*x1 + 0.8*x2)\ny &lt;- rpois(n, lambda = lambda)\n\n# Fit model\nfit &lt;- glm(y ~ x1 + x2, family = poisson)\n\n# Check model adequacy\npar(mfrow = c(2, 2))\nffplot(fit, type = \"l\", main = \"Function-Function Plot\")\nfredplot(fit, x = x1, type = \"hex\", main = \"FRED: x1\")\nfredplot(fit, x = x2, type = \"hex\", main = \"FRED: x2\")\n\n# Surrogate residual plot\nsurr_res &lt;- fresiduals(fit, type = \"surrogate\")\nplot(fitted(fit), surr_res,\n     xlab = \"Fitted Values\", ylab = \"Surrogate Residuals\")\nabline(h = 0.5, col = \"red\", lty = 2)\n\n\n\nDetecting Overdispersion\n\n# Generate overdispersed count data\nset.seed(123)\nn &lt;- 500\nx &lt;- rnorm(n)\nmu &lt;- exp(1 + x)\n# Add overdispersion via negative binomial\ny &lt;- rnegbin(n, mu = mu, theta = 2)\n\n# Fit Poisson (wrong)\nfit_pois &lt;- glm(y ~ x, family = poisson)\n\n# Fit Quasi-Poisson (correct)\nfit_qpois &lt;- glm(y ~ x, family = quasipoisson)\n\n# Compare\npar(mfrow = c(1, 2))\nffplot(fit_pois, main = \"Poisson\")\nffplot(fit_qpois, main = \"Quasi-Poisson\")",
+    "section": "Example 2: Poisson regression",
+    "text": "Example 2: Poisson regression\n\nCount data analysis\n\n# Simulate count data\nset.seed(42)\nn &lt;- 500\nx1 &lt;- rnorm(n)\nx2 &lt;- rnorm(n)\nlambda &lt;- exp(1 + 0.5*x1 + 0.8*x2)\ny &lt;- rpois(n, lambda = lambda)\n\n# Fit model\nfit &lt;- glm(y ~ x1 + x2, family = poisson)\n\n# Check model adequacy\npar(mfrow = c(2, 2))\nffplot(fit, type = \"l\", main = \"Function-Function Plot\")\nfredplot(fit, x = x1, type = \"hex\", main = \"FRED: x1\")\nfredplot(fit, x = x2, type = \"hex\", main = \"FRED: x2\")\n\n# Surrogate residual plot\nsurr_res &lt;- fresiduals(fit, type = \"surrogate\")\nplot(fitted(fit), surr_res,\n     xlab = \"Fitted Values\", ylab = \"Surrogate Residuals\")\nabline(h = 0.5, col = \"red\", lty = 2)\n\n\n\n\n\n\n\n\n\n\nDetecting overdispersion\n\nlibrary(MASS)  # For rnegbin and glm.nb functions\n\n# Generate overdispersed count data\nset.seed(123)\nn &lt;- 500\nx &lt;- rnorm(n)\nmu &lt;- exp(1 + x)\n# Add overdispersion via negative binomial\ny &lt;- rnegbin(n, mu = mu, theta = 2)\n\n# Fit Poisson (wrong)\nfit_pois &lt;- glm(y ~ x, family = poisson)\n\n# Fit Negative Binomial (correct)\nfit_nb &lt;- glm.nb(y ~ x)\n\n# Compare\npar(mfrow = c(1, 2))\nffplot(fit_pois, main = \"Poisson\")\nffplot(fit_nb, main = \"Negative Binomial\")",
     "crumbs": [
       "R Examples"
     ]
@@ -110,8 +110,8 @@
     "objectID": "examples-r.html#example-3-negative-binomial-regression",
     "href": "examples-r.html#example-3-negative-binomial-regression",
     "title": "R Examples",
-    "section": "Example 3: Negative Binomial Regression",
-    "text": "Example 3: Negative Binomial Regression\n\nlibrary(MASS)\n\n# Generate negative binomial data\nset.seed(2024)\nn &lt;- 400\nx &lt;- rnorm(n)\nmu &lt;- exp(1 + 0.5*x)\ny &lt;- rnbinom(n, mu = mu, size = 3)\n\n# Fit model\nfit_nb &lt;- glm.nb(y ~ x)\n\n# Diagnostics\nfres &lt;- fresiduals(fit_nb)\n\npar(mfrow = c(1, 3))\nffplot(fit_nb, type = \"l\", main = \"Fn-Fn Plot\")\nfredplot(fit_nb, x = x, type = \"hex\", main = \"FRED Plot\")\n\n# Compare to traditional deviance residuals\ndev_res &lt;- residuals(fit_nb, type = \"deviance\")\nsurr_res &lt;- fresiduals(fit_nb, type = \"surrogate\")\nplot(surr_res, dev_res,\n     xlab = \"Surrogate Residuals\",\n     ylab = \"Deviance Residuals\")",
+    "section": "Example 3: negative binomial regression",
+    "text": "Example 3: negative binomial regression\n\nlibrary(MASS)\n\n# Generate negative binomial data\nset.seed(2024)\nn &lt;- 400\nx &lt;- rnorm(n)\nmu &lt;- exp(1 + 0.5*x)\ny &lt;- rnbinom(n, mu = mu, size = 3)\n\n# Fit model\nfit_nb &lt;- glm.nb(y ~ x)\n\n# Diagnostics\nfres &lt;- fresiduals(fit_nb)\n\npar(mfrow = c(1, 3))\nffplot(fit_nb, type = \"l\", main = \"Fn-Fn Plot\")\nfredplot(fit_nb, x = x, type = \"hex\", main = \"FRED Plot\")\n\n# Compare to traditional deviance residuals\ndev_res &lt;- residuals(fit_nb, type = \"deviance\")\nsurr_res &lt;- fresiduals(fit_nb, type = \"surrogate\")\nplot(surr_res, dev_res,\n     xlab = \"Surrogate Residuals\",\n     ylab = \"Deviance Residuals\")",
     "crumbs": [
       "R Examples"
     ]
@@ -120,8 +120,8 @@
     "objectID": "examples-r.html#example-4-generalized-additive-models-gam",
     "href": "examples-r.html#example-4-generalized-additive-models-gam",
     "title": "R Examples",
-    "section": "Example 4: Generalized Additive Models (GAM)",
-    "text": "Example 4: Generalized Additive Models (GAM)\n\nlibrary(mgcv)\n\n# Generate data with non-linear relationship\nset.seed(777)\nn &lt;- 500\nx &lt;- runif(n, -3, 3)\nf &lt;- function(x) sin(x) + 0.5*x\neta &lt;- f(x)\nmu &lt;- exp(eta)\ny &lt;- rpois(n, lambda = mu)\n\n# Fit GAM with smooth term\nfit_gam &lt;- gam(y ~ s(x), family = poisson)\n\n# Fit incorrect GLM (linear)\nfit_glm &lt;- glm(y ~ x, family = poisson)\n\n# Compare diagnostics\npar(mfrow = c(2, 2))\nffplot(fit_glm, main = \"GLM (Wrong)\")\nffplot(fit_gam, main = \"GAM (Correct)\")\nfredplot(fit_glm, x = x, type = \"hex\", main = \"GLM FRED\")\nfredplot(fit_gam, x = x, type = \"hex\", main = \"GAM FRED\")",
+    "section": "Example 4: generalized additive models (GAM)",
+    "text": "Example 4: generalized additive models (GAM)\n\nlibrary(mgcv)\n\n# Generate data with non-linear relationship\nset.seed(777)\nn &lt;- 500\nx &lt;- runif(n, -3, 3)\nf &lt;- function(x) sin(x) + 0.5*x\neta &lt;- f(x)\nmu &lt;- exp(eta)\ny &lt;- rpois(n, lambda = mu)\n\n# Fit GAM with smooth term\nfit_gam &lt;- gam(y ~ s(x), family = poisson)\n\n# Fit incorrect GLM (linear)\nfit_glm &lt;- glm(y ~ x, family = poisson)\n\n# Compare diagnostics\npar(mfrow = c(2, 2))\nffplot(fit_glm, main = \"GLM (Wrong)\")\nffplot(fit_gam, main = \"GAM (Correct)\")\nfredplot(fit_glm, x = x, type = \"hex\", main = \"GLM FRED\")\nfredplot(fit_gam, x = x, type = \"hex\", main = \"GAM FRED\")",
     "crumbs": [
       "R Examples"
     ]
@@ -130,8 +130,8 @@
     "objectID": "examples-r.html#example-5-ordinal-regression",
     "href": "examples-r.html#example-5-ordinal-regression",
     "title": "R Examples",
-    "section": "Example 5: Ordinal Regression",
-    "text": "Example 5: Ordinal Regression\n\nlibrary(VGAM)\n\n# Generate ordinal outcome data\nset.seed(999)\nn &lt;- 500\nx1 &lt;- rnorm(n)\nx2 &lt;- rnorm(n)\n\n# True latent variable\nz &lt;- 1 + 0.8*x1 - 0.5*x2 + rlogis(n)\n\n# Create ordinal outcome with 4 categories\ny &lt;- cut(z, breaks = c(-Inf, -1, 0, 1, Inf), labels = FALSE)\n\n# Fit proportional odds model\nfit_ord &lt;- vglm(factor(y) ~ x1 + x2,\n                family = cumulative(parallel = TRUE))\n\n# Diagnostics\npar(mfrow = c(1, 3))\nffplot(fit_ord, type = \"l\", main = \"Fn-Fn Plot\")\nfredplot(fit_ord, x = x1, type = \"hex\", main = \"FRED: x1\")\nfredplot(fit_ord, x = x2, type = \"hex\", main = \"FRED: x2\")\n\n# Check proportional odds assumption\n# If violated, try parallel = FALSE",
+    "section": "Example 5: ordinal regression",
+    "text": "Example 5: ordinal regression\n\nlibrary(VGAM)\n\n# Generate ordinal outcome data\nset.seed(999)\nn &lt;- 500\nx1 &lt;- rnorm(n)\nx2 &lt;- rnorm(n)\n\n# True latent variable\nz &lt;- 1 + 0.8*x1 - 0.5*x2 + rlogis(n)\n\n# Create ordinal outcome with 4 categories\ny &lt;- cut(z, breaks = c(-Inf, -1, 0, 1, Inf), labels = FALSE)\n\n# Fit proportional odds model\nfit_ord &lt;- vglm(factor(y) ~ x1 + x2,\n                family = cumulative(parallel = TRUE))\n\n# Diagnostics\npar(mfrow = c(1, 3))\nffplot(fit_ord, type = \"l\", main = \"Fn-Fn Plot\")\nfredplot(fit_ord, x = x1, type = \"hex\", main = \"FRED: x1\")\nfredplot(fit_ord, x = x2, type = \"hex\", main = \"FRED: x2\")\n\n# Check proportional odds assumption\n# If violated, try parallel = FALSE",
     "crumbs": [
       "R Examples"
     ]
@@ -140,8 +140,8 @@
     "objectID": "examples-r.html#example-6-zero-inflated-models",
     "href": "examples-r.html#example-6-zero-inflated-models",
     "title": "R Examples",
-    "section": "Example 6: Zero-Inflated Models",
-    "text": "Example 6: Zero-Inflated Models\n\nlibrary(pscl)\nlibrary(VGAM)\n\n# Generate zero-inflated count data\nset.seed(2025)\nn &lt;- 500\nx &lt;- rnorm(n)\n\n# Zero-inflation probability\npi &lt;- plogis(-1 + 0.5*x)\n# Count process\nlambda &lt;- exp(1 + 0.8*x)\n\n# Generate outcome\ny &lt;- ifelse(rbinom(n, 1, pi) == 1, 0, rpois(n, lambda))\n\n# Fit zero-inflated Poisson model\nfit_zip &lt;- zeroinfl(y ~ x | x, dist = \"poisson\")\n\n# Diagnostics\npar(mfrow = c(1, 2))\nffplot(fit_zip, type = \"l\", main = \"ZIP Model\")\nfredplot(fit_zip, x = x, type = \"hex\", main = \"FRED Plot\")\n\n# Compare to standard Poisson\nfit_pois &lt;- glm(y ~ x, family = poisson)\nffplot(fit_pois, main = \"Standard Poisson\")",
+    "section": "Example 6: zero-inflated models",
+    "text": "Example 6: zero-inflated models\n\nlibrary(pscl)\nlibrary(VGAM)\n\n# Generate zero-inflated count data\nset.seed(2025)\nn &lt;- 500\nx &lt;- rnorm(n)\n\n# Zero-inflation probability\npi &lt;- plogis(-1 + 0.5*x)\n# Count process\nlambda &lt;- exp(1 + 0.8*x)\n\n# Generate outcome\ny &lt;- ifelse(rbinom(n, 1, pi) == 1, 0, rpois(n, lambda))\n\n# Fit zero-inflated Poisson model\nfit_zip &lt;- zeroinfl(y ~ x | x, dist = \"poisson\")\n\n# Diagnostics\npar(mfrow = c(1, 2))\nffplot(fit_zip, type = \"l\", main = \"ZIP Model\")\nfredplot(fit_zip, x = x, type = \"hex\", main = \"FRED Plot\")\n\n# Compare to standard Poisson\nfit_pois &lt;- glm(y ~ x, family = poisson)\nffplot(fit_pois, main = \"Standard Poisson\")",
     "crumbs": [
       "R Examples"
     ]
@@ -150,8 +150,8 @@
     "objectID": "examples-r.html#example-7-model-comparison",
     "href": "examples-r.html#example-7-model-comparison",
     "title": "R Examples",
-    "section": "Example 7: Model Comparison",
-    "text": "Example 7: Model Comparison\n\nComparing Nested Models\n\n# Generate data\nset.seed(333)\nn &lt;- 800\nx1 &lt;- rnorm(n)\nx2 &lt;- rnorm(n)\nx3 &lt;- rnorm(n)\n\n# True model includes x1 and x2, but not x3\neta &lt;- 1 + x1 + 0.5*x2\ny &lt;- rbinom(n, 1, plogis(eta))\n\n# Fit models\nfit1 &lt;- glm(y ~ x1, family = binomial)\nfit2 &lt;- glm(y ~ x1 + x2, family = binomial)\nfit3 &lt;- glm(y ~ x1 + x2 + x3, family = binomial)\n\n# Visual comparison\npar(mfrow = c(2, 3))\nffplot(fit1, main = \"Model 1: x1 only\")\nffplot(fit2, main = \"Model 2: x1 + x2\")\nffplot(fit3, main = \"Model 3: x1 + x2 + x3\")\n\nfredplot(fit1, x = x1, type = \"hex\", main = \"M1 FRED\")\nfredplot(fit2, x = x1, type = \"hex\", main = \"M2 FRED\")\nfredplot(fit3, x = x1, type = \"hex\", main = \"M3 FRED\")",
+    "section": "Example 7: model comparison",
+    "text": "Example 7: model comparison\n\nComparing nested models\n\n# Generate data\nset.seed(333)\nn &lt;- 800\nx1 &lt;- rnorm(n)\nx2 &lt;- rnorm(n)\nx3 &lt;- rnorm(n)\n\n# True model includes x1 and x2, but not x3\neta &lt;- 1 + x1 + 0.5*x2\ny &lt;- rbinom(n, 1, plogis(eta))\n\n# Fit models\nfit1 &lt;- glm(y ~ x1, family = binomial)\nfit2 &lt;- glm(y ~ x1 + x2, family = binomial)\nfit3 &lt;- glm(y ~ x1 + x2 + x3, family = binomial)\n\n# Visual comparison\npar(mfrow = c(2, 3))\nffplot(fit1, main = \"Model 1: x1 only\")\nffplot(fit2, main = \"Model 2: x1 + x2\")\nffplot(fit3, main = \"Model 3: x1 + x2 + x3\")\n\nfredplot(fit1, x = x1, type = \"hex\", main = \"M1 FRED\")\nfredplot(fit2, x = x1, type = \"hex\", main = \"M2 FRED\")\nfredplot(fit3, x = x1, type = \"hex\", main = \"M3 FRED\")",
     "crumbs": [
       "R Examples"
     ]
@@ -160,8 +160,8 @@
     "objectID": "examples-r.html#example-8-customizing-plots",
     "href": "examples-r.html#example-8-customizing-plots",
     "title": "R Examples",
-    "section": "Example 8: Customizing Plots",
-    "text": "Example 8: Customizing Plots\n\nFunction-Function Plots\n\n# Fit a model\nfit &lt;- glm(y ~ x, family = binomial)\n\n# Customize ffplot\nffplot(fit,\n       type = \"p\",              # Points instead of line\n       pch = 16,                # Solid circles\n       col = \"steelblue\",       # Custom color\n       cex = 0.5,               # Smaller points\n       ref.col = \"red\",         # Red reference line\n       ref.lwd = 2,             # Thicker reference line\n       ref.lty = \"dashed\",      # Dashed reference line\n       xlab = \"Theoretical\",\n       ylab = \"Observed\",\n       main = \"Custom Fn-Fn Plot\")\n\n\n\nFRED Plots\n\n# Customize fredplot with hex type\nlibrary(hexbin)\nfredplot(fit, x = x,\n         type = \"hex\",\n         xbins = 30,                    # Number of hexagonal bins\n         colorkey = TRUE,               # Show legend\n         color.palette = heat.colors,   # Custom color scheme\n         smooth = TRUE,                 # Add LOESS smooth\n         smooth.col = \"cyan\",           # Cyan smooth line\n         smooth.lwd = 3,                # Thick smooth line\n         xlab = \"Predictor\",\n         ylab = \"Functional Residual\",\n         main = \"Custom FRED Plot\")\n\n# Customize with KDE type\nlibrary(MASS)\nlibrary(lattice)\nfredplot(fit, x = x,\n         type = \"kde\",\n         n = 50,                        # Grid resolution\n         color.palette = topo.colors,   # Custom colors\n         smooth = TRUE,\n         xlab = \"Predictor\",\n         main = \"KDE FRED Plot\")",
+    "section": "Example 8: customizing plots",
+    "text": "Example 8: customizing plots\n\nFunction-function plots\n\n# Generate data\nset.seed(123)\nn &lt;- 500\nx &lt;- rnorm(n)\ny &lt;- rbinom(n, size = 1, prob = plogis(x))\n\n# Fit a model\nfit &lt;- glm(y ~ x, family = binomial)\n\n# Customize ffplot\nffplot(fit,\n       type = \"p\",              # Points instead of line\n       pch = 16,                # Solid circles\n       col = \"steelblue\",       # Custom color\n       cex = 0.5,               # Smaller points\n       ref.col = \"red\",         # Red reference line\n       ref.lwd = 2,             # Thicker reference line\n       ref.lty = \"dashed\",      # Dashed reference line\n       xlab = \"Theoretical\",\n       ylab = \"Observed\",\n       main = \"Custom Fn-Fn Plot\")\n\n\n\n\n\n\n\n\n\n\nFRED plots\n\n# Customize fredplot with hex type\nlibrary(hexbin)\nfredplot(fit, x = x,\n         type = \"hex\",\n         xbins = 30,                    # Number of hexagonal bins\n         colorkey = TRUE,               # Show legend\n         color.palette = heat.colors,   # Custom color scheme\n         smooth = TRUE,                 # Add LOESS smooth\n         smooth.col = \"cyan\",           # Cyan smooth line\n         smooth.lwd = 3,                # Thick smooth line\n         xlab = \"Predictor\",\n         ylab = \"Functional Residual\",\n         main = \"Custom FRED Plot\")\n\n\n\n\n\n\n\n# Customize with KDE type\nlibrary(MASS)\nlibrary(lattice)\nfredplot(fit, x = x,\n         type = \"kde\",\n         n = 50,                        # Grid resolution\n         color.palette = topo.colors,   # Custom colors\n         smooth = TRUE,\n         xlab = \"Predictor\",\n         main = \"KDE FRED Plot\")",
     "crumbs": [
       "R Examples"
     ]
@@ -170,8 +170,8 @@
     "objectID": "examples-r.html#example-9-large-datasets",
     "href": "examples-r.html#example-9-large-datasets",
     "title": "R Examples",
-    "section": "Example 9: Large Datasets",
-    "text": "Example 9: Large Datasets\n\nSubsampling for Speed\n\n# Large dataset\nset.seed(12345)\nn &lt;- 50000\nx &lt;- rnorm(n)\ny &lt;- rbinom(n, 1, plogis(x))\nfit &lt;- glm(y ~ x, family = binomial)\n\n# Use subsampling for faster plotting\nffplot(fit, n = 1000)  # Use only 1000 observations\n\n# For FRED plots, sample the data\nidx &lt;- sample(n, 5000)\nfredplot(fit, x = x[idx], type = \"hex\")",
+    "section": "Example 9: large datasets",
+    "text": "Example 9: large datasets\n\nSubsampling for speed\n\n# Large dataset\nset.seed(12345)\nn &lt;- 50000\nx &lt;- rnorm(n)\ny &lt;- rbinom(n, 1, plogis(x))\nfit &lt;- glm(y ~ x, family = binomial)\n\n# Use subsampling for faster plotting\nffplot(fit, n = 1000)  # Use only 1000 observations\n\n\n\n\n\n\n\n# For FRED plots, sample the data\nidx &lt;- sample(n, 5000)\nfredplot(fit, x = x[idx], type = \"hex\")",
     "crumbs": [
       "R Examples"
     ]
@@ -180,8 +180,8 @@
     "objectID": "examples-r.html#example-10-extracting-residuals-for-custom-analysis",
     "href": "examples-r.html#example-10-extracting-residuals-for-custom-analysis",
     "title": "R Examples",
-    "section": "Example 10: Extracting Residuals for Custom Analysis",
-    "text": "Example 10: Extracting Residuals for Custom Analysis\n\n# Fit model\nfit &lt;- glm(y ~ x, family = poisson)\n\n# Get functional residuals\nfres_list &lt;- fresiduals(fit, type = \"function\")\n\n# Evaluate first functional residual at specific points\nt_vals &lt;- seq(0, 1, by = 0.1)\nf1_vals &lt;- sapply(t_vals, fres_list[[1]])\n\n# Get surrogate residuals for custom plots\nsurr_res &lt;- fresiduals(fit, type = \"surrogate\")\n\n# Custom analysis\nlibrary(ggplot2)\ndf &lt;- data.frame(x = x, residual = surr_res)\nggplot(df, aes(x = x, y = residual)) +\n  geom_point(alpha = 0.3) +\n  geom_smooth(method = \"loess\", color = \"red\") +\n  geom_hline(yintercept = 0.5, linetype = \"dashed\") +\n  theme_minimal() +\n  labs(title = \"Custom Surrogate Residual Plot\")",
+    "section": "Example 10: extracting residuals for custom analysis",
+    "text": "Example 10: extracting residuals for custom analysis\n\n# Generate data\nset.seed(42)\nn &lt;- 500\nx &lt;- rnorm(n)\ny &lt;- rpois(n, exp(0.5 + 0.3*x))\n\n# Fit model\nfit &lt;- glm(y ~ x, family = poisson)\n\n# Get functional residuals\nfres_list &lt;- fresiduals(fit, type = \"function\")\n\n# Evaluate first functional residual at specific points\nt_vals &lt;- seq(0, 1, by = 0.1)\nf1_vals &lt;- sapply(t_vals, fres_list[[1]])\n\n# Get surrogate residuals for custom plots\nsurr_res &lt;- fresiduals(fit, type = \"surrogate\")\n\n# Custom analysis\nlibrary(ggplot2)\ndf &lt;- data.frame(x = x, residual = surr_res)\nggplot(df, aes(x = x, y = residual)) +\n  geom_point(alpha = 0.3) +\n  geom_smooth(method = \"loess\", color = \"red\") +\n  geom_hline(yintercept = 0.5, linetype = \"dashed\") +\n  theme_minimal() +\n  labs(title = \"Custom Surrogate Residual Plot\")",
     "crumbs": [
       "R Examples"
     ]
@@ -190,8 +190,8 @@
     "objectID": "examples-r.html#tips-and-tricks",
     "href": "examples-r.html#tips-and-tricks",
     "title": "R Examples",
-    "section": "Tips and Tricks",
-    "text": "Tips and Tricks\n\n1. Choosing Between Hex and KDE\n\nHex plots: Better for large datasets, clearer for discrete patterns\nKDE plots: Smoother appearance, better for continuous relationships\nStart with hex for exploratory analysis\n\n\n\n2. Interpreting FRED Plots\n\nHorizontal band: Good model fit\nCurvature: Missing polynomial terms\nFunneling: Heteroscedasticity\nGaps: Zero-inflation or missing categories\n\n\n\n3. When to Use Each Residual Type\n\nfunction: Full diagnostic capabilities, use for formal tests\nsurrogate: Quick checks, traditional residual plots\nprobscale: When you want residuals centered at 0\n\n\n\n4. Combining with Other Diagnostics\n\n# Comprehensive diagnostic panel\npar(mfrow = c(2, 3))\n\n# Functional residual diagnostics\nffplot(fit, main = \"Fn-Fn Plot\")\nfredplot(fit, x = x, type = \"hex\", main = \"FRED Plot\")\n\n# Traditional diagnostics\nplot(fit, which = 1)  # Residuals vs Fitted\nplot(fit, which = 2)  # Q-Q Plot\nplot(fit, which = 3)  # Scale-Location\nplot(fit, which = 5)  # Residuals vs Leverage",
+    "section": "Tips and tricks",
+    "text": "Tips and tricks\n\n1. Choosing between hex and KDE\n\nHex plots: Better for large datasets, clearer for discrete patterns\nKDE plots: Smoother appearance, better for continuous relationships\nStart with hex for exploratory analysis\n\n\n\n2. Interpreting FRED plots\n\nHorizontal band: Good model fit\nCurvature: Missing polynomial terms\nFunneling: Heteroscedasticity\nGaps: Zero-inflation or missing categories\n\n\n\n3. When to use each residual type\n\nfunction: Full diagnostic capabilities, use for formal tests\nsurrogate: Quick checks, traditional residual plots\nprobscale: When you want residuals centered at 0\n\n\n\n4. Combining with other diagnostics\n\n# Comprehensive diagnostic panel\npar(mfrow = c(2, 3))\n\n# Fit model on smaller dataset\nset.seed(42)\nn &lt;- 500\nx &lt;- rnorm(n)\ny &lt;- rpois(n, exp(0.5 + 0.3*x))\nfit &lt;- glm(y ~ x, family = poisson)\n\n# Functional residual diagnostics\nffplot(fit, main = \"Fn-Fn Plot\")\nfredplot(fit, x = x, type = \"hex\", main = \"FRED Plot\")\n\n# Traditional diagnostics\nplot(fit, which = 1)  # Residuals vs Fitted\nplot(fit, which = 2)  # Q-Q Plot\nplot(fit, which = 3)  # Scale-Location\nplot(fit, which = 5)  # Residuals vs Leverage",
     "crumbs": [
       "R Examples"
     ]
@@ -200,364 +200,11 @@
     "objectID": "examples-r.html#next-steps",
     "href": "examples-r.html#next-steps",
     "title": "R Examples",
-    "section": "Next Steps",
-    "text": "Next Steps\n\nExplore Python Examples for Python-specific implementations\nLearn about the Methodology behind functional residuals\nCheck the R API Reference for detailed function documentation\nRead the Contributing Guide to contribute new examples",
+    "section": "Next steps",
+    "text": "Next steps\n\nExplore Python Examples for Python-specific implementations\nLearn about the Methodology behind functional residuals\nCheck the R API Reference for detailed function documentation\nRead the Contributing Guide to contribute new examples",
     "crumbs": [
       "R Examples"
     ]
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "",
-    "text": "unifres provides a unified framework for residual diagnostics in generalized linear models (GLMs) and beyond. Available in both R and Python, the package implements the functional residual methodology described in Liu, Lin, & Zhang (2025), offering powerful diagnostic tools that work seamlessly across discrete and continuous outcomes."
-  },
-  {
-    "objectID": "index.html#welcome",
-    "href": "index.html#welcome",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "",
-    "text": "unifres provides a unified framework for residual diagnostics in generalized linear models (GLMs) and beyond. Available in both R and Python, the package implements the functional residual methodology described in Liu, Lin, & Zhang (2025), offering powerful diagnostic tools that work seamlessly across discrete and continuous outcomes."
-  },
-  {
-    "objectID": "index.html#why-functional-residuals",
-    "href": "index.html#why-functional-residuals",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "Why Functional Residuals?",
-    "text": "Why Functional Residuals?\nTraditional residual diagnostics struggle with discrete data:\n\nBinary outcomes: Residuals can only take two values\nCount data: Discrete nature creates artificial patterns\nOrdinal data: Difficult to interpret traditional residuals\n\nFunctional residuals solve these problems by representing the entire distribution of residual randomness, not just a single point estimate."
-  },
-  {
-    "objectID": "index.html#key-features",
-    "href": "index.html#key-features",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "Key Features",
-    "text": "Key Features\n\n🎯 Unified Framework\nA single approach that works for:\n\nBinary outcomes (logistic regression)\nCount outcomes (Poisson, negative binomial)\nOrdinal outcomes (proportional odds models)\nZero-inflated models\nContinuous outcomes (as a special case)\n\n\n\n📊 Powerful Diagnostics\nTwo main diagnostic plots:\n\nFunction-Function (Fn-Fn) Plots: Assess overall model adequacy\nFunctional Residual Density (FRED) Plots: Identify specific model failures\n\n\n\n🔧 Three Residual Types\n\nFunctional: Full distribution objects (R functions, Python scipy distributions)\nSurrogate: Point residuals for traditional plots\nProbability-scale: Centered residuals for interpretation\n\n\n\n🚀 Easy to Use\n# R\nlibrary(unifres)\nfit &lt;- glm(y ~ x, family = binomial)\nfresiduals(fit)\nffplot(fit)\nfredplot(fit, x = x)\n# Python\nfrom unifres import fresiduals, ffplot, fredplot\nmodel = sm.GLM(y, X, family=sm.families.Binomial()).fit()\nfresiduals(model)\nffplot(model)\nfredplot(model, x)"
-  },
-  {
-    "objectID": "index.html#quick-example",
-    "href": "index.html#quick-example",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "Quick Example",
-    "text": "Quick Example\n\nThe Problem: Missing Quadratic Term\n# R Example\nset.seed(1217)\nn &lt;- 1000\nx &lt;- rnorm(n)\nz &lt;- 1 - 2*x + 3*x^2 + rlogis(n)\ny &lt;- ifelse(z &gt; 0, 1, 0)\n\n# Wrong model (missing x²)\nfit_wrong &lt;- glm(y ~ x, family = binomial)\n\n# Correct model\nfit_correct &lt;- glm(y ~ x + I(x^2), family = binomial)\n\n# Compare\npar(mfrow = c(1, 2))\nffplot(fit_wrong, main = \"Wrong Model\")\nffplot(fit_correct, main = \"Correct Model\")\n# Python Example\nimport numpy as np\nimport statsmodels.api as sm\nfrom unifres import ffplot\n\nnp.random.seed(1217)\nn = 1000\nx = np.random.normal(size=n)\nz = 1 - 2*x + 3*x**2 + np.random.logistic(size=n)\ny = np.where(z &gt; 0, 1, 0)\n\n# Wrong model\nX_wrong = sm.add_constant(x)\nmodel_wrong = sm.GLM(y, X_wrong, family=sm.families.Binomial()).fit()\n\n# Correct model\nX_correct = sm.add_constant(np.column_stack([x, x**2]))\nmodel_correct = sm.GLM(y, X_correct, family=sm.families.Binomial()).fit()\n\n# Compare\nfig, axes = plt.subplots(1, 2, figsize=(12, 5))\nffplot(model_wrong, ax=axes[0])\naxes[0].set_title(\"Wrong Model\")\nffplot(model_correct, ax=axes[1])\naxes[1].set_title(\"Correct Model\")\nplt.show()\nThe function-function plot immediately reveals the model misspecification!"
-  },
-  {
-    "objectID": "index.html#installation",
-    "href": "index.html#installation",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "Installation",
-    "text": "Installation\n\nRPython\n\n\n# Install from GitHub\nremotes::install_github(\"bgreenwell/unifres\", subdir = \"r/unifres\")\n\n\n# Install from GitHub\npip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python\n\n\n\n→ Full Installation Guide"
-  },
-  {
-    "objectID": "index.html#get-started",
-    "href": "index.html#get-started",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "Get Started",
-    "text": "Get Started\n\n\n\n📚 Quick Start\n\n\nLearn the basics in 5 minutes\n\nGet Started →\n\n\n\n💻 Examples\n\n\nComprehensive examples for R and Python\n\nR Examples → Python Examples →\n\n\n\n📖 Methodology\n\n\nUnderstand the theory behind functional residuals\n\nLearn More →\n\n\n\n🔗 API Reference\n\n\nDetailed function documentation\n\nR API → Python API →"
-  },
-  {
-    "objectID": "index.html#supported-models",
-    "href": "index.html#supported-models",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "Supported Models",
-    "text": "Supported Models\n\nR Package\n\n✅ glm() - Binomial, Poisson, Quasi-Poisson families\n✅ MASS::glm.nb() - Negative Binomial\n✅ mgcv::gam() - Generalized Additive Models\n✅ VGAM::vglm() - Vector GLMs (ordinal regression)\n✅ pscl::zeroinfl() - Zero-Inflated Poisson\n\n\n\nPython Package\n\n✅ statsmodels.GLM - Binomial, Poisson, Negative Binomial\n✅ statsmodels.NegativeBinomial - Discrete Negative Binomial\n✅ statsmodels.OrderedModel - Ordinal Regression"
-  },
-  {
-    "objectID": "index.html#citation",
-    "href": "index.html#citation",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "Citation",
-    "text": "Citation\nIf you use unifres in your research, please cite:\n\nLiu, D., Lin, Z., & Zhang, H. (2025). A unified framework for residual diagnostics in generalized linear models and beyond. Journal of the American Statistical Association, 1–29. https://doi.org/10.1080/01621459.2025.2504037\n\n@article{liu2025unified,\n  title={A unified framework for residual diagnostics in generalized linear models and beyond},\n  author={Liu, Dungang and Lin, Zewei and Zhang, Heping},\n  journal={Journal of the American Statistical Association},\n  pages={1--29},\n  year={2025},\n  publisher={Taylor \\& Francis},\n  doi={10.1080/01621459.2025.2504037}\n}"
-  },
-  {
-    "objectID": "index.html#features-at-a-glance",
-    "href": "index.html#features-at-a-glance",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "Features at a Glance",
-    "text": "Features at a Glance\n\n\n\nFeature\nR\nPython\n\n\n\n\nFunctional Residuals\n✅\n✅\n\n\nFn-Fn Plots\n✅\n✅\n\n\nFRED Plots\n✅\n✅\n\n\nSurrogate Residuals\n✅\n✅\n\n\nProbability-scale Residuals\n✅\n✅\n\n\nBinary Models\n✅\n✅\n\n\nCount Models\n✅\n✅\n\n\nNegative Binomial\n✅\n✅\n\n\nOrdinal Models\n✅\n✅\n\n\nZero-Inflated Models\n✅\n⏳\n\n\nGAMs\n✅\n⏳"
-  },
-  {
-    "objectID": "index.html#community",
-    "href": "index.html#community",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "Community",
-    "text": "Community\n\nGitHub: https://github.com/bgreenwell/unifres\nIssues: Report bugs or request features\nContributing: How to contribute"
-  },
-  {
-    "objectID": "index.html#authors",
-    "href": "index.html#authors",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "Authors",
-    "text": "Authors\n\nBrandon M. Greenwell - greenwell.brandon@gmail.com\nDungang Liu - dungang.liu@uc.edu\nZewei Lin - pqt19@txstate.edu"
-  },
-  {
-    "objectID": "index.html#license",
-    "href": "index.html#license",
-    "title": "unifres: Unified Residual Diagnostics",
-    "section": "License",
-    "text": "License\nBoth R and Python packages are licensed under GPL-3 or later.\n\n\nReady to improve your model diagnostics?\nGet Started"
-  },
-  {
-    "objectID": "reference_python/utils.expand_endpoints.html",
-    "href": "reference_python/utils.expand_endpoints.html",
-    "title": "utils.expand_endpoints",
-    "section": "",
-    "text": "utils.expand_endpoints(endpoints, resolution=101)\nExpand endpoint pairs into a series of points for plotting.\nThis is an internal convenience function used for creating density plots.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nendpoints\nnp.ndarray\nAn (n x 2) array of [lower, upper] endpoints.\nrequired\n\n\nresolution\nint\nThe number of points to interpolate between each endpoint pair, by default 101.\n101\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\n\nnp.ndarray\nA flattened 1D array of the interpolated points."
-  },
-  {
-    "objectID": "reference_python/utils.expand_endpoints.html#parameters",
-    "href": "reference_python/utils.expand_endpoints.html#parameters",
-    "title": "utils.expand_endpoints",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nendpoints\nnp.ndarray\nAn (n x 2) array of [lower, upper] endpoints.\nrequired\n\n\nresolution\nint\nThe number of points to interpolate between each endpoint pair, by default 101.\n101"
-  },
-  {
-    "objectID": "reference_python/utils.expand_endpoints.html#returns",
-    "href": "reference_python/utils.expand_endpoints.html#returns",
-    "title": "utils.expand_endpoints",
-    "section": "",
-    "text": "Name\nType\nDescription\n\n\n\n\n\nnp.ndarray\nA flattened 1D array of the interpolated points."
-  },
-  {
-    "objectID": "reference_python/utils.unifend.html",
-    "href": "reference_python/utils.unifend.html",
-    "title": "utils.unifend",
-    "section": "",
-    "text": "utils.unifend(model, y=None)\nCalculate the endpoints of the uniform residual distributions.\nFor each observation, this function computes the lower and upper bounds of the predicted cumulative distribution function, P(Y &lt; y) and P(Y &lt;= y).\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nA fitted model object from the statsmodels library.\nrequired\n\n\ny\nnp.ndarray\nThe observed response variable. If not provided, it will be extracted from the model object.\nNone\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\n\nnp.ndarray\nAn (n x 2) array where n is the number of observations. Each row contains the [lower, upper] endpoint for a residual’s uniform distribution.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\n\nValueError\nIf the model type is not a recognized statsmodels model."
-  },
-  {
-    "objectID": "reference_python/utils.unifend.html#parameters",
-    "href": "reference_python/utils.unifend.html#parameters",
-    "title": "utils.unifend",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nA fitted model object from the statsmodels library.\nrequired\n\n\ny\nnp.ndarray\nThe observed response variable. If not provided, it will be extracted from the model object.\nNone"
-  },
-  {
-    "objectID": "reference_python/utils.unifend.html#returns",
-    "href": "reference_python/utils.unifend.html#returns",
-    "title": "utils.unifend",
-    "section": "",
-    "text": "Name\nType\nDescription\n\n\n\n\n\nnp.ndarray\nAn (n x 2) array where n is the number of observations. Each row contains the [lower, upper] endpoint for a residual’s uniform distribution."
-  },
-  {
-    "objectID": "reference_python/utils.unifend.html#raises",
-    "href": "reference_python/utils.unifend.html#raises",
-    "title": "utils.unifend",
-    "section": "",
-    "text": "Name\nType\nDescription\n\n\n\n\n\nValueError\nIf the model type is not a recognized statsmodels model."
-  },
-  {
-    "objectID": "reference_python/fredplot.html",
-    "href": "reference_python/fredplot.html",
-    "title": "fredplot",
-    "section": "",
-    "text": "fredplot(model, x, type='kde', lowess=False, frac=2 / 3, ax=None, **kwargs)\nCreate a Functional REsidual Density (FRED) plot.\nThis plot shows the density of the functional residuals against a continuous predictor variable, which is useful for identifying model misspecifications like missing non-linear terms.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nA fitted model object from statsmodels.\nrequired\n\n\nx\nnp.ndarray\nThe predictor variable to plot on the x-axis.\nrequired\n\n\ntype\nstr\nThe type of density plot to generate. One of {“kde”, “hex”}, by default “kde”.\n'kde'\n\n\nlowess\nbool\nIf True, add a LOWESS smooth to the plot, by default False.\nFalse\n\n\nfrac\nfloat\nThe fraction of data used when estimating each y-value of the LOWESS smooth, by default 2/3.\n2 / 3\n\n\nax\nmatplotlib.axes.Axes\nAn existing matplotlib Axes object to plot on. If None, a new figure and axes are created.\nNone\n\n\n**kwargs\ndict\nAdditional keyword arguments passed to the seaborn plotting function (e.g., sns.kdeplot or sns.jointplot).\n{}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\n\nmatplotlib.axes.Axes\nThe matplotlib Axes object containing the plot."
-  },
-  {
-    "objectID": "reference_python/fredplot.html#parameters",
-    "href": "reference_python/fredplot.html#parameters",
-    "title": "fredplot",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nA fitted model object from statsmodels.\nrequired\n\n\nx\nnp.ndarray\nThe predictor variable to plot on the x-axis.\nrequired\n\n\ntype\nstr\nThe type of density plot to generate. One of {“kde”, “hex”}, by default “kde”.\n'kde'\n\n\nlowess\nbool\nIf True, add a LOWESS smooth to the plot, by default False.\nFalse\n\n\nfrac\nfloat\nThe fraction of data used when estimating each y-value of the LOWESS smooth, by default 2/3.\n2 / 3\n\n\nax\nmatplotlib.axes.Axes\nAn existing matplotlib Axes object to plot on. If None, a new figure and axes are created.\nNone\n\n\n**kwargs\ndict\nAdditional keyword arguments passed to the seaborn plotting function (e.g., sns.kdeplot or sns.jointplot).\n{}"
-  },
-  {
-    "objectID": "reference_python/fredplot.html#returns",
-    "href": "reference_python/fredplot.html#returns",
-    "title": "fredplot",
-    "section": "",
-    "text": "Name\nType\nDescription\n\n\n\n\n\nmatplotlib.axes.Axes\nThe matplotlib Axes object containing the plot."
-  },
-  {
-    "objectID": "contributing.html",
-    "href": "contributing.html",
-    "title": "Contributing",
-    "section": "",
-    "text": "We welcome contributions to unifres! Whether you’re reporting bugs, suggesting features, improving documentation, or contributing code, your help is appreciated.",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "contributing.html#quick-links",
-    "href": "contributing.html#quick-links",
-    "title": "Contributing",
-    "section": "Quick Links",
-    "text": "Quick Links\n\nGitHub Repository: https://github.com/bgreenwell/unifres\nIssue Tracker: https://github.com/bgreenwell/unifres/issues\nFull Contributing Guide: CONTRIBUTING.md",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "contributing.html#ways-to-contribute",
-    "href": "contributing.html#ways-to-contribute",
-    "title": "Contributing",
-    "section": "Ways to Contribute",
-    "text": "Ways to Contribute\n\n1. Report Bugs\nFound a bug? Please open an issue with:\n\nClear title describing the problem\nSteps to reproduce the bug\nExpected vs actual behavior\nSystem information (R/Python version, OS)\nMinimal reproducible example\n\n\n\n2. Suggest Enhancements\nHave an idea for a new feature? Create an issue describing:\n\nWhat problem it solves\nHow it would work\nExample use cases\nWhether you’d like to implement it\n\n\n\n3. Improve Documentation\nDocumentation improvements are always welcome:\n\nFix typos or clarify existing docs\nAdd examples to function documentation\nWrite tutorials or vignettes\nImprove website content\n\n\n\n4. Contribute Code\nReady to contribute code? Great!\n\nFor R:\n# Fork and clone the repository\n# Make your changes in r/unifres/\n\n# Run tests\ndevtools::test()\n\n# Check package\ndevtools::check()\n\n# Submit a pull request\n\n\nFor Python:\n# Fork and clone the repository\n# Make your changes in python/\n\n# Install in development mode\npip install -e \".[dev]\"\n\n# Run tests\npytest tests/ -v\n\n# Submit a pull request",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "contributing.html#development-workflow",
-    "href": "contributing.html#development-workflow",
-    "title": "Contributing",
-    "section": "Development Workflow",
-    "text": "Development Workflow\n\n1. Fork and Clone\n# Fork the repository on GitHub\n# Then clone your fork\ngit clone https://github.com/YOUR-USERNAME/unifres.git\ncd unifres\n\n\n2. Create a Branch\ngit checkout -b feature/your-feature-name\n# or\ngit checkout -b fix/your-bug-fix\n\n\n3. Make Changes\n\nWrite clear, documented code\nAdd tests for new functionality\nFollow existing code style\nUpdate documentation as needed\n\n\n\n4. Test Your Changes\n\nR Package:\ndevtools::load_all()\ndevtools::test()\ndevtools::check()\n\n\nPython Package:\npytest tests/ -v --cov=unifres\n\n\n\n5. Commit and Push\ngit add .\ngit commit -m \"Add feature: description of your changes\"\ngit push origin feature/your-feature-name\n\n\n6. Submit Pull Request\n\nGo to your fork on GitHub\nClick “New Pull Request”\nFill out the PR template\nLink any related issues",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "contributing.html#coding-standards",
-    "href": "contributing.html#coding-standards",
-    "title": "Contributing",
-    "section": "Coding Standards",
-    "text": "Coding Standards\n\nR Code Style\n\nFollow the tidyverse style guide\nUse &lt;- for assignment\nMaximum line length: 80 characters\nDocument with roxygen2\nInclude examples in documentation\n\n\n\nPython Code Style\n\nFollow PEP 8\nUse type hints\nMaximum line length: 88 characters\nNumPy-style docstrings\nInclude docstring examples",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "contributing.html#testing-guidelines",
-    "href": "contributing.html#testing-guidelines",
-    "title": "Contributing",
-    "section": "Testing Guidelines",
-    "text": "Testing Guidelines\n\nWrite Good Tests\n\nTest all new functionality\nInclude edge cases\nTest error conditions\nAim for &gt;80% coverage\nUse descriptive test names\n\n\n\nR Testing\ntest_that(\"fresiduals works with binomial GLM\", {\n  # Arrange\n  fit &lt;- glm(y ~ x, family = binomial)\n\n  # Act\n  fres &lt;- fresiduals(fit)\n\n  # Assert\n  expect_s3_class(fres, \"unifres\")\n  expect_equal(length(fres), length(y))\n})\n\n\nPython Testing\ndef test_fresiduals_binomial():\n    \"\"\"Test fresiduals with binomial GLM\"\"\"\n    # Arrange\n    model = sm.GLM(y, X, family=sm.families.Binomial()).fit()\n\n    # Act\n    fres = fresiduals(model)\n\n    # Assert\n    assert len(fres) == len(y)\n    assert all(hasattr(f, 'cdf') for f in fres)",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "contributing.html#documentation-standards",
-    "href": "contributing.html#documentation-standards",
-    "title": "Contributing",
-    "section": "Documentation Standards",
-    "text": "Documentation Standards\n\nR Documentation\nUse roxygen2 with: - @param for parameters - @return for return values - @examples with working code - @export for public functions - @references for citations\n\n\nPython Documentation\nUse NumPy-style docstrings with: - Parameters section - Returns section - Examples section - Notes section (if needed) - References section",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "contributing.html#pull-request-checklist",
-    "href": "contributing.html#pull-request-checklist",
-    "title": "Contributing",
-    "section": "Pull Request Checklist",
-    "text": "Pull Request Checklist\nBefore submitting a PR, ensure:\n\nCode follows style guidelines\nAll tests pass\nNew tests added for new features\nDocumentation updated\nNEWS.md updated (for user-facing changes)\nNo decrease in code coverage\nPR description clearly explains changes",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "contributing.html#code-review-process",
-    "href": "contributing.html#code-review-process",
-    "title": "Contributing",
-    "section": "Code Review Process",
-    "text": "Code Review Process\n\nMaintainers will review your PR\nThey may request changes\nMake requested changes and push to your branch\nOnce approved, maintainers will merge",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "contributing.html#getting-help",
-    "href": "contributing.html#getting-help",
-    "title": "Contributing",
-    "section": "Getting Help",
-    "text": "Getting Help\nNeed help contributing?\n\nCheck the full contributing guide\nOpen a discussion\nAsk questions in your PR or issue",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "contributing.html#recognition",
-    "href": "contributing.html#recognition",
-    "title": "Contributing",
-    "section": "Recognition",
-    "text": "Recognition\nAll contributors will be recognized in: - GitHub contributors page - DESCRIPTION file (for significant contributions) - Release notes",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "contributing.html#code-of-conduct",
-    "href": "contributing.html#code-of-conduct",
-    "title": "Contributing",
-    "section": "Code of Conduct",
-    "text": "Code of Conduct\nBe respectful and inclusive. We’re all here to improve unifres together.",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "contributing.html#license",
-    "href": "contributing.html#license",
-    "title": "Contributing",
-    "section": "License",
-    "text": "License\nBy contributing, you agree that your contributions will be licensed under the same license as the project (GPL-3 or later).\n\nThank you for contributing to unifres! Your efforts help make statistical software better for everyone.",
-    "crumbs": [
-      "Methodology",
-      "Contributing"
-    ]
-  },
-  {
-    "objectID": "reference_python/ffplot.html",
-    "href": "reference_python/ffplot.html",
-    "title": "ffplot",
-    "section": "",
-    "text": "ffplot(model, resolution=101, n=None, ax=None, **kwargs)\nCreate a Function-Function (Fn-Fn) plot.\nThis plot shows the average of the functional residuals against the theoretical CDF of a Uniform(0, 1) random variable.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nA fitted model object (e.g., from statsmodels) or a list of functional residuals.\nrequired\n\n\nresolution\nint\nThe number of points between 0 and 1 to evaluate, by default 101.\n101\n\n\nn\nint\nThe number of functional residuals to subsample, by default None (use all).\nNone\n\n\nax\nmatplotlib.axes.Axes\nAn existing matplotlib Axes object to plot on.\nNone\n\n\n**kwargs\ndict\nAdditional keyword arguments passed to ax.plot().\n{}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\n\nmatplotlib.axes.Axes\nThe matplotlib Axes object containing the plot."
-  },
-  {
-    "objectID": "reference_python/ffplot.html#parameters",
-    "href": "reference_python/ffplot.html#parameters",
-    "title": "ffplot",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nA fitted model object (e.g., from statsmodels) or a list of functional residuals.\nrequired\n\n\nresolution\nint\nThe number of points between 0 and 1 to evaluate, by default 101.\n101\n\n\nn\nint\nThe number of functional residuals to subsample, by default None (use all).\nNone\n\n\nax\nmatplotlib.axes.Axes\nAn existing matplotlib Axes object to plot on.\nNone\n\n\n**kwargs\ndict\nAdditional keyword arguments passed to ax.plot().\n{}"
-  },
-  {
-    "objectID": "reference_python/ffplot.html#returns",
-    "href": "reference_python/ffplot.html#returns",
-    "title": "ffplot",
-    "section": "",
-    "text": "Name\nType\nDescription\n\n\n\n\n\nmatplotlib.axes.Axes\nThe matplotlib Axes object containing the plot."
-  },
-  {
-    "objectID": "reference_python/index.html",
-    "href": "reference_python/index.html",
-    "title": "Python Reference",
-    "section": "",
-    "text": "The unifres Python package implements the unifying functional residual methodology for generalized linear models.\nSee the navigation bar or the links below for the core functions and utilities:\n\nCore Functions\n\nfresiduals\nfredplot\nffplot\n\n\n\nUtilities\n\nis_fitted\nunifend\nexpand_endpoints"
-  },
-  {
-    "objectID": "reference_python/utils.is_fitted.html",
-    "href": "reference_python/utils.is_fitted.html",
-    "title": "utils.is_fitted",
-    "section": "",
-    "text": "utils.is_fitted(model)\nCheck if a model object has been fitted.\nThis is determined by checking for the presence of a params attribute.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nThe model object to check.\nrequired\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\n\nbool\nTrue if the model appears to be fitted, False otherwise."
-  },
-  {
-    "objectID": "reference_python/utils.is_fitted.html#parameters",
-    "href": "reference_python/utils.is_fitted.html#parameters",
-    "title": "utils.is_fitted",
-    "section": "",
-    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nThe model object to check.\nrequired"
-  },
-  {
-    "objectID": "reference_python/utils.is_fitted.html#returns",
-    "href": "reference_python/utils.is_fitted.html#returns",
-    "title": "utils.is_fitted",
-    "section": "",
-    "text": "Name\nType\nDescription\n\n\n\n\n\nbool\nTrue if the model appears to be fitted, False otherwise."
   },
   {
     "objectID": "reference_python/fresiduals.html",
@@ -588,11 +235,60 @@
     "text": "Name\nType\nDescription\n\n\n\n\n\nValueError\nIf the specified type is not valid."
   },
   {
+    "objectID": "reference_python/utils.is_fitted.html",
+    "href": "reference_python/utils.is_fitted.html",
+    "title": "utils.is_fitted",
+    "section": "",
+    "text": "utils.is_fitted(model)\nCheck if a model object has been fitted.\nThis is determined by checking for the presence of a params attribute.\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nThe model object to check.\nrequired\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\n\nbool\nTrue if the model appears to be fitted, False otherwise."
+  },
+  {
+    "objectID": "reference_python/utils.is_fitted.html#parameters",
+    "href": "reference_python/utils.is_fitted.html#parameters",
+    "title": "utils.is_fitted",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nThe model object to check.\nrequired"
+  },
+  {
+    "objectID": "reference_python/utils.is_fitted.html#returns",
+    "href": "reference_python/utils.is_fitted.html#returns",
+    "title": "utils.is_fitted",
+    "section": "",
+    "text": "Name\nType\nDescription\n\n\n\n\n\nbool\nTrue if the model appears to be fitted, False otherwise."
+  },
+  {
+    "objectID": "reference_python/index.html",
+    "href": "reference_python/index.html",
+    "title": "Python Reference",
+    "section": "",
+    "text": "The unifres Python package implements the unifying functional residual methodology for generalized linear models.\nSee the navigation bar or the links below for the core functions and utilities:\n\nCore Functions\n\nfresiduals\nfredplot\nffplot\n\n\n\nUtilities\n\nis_fitted\nunifend\nexpand_endpoints"
+  },
+  {
+    "objectID": "reference_python/ffplot.html",
+    "href": "reference_python/ffplot.html",
+    "title": "ffplot",
+    "section": "",
+    "text": "ffplot(model, resolution=101, n=None, ax=None, **kwargs)\nCreate a Function-Function (Fn-Fn) plot.\nThis plot shows the average of the functional residuals against the theoretical CDF of a Uniform(0, 1) random variable.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nA fitted model object (e.g., from statsmodels) or a list of functional residuals.\nrequired\n\n\nresolution\nint\nThe number of points between 0 and 1 to evaluate, by default 101.\n101\n\n\nn\nint\nThe number of functional residuals to subsample, by default None (use all).\nNone\n\n\nax\nmatplotlib.axes.Axes\nAn existing matplotlib Axes object to plot on.\nNone\n\n\n**kwargs\ndict\nAdditional keyword arguments passed to ax.plot().\n{}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\n\nmatplotlib.axes.Axes\nThe matplotlib Axes object containing the plot."
+  },
+  {
+    "objectID": "reference_python/ffplot.html#parameters",
+    "href": "reference_python/ffplot.html#parameters",
+    "title": "ffplot",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nA fitted model object (e.g., from statsmodels) or a list of functional residuals.\nrequired\n\n\nresolution\nint\nThe number of points between 0 and 1 to evaluate, by default 101.\n101\n\n\nn\nint\nThe number of functional residuals to subsample, by default None (use all).\nNone\n\n\nax\nmatplotlib.axes.Axes\nAn existing matplotlib Axes object to plot on.\nNone\n\n\n**kwargs\ndict\nAdditional keyword arguments passed to ax.plot().\n{}"
+  },
+  {
+    "objectID": "reference_python/ffplot.html#returns",
+    "href": "reference_python/ffplot.html#returns",
+    "title": "ffplot",
+    "section": "",
+    "text": "Name\nType\nDescription\n\n\n\n\n\nmatplotlib.axes.Axes\nThe matplotlib Axes object containing the plot."
+  },
+  {
     "objectID": "examples-python.html",
     "href": "examples-python.html",
     "title": "Python Examples",
     "section": "",
-    "text": "This page provides comprehensive examples of using unifres with various model types in Python.",
+    "text": "This page provides comprehensive examples of using unifres with various model types in Python.\nimport numpy as np\nimport pandas as pd\nimport statsmodels.api as sm\nimport statsmodels.formula.api as smf\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nfrom unifres import fresiduals, ffplot, fredplot\n\nEnvironment initialized.",
     "crumbs": [
       "Python Examples"
     ]
@@ -601,8 +297,8 @@
     "objectID": "examples-python.html#example-1-logistic-regression",
     "href": "examples-python.html#example-1-logistic-regression",
     "title": "Python Examples",
-    "section": "Example 1: Logistic Regression",
-    "text": "Example 1: Logistic Regression\n\nDetecting Missing Polynomial Terms\nimport numpy as np\nimport statsmodels.api as sm\nfrom unifres import fresiduals, ffplot, fredplot\nimport matplotlib.pyplot as plt\n\n# Generate data with a quadratic relationship\nnp.random.seed(1217)\nn = 1000\nx = np.random.normal(size=n)\nz = 1 - 2*x + 3*x**2 + np.random.logistic(size=n)\ny = np.where(z &gt; 0, 1, 0)\n\n# Fit incorrect model (missing x²)\nX_wrong = sm.add_constant(x)\nmodel_wrong = sm.GLM(y, X_wrong, family=sm.families.Binomial()).fit()\n\n# Fit correct model\nX_correct = sm.add_constant(np.column_stack([x, x**2]))\nmodel_correct = sm.GLM(y, X_correct, family=sm.families.Binomial()).fit()\n\n# Compare with function-function plots\nfig, axes = plt.subplots(1, 2, figsize=(12, 5))\nffplot(model_wrong, ax=axes[0])\naxes[0].set_title(\"Missing x²\")\nffplot(model_correct, ax=axes[1])\naxes[1].set_title(\"Correct Model\")\nplt.tight_layout()\nplt.show()\n\n\nUsing FRED Plots\n# FRED plots show where the model fails\nfig, axes = plt.subplots(1, 2, figsize=(12, 5))\n\nfredplot(model_wrong, x, type=\"kde\", ax=axes[0])\naxes[0].set_title(\"Wrong Model\")\n\nfredplot(model_correct, x, type=\"kde\", ax=axes[1])\naxes[1].set_title(\"Correct Model\")\n\nplt.tight_layout()\nplt.show()\nThe wrong model shows a clear parabolic pattern in the FRED plot, indicating the missing quadratic term.",
+    "section": "Example 1: logistic regression",
+    "text": "Example 1: logistic regression\n\nDetecting missing polynomial terms\n\n# Generate data with a quadratic relationship\nnp.random.seed(1217)\nn = 1000\nx = np.random.normal(size=n)\nz = 1 - 2*x + 3*x**2 + np.random.logistic(size=n)\ny = np.where(z &gt; 0, 1, 0)\n\n# Fit incorrect model (missing x²)\nX_wrong = sm.add_constant(x)\nmodel_wrong = sm.GLM(y, X_wrong, family=sm.families.Binomial()).fit()\n\n# Fit correct model\nX_correct = sm.add_constant(np.column_stack([x, x**2]))\nmodel_correct = sm.GLM(y, X_correct, family=sm.families.Binomial()).fit()\n\n# Compare with function-function plots\nfig, axes = plt.subplots(1, 2, figsize=(12, 5))\nffplot(model_wrong, ax=axes[0])\naxes[0].set_title(\"Missing x²\")\nffplot(model_correct, ax=axes[1])\naxes[1].set_title(\"Correct Model\")\nplt.tight_layout()\nplt.show()\n\n\n\n\n\n\n\n\n\n\nUsing FRED plots\n\n# FRED plots show where the model fails\nfig, axes = plt.subplots(1, 2, figsize=(12, 5))\n\nfredplot(model_wrong, x, type=\"kde\", ax=axes[0])\naxes[0].set_title(\"Wrong Model\")\n\nfredplot(model_correct, x, type=\"kde\", ax=axes[1])\naxes[1].set_title(\"Correct Model\")\n\nplt.tight_layout()\nplt.show()",
     "crumbs": [
       "Python Examples"
     ]
@@ -611,8 +307,8 @@
     "objectID": "examples-python.html#example-2-poisson-regression",
     "href": "examples-python.html#example-2-poisson-regression",
     "title": "Python Examples",
-    "section": "Example 2: Poisson Regression",
-    "text": "Example 2: Poisson Regression\n\nCount Data Analysis\n# Simulate count data\nnp.random.seed(42)\nn = 500\nx1 = np.random.normal(size=n)\nx2 = np.random.normal(size=n)\nlambda_ = np.exp(1 + 0.5*x1 + 0.8*x2)\ny = np.random.poisson(lambda_)\n\n# Fit model\nX = sm.add_constant(np.column_stack([x1, x2]))\nmodel = sm.GLM(y, X, family=sm.families.Poisson()).fit()\n\n# Check model adequacy\nfig, axes = plt.subplots(2, 2, figsize=(12, 10))\n\nffplot(model, ax=axes[0, 0])\naxes[0, 0].set_title(\"Function-Function Plot\")\n\nfredplot(model, x1, type=\"kde\", ax=axes[0, 1])\naxes[0, 1].set_title(\"FRED: x1\")\n\nfredplot(model, x2, type=\"kde\", ax=axes[1, 0])\naxes[1, 0].set_title(\"FRED: x2\")\n\n# Surrogate residual plot\nsurr_res = fresiduals(model, type=\"surrogate\")\naxes[1, 1].scatter(model.fittedvalues, surr_res, alpha=0.5)\naxes[1, 1].axhline(y=0.5, color='r', linestyle='--')\naxes[1, 1].set_xlabel(\"Fitted Values\")\naxes[1, 1].set_ylabel(\"Surrogate Residuals\")\naxes[1, 1].set_title(\"Surrogate Residuals vs Fitted\")\n\nplt.tight_layout()\nplt.show()\n\n\nDetecting Overdispersion\n# Generate overdispersed count data\nnp.random.seed(123)\nn = 500\nx = np.random.normal(size=n)\nmu = np.exp(1 + x)\n# Add overdispersion via negative binomial\nsize = 2\nprob = size / (size + mu)\ny = np.random.negative_binomial(size, prob)\n\n# Fit Poisson (wrong)\nX = sm.add_constant(x)\nmodel_pois = sm.GLM(y, X, family=sm.families.Poisson()).fit()\n\n# Fit Negative Binomial (correct)\nmodel_nb = sm.GLM(y, X, family=sm.families.NegativeBinomial()).fit()\n\n# Compare\nfig, axes = plt.subplots(1, 2, figsize=(12, 5))\nffplot(model_pois, ax=axes[0])\naxes[0].set_title(\"Poisson\")\nffplot(model_nb, ax=axes[1])\naxes[1].set_title(\"Negative Binomial\")\nplt.tight_layout()\nplt.show()",
+    "section": "Example 2: Poisson regression",
+    "text": "Example 2: Poisson regression\n\nCount data analysis\n\n# Simulate count data\nnp.random.seed(42)\nn = 500\nx1 = np.random.normal(size=n)\nx2 = np.random.normal(size=n)\nlambda_ = np.exp(1 + 0.5*x1 + 0.8*x2)\ny = np.random.poisson(lambda_)\n\n# Fit model\nX = sm.add_constant(np.column_stack([x1, x2]))\nmodel = sm.GLM(y, X, family=sm.families.Poisson()).fit()\n\n# Check model adequacy\nfig, axes = plt.subplots(2, 2, figsize=(12, 10))\n\nffplot(model, ax=axes[0, 0])\naxes[0, 0].set_title(\"Function-Function Plot\")\n\nfredplot(model, x1, type=\"kde\", ax=axes[0, 1])\naxes[0, 1].set_title(\"FRED: x1\")\n\nfredplot(model, x2, type=\"kde\", ax=axes[1, 0])\naxes[1, 0].set_title(\"FRED: x2\")\n\n# Surrogate residual plot\nsurr_res = fresiduals(model, type=\"surrogate\")\naxes[1, 1].scatter(model.fittedvalues, surr_res, alpha=0.5)\naxes[1, 1].axhline(y=0.5, color='r', linestyle='--')\naxes[1, 1].set_xlabel(\"Fitted Values\")\naxes[1, 1].set_ylabel(\"Surrogate Residuals\")\naxes[1, 1].set_title(\"Surrogate Residuals vs Fitted\")\n\nplt.tight_layout()\nplt.show()\n\n\n\n\n\n\n\n\n\n\nDetecting overdispersion\n\n# Generate overdispersed count datanp.random.seed(123)n = 500x = np.random.normal(size=n)mu = np.exp(1 + x)# Add overdispersion via negative binomialsize = 2prob = size / (size + mu)y = np.random.negative_binomial(size, prob)# Fit Poisson (wrong)X = sm.add_constant(x)model_pois = sm.GLM(y, X, family=sm.families.Poisson()).fit()# Fit Negative Binomial (correct)model_nb = sm.NegativeBinomial(y, X).fit(disp=0)# Comparefig, axes = plt.subplots(1, 2, figsize=(12, 5))ffplot(model_pois, ax=axes[0])axes[0].set_title(\"Poisson\")ffplot(model_nb, ax=axes[1])axes[1].set_title(\"Negative Binomial\")plt.tight_layout()plt.show()",
     "crumbs": [
       "Python Examples"
     ]
@@ -621,8 +317,8 @@
     "objectID": "examples-python.html#example-3-negative-binomial-regression",
     "href": "examples-python.html#example-3-negative-binomial-regression",
     "title": "Python Examples",
-    "section": "Example 3: Negative Binomial Regression",
-    "text": "Example 3: Negative Binomial Regression\n# Generate negative binomial data\nnp.random.seed(2024)\nn = 400\nx = np.random.normal(size=n)\nmu = np.exp(1 + 0.5*x)\nsize = 3\nprob = size / (size + mu)\ny = np.random.negative_binomial(size, prob)\n\n# Fit model using discrete NegativeBinomial\nX = sm.add_constant(x)\nmodel_nb = sm.NegativeBinomial(y, X).fit(disp=0)\n\n# Diagnostics\nfig, axes = plt.subplots(1, 3, figsize=(15, 4))\n\nffplot(model_nb, ax=axes[0])\naxes[0].set_title(\"Fn-Fn Plot\")\n\nfredplot(model_nb, x, type=\"kde\", ax=axes[1])\naxes[1].set_title(\"FRED Plot\")\n\n# Compare surrogate to traditional residuals\nsurr_res = fresiduals(model_nb, type=\"surrogate\")\npearson_res = model_nb.resid_pearson\naxes[2].scatter(surr_res, pearson_res, alpha=0.5)\naxes[2].set_xlabel(\"Surrogate Residuals\")\naxes[2].set_ylabel(\"Pearson Residuals\")\naxes[2].set_title(\"Residual Comparison\")\n\nplt.tight_layout()\nplt.show()",
+    "section": "Example 3: negative binomial regression",
+    "text": "Example 3: negative binomial regression\n\n# Generate negative binomial data\nnp.random.seed(2024)\nn = 400\nx = np.random.normal(size=n)\nmu = np.exp(1 + 0.5*x)\nsize = 3\nprob = size / (size + mu)\ny = np.random.negative_binomial(size, prob)\n\n# Fit model using discrete NegativeBinomial\nX = sm.add_constant(x)\nmodel_nb = sm.NegativeBinomial(y, X).fit(disp=0)\n\n# Diagnostics\nfig, axes = plt.subplots(1, 3, figsize=(15, 4))\n\nffplot(model_nb, ax=axes[0])\naxes[0].set_title(\"Fn-Fn Plot\")\n\nfredplot(model_nb, x, type=\"kde\", ax=axes[1])\naxes[1].set_title(\"FRED Plot\")\n\n# Compare surrogate to traditional residuals\nsurr_res = fresiduals(model_nb, type=\"surrogate\")\npearson_res = model_nb.resid_pearson\naxes[2].scatter(surr_res, pearson_res, alpha=0.5)\naxes[2].set_xlabel(\"Surrogate Residuals\")\naxes[2].set_ylabel(\"Pearson Residuals\")\naxes[2].set_title(\"Residual Comparison\")\n\nplt.tight_layout()\nplt.show()",
     "crumbs": [
       "Python Examples"
     ]
@@ -631,8 +327,8 @@
     "objectID": "examples-python.html#example-4-using-pandas-dataframes",
     "href": "examples-python.html#example-4-using-pandas-dataframes",
     "title": "Python Examples",
-    "section": "Example 4: Using Pandas DataFrames",
-    "text": "Example 4: Using Pandas DataFrames\n\nWorking with Real-World Data Structure\nimport pandas as pd\n\n# Create a DataFrame\nnp.random.seed(555)\nn = 500\ndf = pd.DataFrame({\n    'x1': np.random.normal(size=n),\n    'x2': np.random.uniform(-1, 1, size=n),\n    'group': np.random.choice(['A', 'B', 'C'], size=n)\n})\n\n# Generate outcome\neta = 1 + 0.5*df['x1'] - 0.3*df['x2']\ndf['y'] = np.random.poisson(np.exp(eta))\n\n# Fit model using formula\nimport statsmodels.formula.api as smf\nmodel = smf.glm('y ~ x1 + x2', data=df, family=sm.families.Poisson()).fit()\n\n# Diagnostics with DataFrame columns\nfig, axes = plt.subplots(2, 2, figsize=(12, 10))\n\nffplot(model, ax=axes[0, 0])\naxes[0, 0].set_title(\"Fn-Fn Plot\")\n\nfredplot(model, df['x1'].values, ax=axes[0, 1])\naxes[0, 1].set_xlabel(\"x1\")\naxes[0, 1].set_title(\"FRED: x1\")\n\nfredplot(model, df['x2'].values, ax=axes[1, 0])\naxes[1, 0].set_xlabel(\"x2\")\naxes[1, 0].set_title(\"FRED: x2\")\n\n# Residuals by group\nsurr_res = fresiduals(model, type=\"surrogate\")\nfor group in ['A', 'B', 'C']:\n    mask = df['group'] == group\n    axes[1, 1].scatter(df.loc[mask, 'x1'], surr_res[mask],\n                      label=group, alpha=0.5)\naxes[1, 1].axhline(y=0.5, color='gray', linestyle='--')\naxes[1, 1].set_xlabel(\"x1\")\naxes[1, 1].set_ylabel(\"Surrogate Residuals\")\naxes[1, 1].set_title(\"Residuals by Group\")\naxes[1, 1].legend()\n\nplt.tight_layout()\nplt.show()",
+    "section": "Example 4: using Pandas DataFrames",
+    "text": "Example 4: using Pandas DataFrames\n\nWorking with real-world data structure\n\n# Create a DataFrame\nnp.random.seed(555)\nn = 500\ndf = pd.DataFrame({\n    'x1': np.random.normal(size=n),\n    'x2': np.random.uniform(-1, 1, size=n),\n    'group': np.random.choice(['A', 'B', 'C'], size=n)\n})\n\n# Generate outcome\neta = 1 + 0.5*df['x1'] - 0.3*df['x2']\ndf['y'] = np.random.poisson(np.exp(eta))\n\n# Fit model using formula\nmodel = smf.glm('y ~ x1 + x2', data=df, family=sm.families.Poisson()).fit()\n\n# Diagnostics with DataFrame columns\nfig, axes = plt.subplots(2, 2, figsize=(12, 10))\n\nffplot(model, ax=axes[0, 0])\naxes[0, 0].set_title(\"Fn-Fn Plot\")\n\nfredplot(model, df['x1'].values, ax=axes[0, 1])\naxes[0, 1].set_xlabel(\"x1\")\naxes[0, 1].set_title(\"FRED: x1\")\n\nfredplot(model, df['x2'].values, ax=axes[1, 0])\naxes[1, 0].set_xlabel(\"x2\")\naxes[1, 0].set_title(\"FRED: x2\")\n\n# Residuals by group\nsurr_res = fresiduals(model, type=\"surrogate\")\nfor group in ['A', 'B', 'C']:\n    mask = df['group'] == group\n    axes[1, 1].scatter(df.loc[mask, 'x1'], surr_res[mask],\n                      label=group, alpha=0.5)\naxes[1, 1].axhline(y=0.5, color='gray', linestyle='--')\naxes[1, 1].set_xlabel(\"x1\")\naxes[1, 1].set_ylabel(\"Surrogate Residuals\")\naxes[1, 1].set_title(\"Residuals by Group\")\naxes[1, 1].legend()\n\nplt.tight_layout()\nplt.show()",
     "crumbs": [
       "Python Examples"
     ]
@@ -641,8 +337,8 @@
     "objectID": "examples-python.html#example-5-model-comparison",
     "href": "examples-python.html#example-5-model-comparison",
     "title": "Python Examples",
-    "section": "Example 5: Model Comparison",
-    "text": "Example 5: Model Comparison\n\nComparing Nested Models\n# Generate data\nnp.random.seed(333)\nn = 800\nx1 = np.random.normal(size=n)\nx2 = np.random.normal(size=n)\nx3 = np.random.normal(size=n)\n\n# True model includes x1 and x2, but not x3\neta = 1 + x1 + 0.5*x2\ny = np.random.binomial(1, 1/(1 + np.exp(-eta)))\n\n# Fit models\nX1 = sm.add_constant(x1)\nX2 = sm.add_constant(np.column_stack([x1, x2]))\nX3 = sm.add_constant(np.column_stack([x1, x2, x3]))\n\nmodel1 = sm.GLM(y, X1, family=sm.families.Binomial()).fit()\nmodel2 = sm.GLM(y, X2, family=sm.families.Binomial()).fit()\nmodel3 = sm.GLM(y, X3, family=sm.families.Binomial()).fit()\n\n# Visual comparison\nfig, axes = plt.subplots(2, 3, figsize=(15, 10))\n\nffplot(model1, ax=axes[0, 0])\naxes[0, 0].set_title(\"Model 1: x1 only\")\n\nffplot(model2, ax=axes[0, 1])\naxes[0, 1].set_title(\"Model 2: x1 + x2\")\n\nffplot(model3, ax=axes[0, 2])\naxes[0, 2].set_title(\"Model 3: x1 + x2 + x3\")\n\nfredplot(model1, x1, type=\"kde\", ax=axes[1, 0])\naxes[1, 0].set_title(\"M1 FRED\")\n\nfredplot(model2, x1, type=\"kde\", ax=axes[1, 1])\naxes[1, 1].set_title(\"M2 FRED\")\n\nfredplot(model3, x1, type=\"kde\", ax=axes[1, 2])\naxes[1, 2].set_title(\"M3 FRED\")\n\nplt.tight_layout()\nplt.show()",
+    "section": "Example 5: model comparison",
+    "text": "Example 5: model comparison\n\nComparing nested models\n\n# Generate data\nnp.random.seed(333)\nn = 800\nx1 = np.random.normal(size=n)\nx2 = np.random.normal(size=n)\nx3 = np.random.normal(size=n)\n\n# True model includes x1 and x2, but not x3\neta = 1 + x1 + 0.5*x2\ny = np.random.binomial(1, 1/(1 + np.exp(-eta)))\n\n# Fit models\nX1 = sm.add_constant(x1)\nX2 = sm.add_constant(np.column_stack([x1, x2]))\nX3 = sm.add_constant(np.column_stack([x1, x2, x3]))\n\nmodel1 = sm.GLM(y, X1, family=sm.families.Binomial()).fit()\nmodel2 = sm.GLM(y, X2, family=sm.families.Binomial()).fit()\nmodel3 = sm.GLM(y, X3, family=sm.families.Binomial()).fit()\n\n# Visual comparison\nfig, axes = plt.subplots(2, 3, figsize=(15, 10))\n\nffplot(model1, ax=axes[0, 0])\naxes[0, 0].set_title(\"Model 1: x1 only\")\n\nffplot(model2, ax=axes[0, 1])\naxes[0, 1].set_title(\"Model 2: x1 + x2\")\n\nffplot(model3, ax=axes[0, 2])\naxes[0, 2].set_title(\"Model 3: x1 + x2 + x3\")\n\nfredplot(model1, x1, type=\"kde\", ax=axes[1, 0])\naxes[1, 0].set_title(\"M1 FRED\")\n\nfredplot(model2, x1, type=\"kde\", ax=axes[1, 1])\naxes[1, 1].set_title(\"M2 FRED\")\n\nfredplot(model3, x1, type=\"kde\", ax=axes[1, 2])\naxes[1, 2].set_title(\"M3 FRED\")\n\nplt.tight_layout()\nplt.show()",
     "crumbs": [
       "Python Examples"
     ]
@@ -651,8 +347,8 @@
     "objectID": "examples-python.html#example-6-customizing-plots",
     "href": "examples-python.html#example-6-customizing-plots",
     "title": "Python Examples",
-    "section": "Example 6: Customizing Plots",
-    "text": "Example 6: Customizing Plots\n\nStyling with Matplotlib\n# Fit a model\nnp.random.seed(100)\nn = 500\nx = np.random.normal(size=n)\ny = np.random.binomial(1, 1/(1 + np.exp(-x)))\nX = sm.add_constant(x)\nmodel = sm.GLM(y, X, family=sm.families.Binomial()).fit()\n\n# Customize ffplot\nfig, ax = plt.subplots(figsize=(8, 6))\nffplot(model, ax=ax, color='steelblue', linewidth=2)\nax.set_xlabel(\"Theoretical\", fontsize=12, fontweight='bold')\nax.set_ylabel(\"Observed\", fontsize=12, fontweight='bold')\nax.set_title(\"Custom Function-Function Plot\",\n             fontsize=14, fontweight='bold')\nax.grid(True, alpha=0.3)\nplt.tight_layout()\nplt.show()\n\n# Customize fredplot\nfig, ax = plt.subplots(figsize=(10, 6))\nfredplot(model, x, type=\"kde\", ax=ax,\n         lowess=True, frac=0.5,\n         fill=True, cmap='viridis')\nax.set_xlabel(\"Predictor\", fontsize=12)\nax.set_ylabel(\"Functional Residual Density\", fontsize=12)\nax.set_title(\"Custom FRED Plot\", fontsize=14, fontweight='bold')\nplt.tight_layout()\nplt.show()\n\n\nUsing Seaborn Themes\nimport seaborn as sns\n\n# Set seaborn style\nsns.set_style(\"whitegrid\")\nsns.set_palette(\"husl\")\n\n# Create plots with seaborn styling\nfig, axes = plt.subplots(1, 2, figsize=(14, 5))\n\nffplot(model, ax=axes[0])\naxes[0].set_title(\"Seaborn Styled Fn-Fn Plot\", fontsize=12)\n\nfredplot(model, x, type=\"kde\", ax=axes[1], lowess=True)\naxes[1].set_title(\"Seaborn Styled FRED Plot\", fontsize=12)\n\nplt.tight_layout()\nplt.show()\n\n# Reset to default\nsns.reset_defaults()",
+    "section": "Example 6: customizing plots",
+    "text": "Example 6: customizing plots\n\nStyling with Matplotlib\n\n# Fit a model\nnp.random.seed(100)\nn = 500\nx = np.random.normal(size=n)\ny = np.random.binomial(1, 1/(1 + np.exp(-x)))\nX = sm.add_constant(x)\nmodel = sm.GLM(y, X, family=sm.families.Binomial()).fit()\n\n# Customize ffplot\nfig, ax = plt.subplots(figsize=(8, 6))\nffplot(model, ax=ax, color='steelblue', linewidth=2)\nax.set_xlabel(\"Theoretical\", fontsize=12, fontweight='bold')\nax.set_ylabel(\"Observed\", fontsize=12, fontweight='bold')\nax.set_title(\"Custom Function-Function Plot\",\n             fontsize=14, fontweight='bold')\nax.grid(True, alpha=0.3)\nplt.tight_layout()\nplt.show()\n\n# Customize fredplot\nfig, ax = plt.subplots(figsize=(10, 6))\nfredplot(model, x, type=\"kde\", ax=ax,\n         lowess=True, frac=0.5,\n         fill=True, cmap='viridis')\nax.set_xlabel(\"Predictor\", fontsize=12)\nax.set_ylabel(\"Functional Residual Density\", fontsize=12)\nax.set_title(\"Custom FRED Plot\", fontsize=14, fontweight='bold')\nplt.tight_layout()\nplt.show()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nUsing Seaborn themes\n\nimport seaborn as sns\n\n# Set seaborn style\nsns.set_style(\"whitegrid\")\nsns.set_palette(\"husl\")\n\n# Create plots with seaborn styling\nfig, axes = plt.subplots(1, 2, figsize=(14, 5))\n\nffplot(model, ax=axes[0])\naxes[0].set_title(\"Seaborn Styled Fn-Fn Plot\", fontsize=12)\n\nfredplot(model, x, type=\"kde\", ax=axes[1], lowess=True)\naxes[1].set_title(\"Seaborn Styled FRED Plot\", fontsize=12)\n\nplt.tight_layout()\nplt.show()\n\n# Reset to default\nsns.reset_defaults()",
     "crumbs": [
       "Python Examples"
     ]
@@ -661,48 +357,18 @@
     "objectID": "examples-python.html#example-7-large-datasets",
     "href": "examples-python.html#example-7-large-datasets",
     "title": "Python Examples",
-    "section": "Example 7: Large Datasets",
-    "text": "Example 7: Large Datasets\n\nEfficient Handling of Big Data\n# Large dataset\nnp.random.seed(12345)\nn = 50000\nx = np.random.normal(size=n)\ny = np.random.binomial(1, 1/(1 + np.exp(-x)))\nX = sm.add_constant(x)\nmodel = sm.GLM(y, X, family=sm.families.Binomial()).fit()\n\n# Use subsampling for faster plotting\nffplot(model, n=1000)  # Use only 1000 observations\nplt.title(\"Subsampled Fn-Fn Plot (n=1000)\")\nplt.show()\n\n# For FRED plots, sample the data\nidx = np.random.choice(n, 5000, replace=False)\nfredplot(model, x[idx], type=\"kde\")\nplt.title(\"FRED Plot (5000 samples)\")\nplt.show()",
+    "section": "Example 7: large datasets",
+    "text": "Example 7: large datasets\n\nEfficient handling of big data\n\n# Large dataset\nnp.random.seed(12345)\nn = 50000\nx_large = np.random.normal(size=n)\ny_large = np.random.binomial(1, 1/(1 + np.exp(-x_large)))\nX_large = sm.add_constant(x_large)\nmodel_large = sm.GLM(y_large, X_large, family=sm.families.Binomial()).fit()\n\n# Use subsampling for faster plotting\nffplot(model_large, n=1000)\nplt.title(\"Subsampled Fn-Fn Plot (n=1000)\")\nplt.show()\n\n# For FRED plots, use subsampling\nfredplot(model_large, x_large, type=\"kde\", n=5000)\nplt.title(\"FRED Plot (5000 samples)\")\nplt.show()",
     "crumbs": [
       "Python Examples"
     ]
   },
   {
-    "objectID": "examples-python.html#example-8-extracting-and-analyzing-residuals",
-    "href": "examples-python.html#example-8-extracting-and-analyzing-residuals",
+    "objectID": "examples-python.html#example-8-diagnostic-workflow",
+    "href": "examples-python.html#example-8-diagnostic-workflow",
     "title": "Python Examples",
-    "section": "Example 8: Extracting and Analyzing Residuals",
-    "text": "Example 8: Extracting and Analyzing Residuals\n\nCustom Analysis with Functional Residuals\n# Fit model\nnp.random.seed(789)\nn = 300\nx = np.random.normal(size=n)\ny = np.random.poisson(np.exp(1 + 0.5*x))\nX = sm.add_constant(x)\nmodel = sm.GLM(y, X, family=sm.families.Poisson()).fit()\n\n# Get functional residuals\nfres_list = fresiduals(model, type=\"function\")\n\n# Evaluate first functional residual at specific points\nt_vals = np.linspace(0, 1, 100)\nf1_vals = fres_list[0].cdf(t_vals)\n\nplt.figure(figsize=(10, 6))\nplt.plot(t_vals, f1_vals, linewidth=2)\nplt.plot([0, 1], [0, 1], 'r--', label='U(0,1)')\nplt.xlabel(\"t\", fontsize=12)\nplt.ylabel(\"F(t)\", fontsize=12)\nplt.title(\"First Functional Residual CDF\", fontsize=14)\nplt.legend()\nplt.grid(True, alpha=0.3)\nplt.show()\n\n# Get surrogate residuals for custom analysis\nsurr_res = fresiduals(model, type=\"surrogate\")\n\n# Create custom DataFrame for analysis\nimport pandas as pd\ndf_res = pd.DataFrame({\n    'x': x,\n    'y': y,\n    'fitted': model.fittedvalues,\n    'surrogate': surr_res,\n    'probscale': fresiduals(model, type=\"probscale\")\n})\n\n# Custom visualization\nfig, axes = plt.subplots(2, 2, figsize=(12, 10))\n\n# Scatter plot with density\naxes[0, 0].hexbin(df_res['x'], df_res['surrogate'], gridsize=20, cmap='Blues')\naxes[0, 0].axhline(y=0.5, color='r', linestyle='--')\naxes[0, 0].set_xlabel(\"Predictor\")\naxes[0, 0].set_ylabel(\"Surrogate Residual\")\naxes[0, 0].set_title(\"Hexbin Plot\")\n\n# Probability-scale residuals\naxes[0, 1].scatter(df_res['x'], df_res['probscale'], alpha=0.5)\naxes[0, 1].axhline(y=0, color='r', linestyle='--')\naxes[0, 1].set_xlabel(\"Predictor\")\naxes[0, 1].set_ylabel(\"Probability-scale Residual\")\naxes[0, 1].set_title(\"Probability-scale Residuals\")\n\n# Residuals vs fitted\naxes[1, 0].scatter(df_res['fitted'], df_res['surrogate'], alpha=0.5)\naxes[1, 0].axhline(y=0.5, color='r', linestyle='--')\naxes[1, 0].set_xlabel(\"Fitted Values\")\naxes[1, 0].set_ylabel(\"Surrogate Residual\")\naxes[1, 0].set_title(\"Residuals vs Fitted\")\n\n# Distribution of surrogate residuals\naxes[1, 1].hist(df_res['surrogate'], bins=30, edgecolor='black', alpha=0.7)\naxes[1, 1].axvline(x=0.5, color='r', linestyle='--', label='Expected Mean')\naxes[1, 1].set_xlabel(\"Surrogate Residual\")\naxes[1, 1].set_ylabel(\"Frequency\")\naxes[1, 1].set_title(\"Distribution of Residuals\")\naxes[1, 1].legend()\n\nplt.tight_layout()\nplt.show()",
-    "crumbs": [
-      "Python Examples"
-    ]
-  },
-  {
-    "objectID": "examples-python.html#example-9-integration-with-scikit-learn",
-    "href": "examples-python.html#example-9-integration-with-scikit-learn",
-    "title": "Python Examples",
-    "section": "Example 9: Integration with Scikit-learn",
-    "text": "Example 9: Integration with Scikit-learn\n\nUsing with Scikit-learn Pipelines\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\n\n# Generate data\nnp.random.seed(2025)\nn = 500\nX_raw = np.random.normal(size=(n, 3))\nbeta = np.array([0.5, -0.3, 0.8])\neta = 1 + X_raw @ beta\ny = np.random.poisson(np.exp(eta))\n\n# Standardize features\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X_raw)\n\n# Fit statsmodels GLM with scaled features\nX_scaled_const = sm.add_constant(X_scaled)\nmodel = sm.GLM(y, X_scaled_const, family=sm.families.Poisson()).fit()\n\n# Diagnostics\nfig, axes = plt.subplots(1, 3, figsize=(15, 4))\n\nffplot(model, ax=axes[0])\naxes[0].set_title(\"Fn-Fn Plot\")\n\nfredplot(model, X_scaled[:, 0], ax=axes[1])\naxes[1].set_xlabel(\"Standardized Feature 1\")\naxes[1].set_title(\"FRED: Feature 1\")\n\n# Compare predictions\nsurr_res = fresiduals(model, type=\"surrogate\")\naxes[2].scatter(model.fittedvalues, surr_res, alpha=0.5)\naxes[2].axhline(y=0.5, color='r', linestyle='--')\naxes[2].set_xlabel(\"Predicted Count\")\naxes[2].set_ylabel(\"Surrogate Residual\")\naxes[2].set_title(\"Residuals vs Predictions\")\n\nplt.tight_layout()\nplt.show()",
-    "crumbs": [
-      "Python Examples"
-    ]
-  },
-  {
-    "objectID": "examples-python.html#example-10-diagnostic-workflow",
-    "href": "examples-python.html#example-10-diagnostic-workflow",
-    "title": "Python Examples",
-    "section": "Example 10: Diagnostic Workflow",
-    "text": "Example 10: Diagnostic Workflow\n\nComplete Model Checking Procedure\ndef diagnostic_panel(model, x, title=\"Model Diagnostics\"):\n    \"\"\"\n    Create a comprehensive diagnostic panel for a fitted model.\n\n    Parameters:\n    -----------\n    model : statsmodels result object\n        Fitted GLM model\n    x : array-like\n        Primary predictor for FRED plots\n    title : str\n        Overall title for the panel\n    \"\"\"\n    fig = plt.figure(figsize=(16, 12))\n    gs = fig.add_gridspec(3, 3, hspace=0.3, wspace=0.3)\n\n    # Function-function plot\n    ax1 = fig.add_subplot(gs[0, 0])\n    ffplot(model, ax=ax1)\n    ax1.set_title(\"Function-Function Plot\")\n\n    # FRED plot\n    ax2 = fig.add_subplot(gs[0, 1])\n    fredplot(model, x, type=\"kde\", ax=ax2)\n    ax2.set_title(\"FRED Plot (KDE)\")\n\n    # FRED plot with hexbin\n    ax3 = fig.add_subplot(gs[0, 2])\n    fredplot(model, x, type=\"hex\", ax=ax3)\n    ax3.set_title(\"FRED Plot (Hexbin)\")\n\n    # Surrogate residuals vs predictor\n    ax4 = fig.add_subplot(gs[1, 0])\n    surr_res = fresiduals(model, type=\"surrogate\")\n    ax4.scatter(x, surr_res, alpha=0.5)\n    ax4.axhline(y=0.5, color='r', linestyle='--')\n    ax4.set_xlabel(\"Predictor\")\n    ax4.set_ylabel(\"Surrogate Residual\")\n    ax4.set_title(\"Surrogate Residuals vs X\")\n\n    # Surrogate residuals vs fitted\n    ax5 = fig.add_subplot(gs[1, 1])\n    ax5.scatter(model.fittedvalues, surr_res, alpha=0.5)\n    ax5.axhline(y=0.5, color='r', linestyle='--')\n    ax5.set_xlabel(\"Fitted Values\")\n    ax5.set_ylabel(\"Surrogate Residual\")\n    ax5.set_title(\"Residuals vs Fitted\")\n\n    # Distribution of surrogate residuals\n    ax6 = fig.add_subplot(gs[1, 2])\n    ax6.hist(surr_res, bins=30, edgecolor='black', alpha=0.7)\n    ax6.axvline(x=0.5, color='r', linestyle='--')\n    ax6.set_xlabel(\"Surrogate Residual\")\n    ax6.set_ylabel(\"Frequency\")\n    ax6.set_title(\"Residual Distribution\")\n\n    # Probability-scale residuals\n    ax7 = fig.add_subplot(gs[2, 0])\n    prob_res = fresiduals(model, type=\"probscale\")\n    ax7.scatter(x, prob_res, alpha=0.5)\n    ax7.axhline(y=0, color='r', linestyle='--')\n    ax7.set_xlabel(\"Predictor\")\n    ax7.set_ylabel(\"Probability-scale Residual\")\n    ax7.set_title(\"Probability-scale Residuals\")\n\n    # Model summary statistics\n    ax8 = fig.add_subplot(gs[2, 1:])\n    ax8.axis('off')\n    summary_text = f\"\"\"\n    Model Summary:\n    - AIC: {model.aic:.2f}\n    - BIC: {model.bic:.2f}\n    - Deviance: {model.deviance:.2f}\n    - Null Deviance: {model.null_deviance:.2f}\n    - Pseudo R²: {1 - model.deviance/model.null_deviance:.4f}\n    - Number of Observations: {model.nobs:.0f}\n    \"\"\"\n    ax8.text(0.1, 0.5, summary_text, fontsize=12,\n             verticalalignment='center', family='monospace')\n\n    fig.suptitle(title, fontsize=16, fontweight='bold')\n    plt.show()\n\n# Example usage\nnp.random.seed(999)\nn = 800\nx = np.random.normal(size=n)\ny = np.random.binomial(1, 1/(1 + np.exp(-x)))\nX = sm.add_constant(x)\nmodel = sm.GLM(y, X, family=sm.families.Binomial()).fit()\n\ndiagnostic_panel(model, x, title=\"Logistic Regression Diagnostics\")",
-    "crumbs": [
-      "Python Examples"
-    ]
-  },
-  {
-    "objectID": "examples-python.html#tips-and-tricks",
-    "href": "examples-python.html#tips-and-tricks",
-    "title": "Python Examples",
-    "section": "Tips and Tricks",
-    "text": "Tips and Tricks\n\n1. Choosing Plot Types\n\nKDE plots: Smoother, better for presentations\nHex plots: Faster for large datasets, shows density clearly\nTry both and see which reveals patterns better\n\n\n\n2. Working with Multiple Predictors\n# Loop through predictors\npredictors = [x1, x2, x3]\npred_names = ['X1', 'X2', 'X3']\n\nfig, axes = plt.subplots(1, 3, figsize=(15, 4))\nfor i, (pred, name) in enumerate(zip(predictors, pred_names)):\n    fredplot(model, pred, ax=axes[i], type=\"kde\")\n    axes[i].set_title(f\"FRED: {name}\")\nplt.tight_layout()\nplt.show()\n\n\n3. Saving High-Quality Figures\n# Create plot\nfig, ax = plt.subplots(figsize=(10, 6))\nffplot(model, ax=ax)\n\n# Save with high DPI\nplt.savefig('ffplot.png', dpi=300, bbox_inches='tight')\nplt.savefig('ffplot.pdf', bbox_inches='tight')  # Vector format\n\n\n4. Memory Efficiency\nFor very large datasets, work with subsamples:\n# Sample indices\nn_sample = 5000\nidx = np.random.choice(len(x), n_sample, replace=False)\n\n# Use sampled data\nfredplot(model, x[idx], type=\"kde\")",
+    "section": "Example 8: diagnostic workflow",
+    "text": "Example 8: diagnostic workflow\n\nComplete model checking procedure\n\ndef diagnostic_panel(model, x, title=\"Model Diagnostics\"):\n    fig = plt.figure(figsize=(16, 12))\n    gs = fig.add_gridspec(3, 3, hspace=0.3, wspace=0.3)\n\n    ax1 = fig.add_subplot(gs[0, 0])\n    ffplot(model, ax=ax1)\n    ax1.set_title(\"Function-Function Plot\")\n\n    ax2 = fig.add_subplot(gs[0, 1])\n    fredplot(model, x, type=\"kde\", ax=ax2)\n    ax2.set_title(\"FRED Plot (KDE)\")\n\n    ax3 = fig.add_subplot(gs[0, 2])\n    fredplot(model, x, type=\"hex\", ax=ax3)\n    ax3.set_title(\"FRED Plot (Hexbin)\")\n\n    ax4 = fig.add_subplot(gs[1, 0])\n    surr_res = fresiduals(model, type=\"surrogate\")\n    ax4.scatter(x, surr_res, alpha=0.5)\n    ax4.axhline(y=0.5, color='r', linestyle='--')\n    ax4.set_xlabel(\"Predictor\")\n    ax4.set_ylabel(\"Surrogate Residual\")\n    ax4.set_title(\"Surrogate Residuals vs X\")\n\n    ax5 = fig.add_subplot(gs[1, 1])\n    ax5.scatter(model.fittedvalues, surr_res, alpha=0.5)\n    ax5.axhline(y=0.5, color='r', linestyle='--')\n    ax5.set_xlabel(\"Fitted Values\")\n    ax5.set_ylabel(\"Surrogate Residual\")\n    ax5.set_title(\"Residuals vs Fitted\")\n\n    ax6 = fig.add_subplot(gs[1, 2])\n    ax6.hist(surr_res, bins=30, edgecolor='black', alpha=0.7)\n    ax6.axvline(x=0.5, color='r', linestyle='--')\n    ax6.set_xlabel(\"Surrogate Residual\")\n    ax6.set_ylabel(\"Frequency\")\n    ax6.set_title(\"Residual Distribution\")\n\n    ax7 = fig.add_subplot(gs[2, 0])\n    prob_res = fresiduals(model, type=\"probscale\")\n    ax7.scatter(x, prob_res, alpha=0.5)\n    ax7.axhline(y=0, color='r', linestyle='--')\n    ax7.set_xlabel(\"Predictor\")\n    ax7.set_ylabel(\"Probability-scale Residual\")\n    ax7.set_title(\"Probability-scale Residuals\")\n\n    ax8 = fig.add_subplot(gs[2, 1:])\n    ax8.axis('off')\n    summary_text = f\"\"\"\n    Model Summary:\n    - AIC: {model.aic:.2f}\n    - BIC: {model.bic:.2f}\n    - Deviance: {model.deviance:.2f}\n    - Pseudo R²: {1 - model.deviance/model.null_deviance:.4f}\n    - Number of Observations: {model.nobs:.0f}\n    \"\"\"\n    ax8.text(0.1, 0.5, summary_text, fontsize=12,\n             verticalalignment='center', family='monospace')\n\n    fig.suptitle(title, fontsize=16, fontweight='bold')\n    plt.show()\n\nnp.random.seed(999)\nn = 800\nx_diag = np.random.normal(size=n)\ny_diag = np.random.binomial(1, 1/(1 + np.exp(-x_diag)))\nX_diag = sm.add_constant(x_diag)\nmodel_diag = sm.GLM(y_diag, X_diag, family=sm.families.Binomial()).fit()\ndiagnostic_panel(model_diag, x_diag, title=\"Logistic Regression Diagnostics\")",
     "crumbs": [
       "Python Examples"
     ]
@@ -711,11 +377,308 @@
     "objectID": "examples-python.html#next-steps",
     "href": "examples-python.html#next-steps",
     "title": "Python Examples",
-    "section": "Next Steps",
-    "text": "Next Steps\n\nExplore R Examples for R-specific implementations\nLearn about the Methodology behind functional residuals\nCheck the Python API Reference for detailed function documentation\nRead the Contributing Guide to contribute new examples",
+    "section": "Next steps",
+    "text": "Next steps\n\nExplore R Examples for R-specific implementations\nLearn about the Methodology behind functional residuals\nCheck the Python API Reference for detailed function documentation",
     "crumbs": [
       "Python Examples"
     ]
+  },
+  {
+    "objectID": "contributing.html",
+    "href": "contributing.html",
+    "title": "Contributing",
+    "section": "",
+    "text": "We welcome contributions to unifres! Whether you’re reporting bugs, suggesting features, improving documentation, or contributing code, your help is appreciated.",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "contributing.html#quick-links",
+    "href": "contributing.html#quick-links",
+    "title": "Contributing",
+    "section": "Quick links",
+    "text": "Quick links\n\nGitHub Repository: https://github.com/bgreenwell/unifres\nIssue Tracker: https://github.com/bgreenwell/unifres/issues\nFull Contributing Guide: CONTRIBUTING.md",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "contributing.html#ways-to-contribute",
+    "href": "contributing.html#ways-to-contribute",
+    "title": "Contributing",
+    "section": "Ways to contribute",
+    "text": "Ways to contribute\n\n1. Report bugs\nFound a bug? Please open an issue with:\n\nClear title describing the problem\nSteps to reproduce the bug\nExpected vs actual behavior\nSystem information (R/Python version, OS)\nMinimal reproducible example\n\n\n\n2. Suggest enhancements\nHave an idea for a new feature? Create an issue describing:\n\nWhat problem it solves\nHow it would work\nExample use cases\nWhether you’d like to implement it\n\n\n\n3. Improve documentation\nDocumentation improvements are always welcome:\n\nFix typos or clarify existing docs\nAdd examples to function documentation\nWrite tutorials or vignettes\nImprove website content\n\n\n\n4. Contribute code\nReady to contribute code? Great!\n\nFor R:\n# Fork and clone the repository\n# Make your changes in r/unifres/\n\n# Run tests\ndevtools::test()\n\n# Check package\ndevtools::check()\n\n# Submit a pull request\n\n\nFor Python:\n# Fork and clone the repository\n# Make your changes in python/\n\n# Install in development mode\npip install -e \".[dev]\"\n\n# Run tests\npytest tests/ -v\n\n# Submit a pull request",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "contributing.html#development-workflow",
+    "href": "contributing.html#development-workflow",
+    "title": "Contributing",
+    "section": "Development workflow",
+    "text": "Development workflow\n\n1. Fork and clone\n# Fork the repository on GitHub\n# Then clone your fork\ngit clone https://github.com/YOUR-USERNAME/unifres.git\ncd unifres\n\n\n2. Create a branch\ngit checkout -b feature/your-feature-name\n# or\ngit checkout -b fix/your-bug-fix\n\n\n3. Make changes\n\nWrite clear, documented code\nAdd tests for new functionality\nFollow existing code style\nUpdate documentation as needed\n\n\n\n4. Test your changes\n\nR Package:\ndevtools::load_all()\ndevtools::test()\ndevtools::check()\n\n\nPython Package:\npytest tests/ -v --cov=unifres\n\n\n\n5. Commit and push\ngit add .\ngit commit -m \"Add feature: description of your changes\"\ngit push origin feature/your-feature-name\n\n\n6. Submit pull request\n\nGo to your fork on GitHub\nClick “New Pull Request”\nFill out the PR template\nLink any related issues",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "contributing.html#coding-standards",
+    "href": "contributing.html#coding-standards",
+    "title": "Contributing",
+    "section": "Coding standards",
+    "text": "Coding standards\n\nR code style\n\nFollow the tidyverse style guide\nUse &lt;- for assignment\nMaximum line length: 80 characters\nDocument with roxygen2\nInclude examples in documentation\n\n\n\nPython code style\n\nFollow PEP 8\nUse type hints\nMaximum line length: 88 characters\nNumPy-style docstrings\nInclude docstring examples",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "contributing.html#testing-guidelines",
+    "href": "contributing.html#testing-guidelines",
+    "title": "Contributing",
+    "section": "Testing guidelines",
+    "text": "Testing guidelines\n\nWrite good tests\n\nTest all new functionality\nInclude edge cases\nTest error conditions\nAim for &gt;80% coverage\nUse descriptive test names\n\n\n\nR testing\ntest_that(\"fresiduals works with binomial GLM\", {\n  # Arrange\n  fit &lt;- glm(y ~ x, family = binomial)\n\n  # Act\n  fres &lt;- fresiduals(fit)\n\n  # Assert\n  expect_s3_class(fres, \"unifres\")\n  expect_equal(length(fres), length(y))\n})\n\n\nPython testing\ndef test_fresiduals_binomial():\n    \"\"\"Test fresiduals with binomial GLM\"\"\"\n    # Arrange\n    model = sm.GLM(y, X, family=sm.families.Binomial()).fit()\n\n    # Act\n    fres = fresiduals(model)\n\n    # Assert\n    assert len(fres) == len(y)\n    assert all(hasattr(f, 'cdf') for f in fres)",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "contributing.html#documentation-standards",
+    "href": "contributing.html#documentation-standards",
+    "title": "Contributing",
+    "section": "Documentation standards",
+    "text": "Documentation standards\n\nR documentation\nUse roxygen2 with: - @param for parameters - @return for return values - @examples with working code - @export for public functions - @references for citations\n\n\nPython documentation\nUse NumPy-style docstrings with: - Parameters section - Returns section - Examples section - Notes section (if needed) - References section",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "contributing.html#pull-request-checklist",
+    "href": "contributing.html#pull-request-checklist",
+    "title": "Contributing",
+    "section": "Pull request checklist",
+    "text": "Pull request checklist\nBefore submitting a PR, ensure:\n\nCode follows style guidelines\nAll tests pass\nNew tests added for new features\nDocumentation updated\nNEWS.md updated (for user-facing changes)\nNo decrease in code coverage\nPR description clearly explains changes",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "contributing.html#code-review-process",
+    "href": "contributing.html#code-review-process",
+    "title": "Contributing",
+    "section": "Code review process",
+    "text": "Code review process\n\nMaintainers will review your PR\nThey may request changes\nMake requested changes and push to your branch\nOnce approved, maintainers will merge",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "contributing.html#getting-help",
+    "href": "contributing.html#getting-help",
+    "title": "Contributing",
+    "section": "Getting help",
+    "text": "Getting help\nNeed help contributing?\n\nCheck the full contributing guide\nOpen a discussion\nAsk questions in your PR or issue",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "contributing.html#recognition",
+    "href": "contributing.html#recognition",
+    "title": "Contributing",
+    "section": "Recognition",
+    "text": "Recognition\nAll contributors will be recognized in: - GitHub contributors page - DESCRIPTION file (for significant contributions) - Release notes",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "contributing.html#code-of-conduct",
+    "href": "contributing.html#code-of-conduct",
+    "title": "Contributing",
+    "section": "Code of conduct",
+    "text": "Code of conduct\nBe respectful and inclusive. We’re all here to improve unifres together.",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "contributing.html#license",
+    "href": "contributing.html#license",
+    "title": "Contributing",
+    "section": "License",
+    "text": "License\nBy contributing, you agree that your contributions will be licensed under the same license as the project (GPL-3 or later).\n\nThank you for contributing to unifres! Your efforts help make statistical software better for everyone.",
+    "crumbs": [
+      "Methodology",
+      "Contributing"
+    ]
+  },
+  {
+    "objectID": "reference_python/fredplot.html",
+    "href": "reference_python/fredplot.html",
+    "title": "fredplot",
+    "section": "",
+    "text": "fredplot(model, x, type='kde', lowess=False, frac=2 / 3, ax=None, **kwargs)\nCreate a Functional REsidual Density (FRED) plot.\nThis plot shows the density of the functional residuals against a continuous predictor variable, which is useful for identifying model misspecifications like missing non-linear terms.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nA fitted model object from statsmodels.\nrequired\n\n\nx\nnp.ndarray\nThe predictor variable to plot on the x-axis.\nrequired\n\n\ntype\nstr\nThe type of density plot to generate. One of {“kde”, “hex”}, by default “kde”.\n'kde'\n\n\nlowess\nbool\nIf True, add a LOWESS smooth to the plot, by default False.\nFalse\n\n\nfrac\nfloat\nThe fraction of data used when estimating each y-value of the LOWESS smooth, by default 2/3.\n2 / 3\n\n\nax\nmatplotlib.axes.Axes\nAn existing matplotlib Axes object to plot on. If None, a new figure and axes are created.\nNone\n\n\n**kwargs\ndict\nAdditional keyword arguments passed to the seaborn plotting function (e.g., sns.kdeplot or sns.jointplot).\n{}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\n\nmatplotlib.axes.Axes\nThe matplotlib Axes object containing the plot."
+  },
+  {
+    "objectID": "reference_python/fredplot.html#parameters",
+    "href": "reference_python/fredplot.html#parameters",
+    "title": "fredplot",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nA fitted model object from statsmodels.\nrequired\n\n\nx\nnp.ndarray\nThe predictor variable to plot on the x-axis.\nrequired\n\n\ntype\nstr\nThe type of density plot to generate. One of {“kde”, “hex”}, by default “kde”.\n'kde'\n\n\nlowess\nbool\nIf True, add a LOWESS smooth to the plot, by default False.\nFalse\n\n\nfrac\nfloat\nThe fraction of data used when estimating each y-value of the LOWESS smooth, by default 2/3.\n2 / 3\n\n\nax\nmatplotlib.axes.Axes\nAn existing matplotlib Axes object to plot on. If None, a new figure and axes are created.\nNone\n\n\n**kwargs\ndict\nAdditional keyword arguments passed to the seaborn plotting function (e.g., sns.kdeplot or sns.jointplot).\n{}"
+  },
+  {
+    "objectID": "reference_python/fredplot.html#returns",
+    "href": "reference_python/fredplot.html#returns",
+    "title": "fredplot",
+    "section": "",
+    "text": "Name\nType\nDescription\n\n\n\n\n\nmatplotlib.axes.Axes\nThe matplotlib Axes object containing the plot."
+  },
+  {
+    "objectID": "reference_python/utils.unifend.html",
+    "href": "reference_python/utils.unifend.html",
+    "title": "utils.unifend",
+    "section": "",
+    "text": "utils.unifend(model, y=None)\nCalculate the endpoints of the uniform residual distributions.\nFor each observation, this function computes the lower and upper bounds of the predicted cumulative distribution function, P(Y &lt; y) and P(Y &lt;= y).\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nA fitted model object from the statsmodels library.\nrequired\n\n\ny\nnp.ndarray\nThe observed response variable. If not provided, it will be extracted from the model object.\nNone\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\n\nnp.ndarray\nAn (n x 2) array where n is the number of observations. Each row contains the [lower, upper] endpoint for a residual’s uniform distribution.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\n\nValueError\nIf the model type is not a recognized statsmodels model."
+  },
+  {
+    "objectID": "reference_python/utils.unifend.html#parameters",
+    "href": "reference_python/utils.unifend.html#parameters",
+    "title": "utils.unifend",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nmodel\nobject\nA fitted model object from the statsmodels library.\nrequired\n\n\ny\nnp.ndarray\nThe observed response variable. If not provided, it will be extracted from the model object.\nNone"
+  },
+  {
+    "objectID": "reference_python/utils.unifend.html#returns",
+    "href": "reference_python/utils.unifend.html#returns",
+    "title": "utils.unifend",
+    "section": "",
+    "text": "Name\nType\nDescription\n\n\n\n\n\nnp.ndarray\nAn (n x 2) array where n is the number of observations. Each row contains the [lower, upper] endpoint for a residual’s uniform distribution."
+  },
+  {
+    "objectID": "reference_python/utils.unifend.html#raises",
+    "href": "reference_python/utils.unifend.html#raises",
+    "title": "utils.unifend",
+    "section": "",
+    "text": "Name\nType\nDescription\n\n\n\n\n\nValueError\nIf the model type is not a recognized statsmodels model."
+  },
+  {
+    "objectID": "reference_python/utils.expand_endpoints.html",
+    "href": "reference_python/utils.expand_endpoints.html",
+    "title": "utils.expand_endpoints",
+    "section": "",
+    "text": "utils.expand_endpoints(endpoints, resolution=101)\nExpand endpoint pairs into a series of points for plotting.\nThis is an internal convenience function used for creating density plots.\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\nDefault\n\n\n\n\nendpoints\nnp.ndarray\nAn (n x 2) array of [lower, upper] endpoints.\nrequired\n\n\nresolution\nint\nThe number of points to interpolate between each endpoint pair, by default 101.\n101\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nName\nType\nDescription\n\n\n\n\n\nnp.ndarray\nA flattened 1D array of the interpolated points."
+  },
+  {
+    "objectID": "reference_python/utils.expand_endpoints.html#parameters",
+    "href": "reference_python/utils.expand_endpoints.html#parameters",
+    "title": "utils.expand_endpoints",
+    "section": "",
+    "text": "Name\nType\nDescription\nDefault\n\n\n\n\nendpoints\nnp.ndarray\nAn (n x 2) array of [lower, upper] endpoints.\nrequired\n\n\nresolution\nint\nThe number of points to interpolate between each endpoint pair, by default 101.\n101"
+  },
+  {
+    "objectID": "reference_python/utils.expand_endpoints.html#returns",
+    "href": "reference_python/utils.expand_endpoints.html#returns",
+    "title": "utils.expand_endpoints",
+    "section": "",
+    "text": "Name\nType\nDescription\n\n\n\n\n\nnp.ndarray\nA flattened 1D array of the interpolated points."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "unifres: Unified Residual Diagnostics",
+    "section": "",
+    "text": "unifres provides a unified framework for residual diagnostics in generalized linear models (GLMs) and beyond. Available in both R and Python, the package implements the functional residual methodology described in Liu, Lin, & Zhang (2025), offering powerful diagnostic tools that work seamlessly across discrete and continuous outcomes."
+  },
+  {
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
+    "title": "unifres: Unified Residual Diagnostics",
+    "section": "",
+    "text": "unifres provides a unified framework for residual diagnostics in generalized linear models (GLMs) and beyond. Available in both R and Python, the package implements the functional residual methodology described in Liu, Lin, & Zhang (2025), offering powerful diagnostic tools that work seamlessly across discrete and continuous outcomes."
+  },
+  {
+    "objectID": "index.html#why-functional-residuals",
+    "href": "index.html#why-functional-residuals",
+    "title": "unifres: Unified Residual Diagnostics",
+    "section": "Why functional residuals?",
+    "text": "Why functional residuals?\nTraditional residual diagnostics struggle with discrete data:\n\nBinary outcomes: Residuals can only take two values\nCount data: Discrete nature creates artificial patterns\nOrdinal data: Difficult to interpret traditional residuals\n\nFunctional residuals solve these problems by representing the entire distribution of residual randomness, not just a single point estimate."
+  },
+  {
+    "objectID": "index.html#key-features",
+    "href": "index.html#key-features",
+    "title": "unifres: Unified Residual Diagnostics",
+    "section": "Key features",
+    "text": "Key features\n\n🎯 Unified framework\nA single approach that works for:\n\nBinary outcomes (logistic regression)\nCount outcomes (Poisson, negative binomial)\nOrdinal outcomes (proportional odds models)\nZero-inflated models\nContinuous outcomes (as a special case)\n\n\n\n📊 Powerful diagnostics\nTwo main diagnostic plots:\n\nFunction-Function (Fn-Fn) Plots: Assess overall model adequacy\nFunctional Residual Density (FRED) Plots: Identify specific model failures\n\n\n\n🔧 Three residual types\n\nFunctional: Full distribution objects (R functions, Python scipy distributions)\nSurrogate: Point residuals for traditional plots\nProbability-scale: Centered residuals for interpretation\n\n\n\n🚀 Easy to use\n# R\nlibrary(unifres)\nfit &lt;- glm(y ~ x, family = binomial)\nfresiduals(fit)\nffplot(fit)\nfredplot(fit, x = x)\n# Python\nfrom unifres import fresiduals, ffplot, fredplot\nmodel = sm.GLM(y, X, family=sm.families.Binomial()).fit()\nfresiduals(model)\nffplot(model)\nfredplot(model, x)"
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "unifres: Unified Residual Diagnostics",
+    "section": "Installation",
+    "text": "Installation\n\nRPython\n\n\n# Install from GitHub\nremotes::install_github(\"bgreenwell/unifres\", subdir = \"r/unifres\")\n\n\n# Install from GitHub\npip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python\n\n\n\n→ Full Installation Guide"
+  },
+  {
+    "objectID": "index.html#get-started",
+    "href": "index.html#get-started",
+    "title": "unifres: Unified Residual Diagnostics",
+    "section": "Get started",
+    "text": "Get started\n\n\n\n📚 Quick Start\n\n\nLearn the basics in 5 minutes\n\nGet Started →\n\n\n\n💻 Examples\n\n\nComprehensive examples for R and Python\n\nR Examples → Python Examples →\n\n\n\n📖 Methodology\n\n\nUnderstand the theory behind functional residuals\n\nLearn More →\n\n\n\n🔗 API Reference\n\n\nDetailed function documentation\n\nR API → Python API →"
+  },
+  {
+    "objectID": "index.html#supported-models",
+    "href": "index.html#supported-models",
+    "title": "unifres: Unified Residual Diagnostics",
+    "section": "Supported models",
+    "text": "Supported models\n\nR package\n\n✅ glm() - Binomial, Poisson, Quasi-Poisson families\n✅ MASS::glm.nb() - Negative Binomial\n✅ mgcv::gam() - Generalized Additive Models\n✅ VGAM::vglm() - Vector GLMs (ordinal regression)\n✅ pscl::zeroinfl() - Zero-Inflated Poisson\n\n\n\nPython package\n\n✅ statsmodels.GLM - Binomial, Poisson, Negative Binomial\n✅ statsmodels.NegativeBinomial - Discrete Negative Binomial\n✅ statsmodels.OrderedModel - Ordinal Regression"
+  },
+  {
+    "objectID": "index.html#citation",
+    "href": "index.html#citation",
+    "title": "unifres: Unified Residual Diagnostics",
+    "section": "Citation",
+    "text": "Citation\nIf you use unifres in your research, please cite:\n\nLiu, D., Lin, Z., & Zhang, H. (2025). A unified framework for residual diagnostics in generalized linear models and beyond. Journal of the American Statistical Association, 1–29. https://doi.org/10.1080/01621459.2025.2504037\n\n@article{liu2025unified,\n  title={A unified framework for residual diagnostics in generalized linear models and beyond},\n  author={Liu, Dungang and Lin, Zewei and Zhang, Heping},\n  journal={Journal of the American Statistical Association},\n  pages={1--29},\n  year={2025},\n  publisher={Taylor \\& Francis},\n  doi={10.1080/01621459.2025.2504037}\n}"
+  },
+  {
+    "objectID": "index.html#features-at-a-glance",
+    "href": "index.html#features-at-a-glance",
+    "title": "unifres: Unified Residual Diagnostics",
+    "section": "Features at a glance",
+    "text": "Features at a glance\n\n\n\nFeature\nR\nPython\n\n\n\n\nFunctional Residuals\n✅\n✅\n\n\nFn-Fn Plots\n✅\n✅\n\n\nFRED Plots\n✅\n✅\n\n\nSurrogate Residuals\n✅\n✅\n\n\nProbability-scale Residuals\n✅\n✅\n\n\nBinary Models\n✅\n✅\n\n\nCount Models\n✅\n✅\n\n\nNegative Binomial\n✅\n✅\n\n\nOrdinal Models\n✅\n✅\n\n\nZero-Inflated Models\n✅\n⏳\n\n\nGAMs\n✅\n⏳"
+  },
+  {
+    "objectID": "index.html#community",
+    "href": "index.html#community",
+    "title": "unifres: Unified Residual Diagnostics",
+    "section": "Community",
+    "text": "Community\n\nGitHub: https://github.com/bgreenwell/unifres\nIssues: Report bugs or request features\nContributing: How to contribute"
+  },
+  {
+    "objectID": "index.html#authors",
+    "href": "index.html#authors",
+    "title": "unifres: Unified Residual Diagnostics",
+    "section": "Authors",
+    "text": "Authors\n\nBrandon M. Greenwell - greenwell.brandon@gmail.com\nDungang Liu - dungang.liu@uc.edu\nZewei Lin - pqt19@txstate.edu"
+  },
+  {
+    "objectID": "index.html#license",
+    "href": "index.html#license",
+    "title": "unifres: Unified Residual Diagnostics",
+    "section": "License",
+    "text": "License\nBoth R and Python packages are licensed under GPL-3 or later.\n\n\nReady to improve your model diagnostics?\nGet Started"
   },
   {
     "objectID": "installation.html",
@@ -741,8 +704,8 @@
     "objectID": "installation.html#python-package",
     "href": "installation.html#python-package",
     "title": "Installation",
-    "section": "Python Package",
-    "text": "Python Package\n\nUsing pip\nInstall directly from GitHub:\npip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python\n\n\nUsing uv (Recommended)\nuv is a fast Python package manager:\nuv pip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python\n\n\nFrom Source\nClone the repository and install in development mode:\ngit clone https://github.com/bgreenwell/unifres.git\ncd unifres/python\npip install -e .\n\n\nDependencies\nThe Python package requires:\n\nnumpy (&gt;= 1.21.0)\nscipy (&gt;= 1.7.0)\npandas (&gt;= 1.3.0)\nmatplotlib (&gt;= 3.5.0)\nseaborn (&gt;= 0.11.0)\nstatsmodels (&gt;= 0.13.0)\nplotnine (&gt;= 0.10.0)\n\nThese are automatically installed when you install the package.\n\n\nVerify Installation\nAfter installation, verify that everything works:\nimport numpy as np\nimport statsmodels.api as sm\nfrom unifres import fresiduals, ffplot, fredplot\n\n# Generate simple test data\nnp.random.seed(123)\nx = np.random.normal(size=100)\ny = np.random.binomial(1, 1/(1 + np.exp(-x)))\nX = sm.add_constant(x)\nmodel = sm.GLM(y, X, family=sm.families.Binomial()).fit()\n\n# Test basic functionality\nfres = fresiduals(model)\nffplot(model)",
+    "section": "Python package",
+    "text": "Python package\n\nUsing pip\nInstall directly from GitHub:\npip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python\n\n\nUsing uv (recommended)\nuv is a fast Python package manager:\nuv pip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python\n\n\nFrom source\nClone the repository and install in development mode:\ngit clone https://github.com/bgreenwell/unifres.git\ncd unifres/python\npip install -e .\n\n\nDependencies\nThe Python package requires:\n\nnumpy (&gt;= 1.21.0)\nscipy (&gt;= 1.7.0)\npandas (&gt;= 1.3.0)\nmatplotlib (&gt;= 3.5.0)\nseaborn (&gt;= 0.11.0)\nstatsmodels (&gt;= 0.13.0)\nplotnine (&gt;= 0.10.0)\n\nThese are automatically installed when you install the package.\n\n\nVerify installation\nAfter installation, verify that everything works:\nimport numpy as np\nimport statsmodels.api as sm\nfrom unifres import fresiduals, ffplot, fredplot\n\n# Generate simple test data\nnp.random.seed(123)\nx = np.random.normal(size=100)\ny = np.random.binomial(1, 1/(1 + np.exp(-x)))\nX = sm.add_constant(x)\nmodel = sm.GLM(y, X, family=sm.families.Binomial()).fit()\n\n# Test basic functionality\nfres = fresiduals(model)\nffplot(model)",
     "crumbs": [
       "Installation"
     ]
@@ -751,8 +714,8 @@
     "objectID": "installation.html#system-requirements",
     "href": "installation.html#system-requirements",
     "title": "Installation",
-    "section": "System Requirements",
-    "text": "System Requirements\n\nR\n\nR &gt;= 4.0.0\nWorks on Windows, macOS, and Linux\n\n\n\nPython\n\nPython &gt;= 3.8\nWorks on Windows, macOS, and Linux",
+    "section": "System requirements",
+    "text": "System requirements\n\nR\n\nR &gt;= 4.0.0\nWorks on Windows, macOS, and Linux\n\n\n\nPython\n\nPython &gt;= 3.8\nWorks on Windows, macOS, and Linux",
     "crumbs": [
       "Installation"
     ]
@@ -762,7 +725,7 @@
     "href": "installation.html#troubleshooting",
     "title": "Installation",
     "section": "Troubleshooting",
-    "text": "Troubleshooting\n\nR Package Issues\nProblem: Error about missing suggested packages\nSolution: Install the missing optional dependencies:\ninstall.packages(c(\"hexbin\", \"lattice\", \"MASS\"))\nProblem: Installation fails on macOS\nSolution: Ensure you have Xcode Command Line Tools installed:\nxcode-select --install\n\n\nPython Package Issues\nProblem: Compilation errors during installation\nSolution: Upgrade pip and try again:\npip install --upgrade pip\npip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python\nProblem: Import errors after installation\nSolution: Ensure you’re using a clean Python environment:\npython -m venv venv\nsource venv/bin/activate  # On Windows: venv\\Scripts\\activate\npip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python",
+    "text": "Troubleshooting\n\nR package issues\nProblem: Error about missing suggested packages\nSolution: Install the missing optional dependencies:\ninstall.packages(c(\"hexbin\", \"lattice\", \"MASS\"))\nProblem: Installation fails on macOS\nSolution: Ensure you have Xcode Command Line Tools installed:\nxcode-select --install\n\n\nPython package issues\nProblem: Compilation errors during installation\nSolution: Upgrade pip and try again:\npip install --upgrade pip\npip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python\nProblem: Import errors after installation\nSolution: Ensure you’re using a clean Python environment:\npython -m venv venv\nsource venv/bin/activate  # On Windows: venv\\Scripts\\activate\npip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python",
     "crumbs": [
       "Installation"
     ]
@@ -771,8 +734,8 @@
     "objectID": "installation.html#development-installation",
     "href": "installation.html#development-installation",
     "title": "Installation",
-    "section": "Development Installation",
-    "text": "Development Installation\nFor contributors who want to modify the code:\n\nR Development\n# Clone and install in dev mode\ngit clone https://github.com/bgreenwell/unifres.git\ncd unifres/r/unifres\n\n# In R:\ndevtools::install_deps()\ndevtools::load_all()\ndevtools::test()\n\n\nPython Development\n# Clone and install in editable mode with dev dependencies\ngit clone https://github.com/bgreenwell/unifres.git\ncd unifres/python\npip install -e \".[dev]\"\n\n# Run tests\npytest tests/ -v\nSee the Contributing Guide for more details on development workflow.",
+    "section": "Development installation",
+    "text": "Development installation\nFor contributors who want to modify the code:\n\nR development\n# Clone and install in dev mode\ngit clone https://github.com/bgreenwell/unifres.git\ncd unifres/r/unifres\n\n# In R:\ndevtools::install_deps()\ndevtools::load_all()\ndevtools::test()\n\n\nPython development\n# Clone and install in editable mode with dev dependencies\ngit clone https://github.com/bgreenwell/unifres.git\ncd unifres/python\npip install -e \".[dev]\"\n\n# Run tests\npytest tests/ -v\nSee the Contributing Guide for more details on development workflow.",
     "crumbs": [
       "Installation"
     ]
@@ -801,8 +764,8 @@
     "objectID": "methodology.html#the-problem-with-traditional-residuals",
     "href": "methodology.html#the-problem-with-traditional-residuals",
     "title": "Methodology",
-    "section": "The Problem with Traditional Residuals",
-    "text": "The Problem with Traditional Residuals\n\nLimitations for Discrete Data\nTraditional residuals (Pearson, deviance, etc.) are point statistics that:\n\nCannot capture full residual randomness for discrete outcomes\nLack interpretability for binary and count data\nShow patterns even for correct models due to discrete data structure\nDepend on specific link functions, making comparisons difficult\n\n\n\nExample: Binary Outcome\nFor a logistic regression with outcome \\(Y \\in \\{0, 1\\}\\) and fitted probability \\(\\hat{p}\\):\n\nTraditional residuals can only take two values\nThis creates artificial patterns in diagnostic plots\nMakes it difficult to assess model adequacy",
+    "section": "The problem with traditional residuals",
+    "text": "The problem with traditional residuals\n\nLimitations for discrete data\nTraditional residuals (Pearson, deviance, etc.) are point statistics that:\n\nCannot capture full residual randomness for discrete outcomes\nLack interpretability for binary and count data\nShow patterns even for correct models due to discrete data structure\nDepend on specific link functions, making comparisons difficult\n\n\n\nExample: binary outcome\nFor a logistic regression with outcome \\(Y \\in \\{0, 1\\}\\) and fitted probability \\(\\hat{p}\\):\n\nTraditional residuals can only take two values\nThis creates artificial patterns in diagnostic plots\nMakes it difficult to assess model adequacy",
     "crumbs": [
       "Methodology"
     ]
@@ -811,8 +774,8 @@
     "objectID": "methodology.html#functional-residuals-the-solution",
     "href": "methodology.html#functional-residuals-the-solution",
     "title": "Methodology",
-    "section": "Functional Residuals: The Solution",
-    "text": "Functional Residuals: The Solution\n\nCore Concept\nInstead of point residuals, functional residuals represent the entire distribution of residual randomness:\n\\[F_i(t) = P(U_i \\leq t \\mid Y_i)\\]\nwhere \\(U_i\\) is a uniform random variable capturing the residual for observation \\(i\\).\n\n\nKey Properties\n\nUniform Distribution: Under a correctly specified model, \\(U_i \\sim \\text{Uniform}(0,1)\\)\nFull Information: Captures all residual randomness, not just a point estimate\nModel-Free: Works across all GLM families\nInterpretable: Direct probabilistic interpretation\n\n\n\nConstruction for Different Models\n\nBinary Outcomes (Logistic Regression)\nFor \\(Y_i \\in \\{0, 1\\}\\) with fitted probability \\(\\hat{p}_i\\):\nEndpoints: - If \\(Y_i = 0\\): \\(U_i \\in [0, 1-\\hat{p}_i]\\) - If \\(Y_i = 1\\): \\(U_i \\in [1-\\hat{p}_i, 1]\\)\n\n\nCount Outcomes (Poisson Regression)\nFor \\(Y_i \\in \\{0, 1, 2, ...\\}\\) with fitted rate \\(\\hat{\\lambda}_i\\):\nEndpoints: \\(U_i \\in [P(Y \\leq y_i - 1), P(Y \\leq y_i)]\\)",
+    "section": "Functional residuals: the solution",
+    "text": "Functional residuals: the solution\n\nCore concept\nInstead of point residuals, functional residuals represent the entire distribution of residual randomness:\n\\[F_i(t) = P(U_i \\leq t \\mid Y_i)\\]\nwhere \\(U_i\\) is a uniform random variable capturing the residual for observation \\(i\\).\n\n\nKey properties\n\nUniform Distribution: Under a correctly specified model, \\(U_i \\sim \\text{Uniform}(0,1)\\)\nFull Information: Captures all residual randomness, not just a point estimate\nModel-Free: Works across all GLM families\nInterpretable: Direct probabilistic interpretation\n\n\n\nConstruction for different models\n\nBinary outcomes (logistic regression)\nFor \\(Y_i \\in \\{0, 1\\}\\) with fitted probability \\(\\hat{p}_i\\):\nEndpoints: - If \\(Y_i = 0\\): \\(U_i \\in [0, 1-\\hat{p}_i]\\) - If \\(Y_i = 1\\): \\(U_i \\in [1-\\hat{p}_i, 1]\\)\n\n\nCount outcomes (Poisson regression)\nFor \\(Y_i \\in \\{0, 1, 2, ...\\}\\) with fitted rate \\(\\hat{\\lambda}_i\\):\nEndpoints: \\(U_i \\in [P(Y \\leq y_i - 1), P(Y \\leq y_i)]\\)",
     "crumbs": [
       "Methodology"
     ]
@@ -821,8 +784,8 @@
     "objectID": "methodology.html#diagnostic-tools",
     "href": "methodology.html#diagnostic-tools",
     "title": "Methodology",
-    "section": "Diagnostic Tools",
-    "text": "Diagnostic Tools\n\n1. Function-Function (Fn-Fn) Plots\nThe ffplot() function plots the average functional residual against the theoretical CDF:\n\\[\\bar{F}(t) = \\frac{1}{n}\\sum_{i=1}^n F_i(t) \\quad \\text{vs} \\quad t\\]\nInterpretation: - Good fit: \\(\\bar{F}(t) \\approx t\\) (points follow diagonal) - Poor fit: Systematic deviations from diagonal - Analogous to Q-Q plots but for functional residuals\nMathematical Basis: Under correct model specification: \\(\\mathbb{E}[F_i(t)] = t\\) for all \\(t \\in [0,1]\\)\n\n\n2. Functional Residual Density (FRED) Plots\nThe fredplot() function visualizes the density of functional residuals against covariates:\nConstruction: 1. Expand each \\(F_i\\) into dense grid of points 2. Create 2D density plot: covariate vs residual value 3. Add LOESS smoother to detect patterns\nInterpretation: - Good fit: Uniform horizontal band - Poor fit: Patterns indicate: - Curvature → Missing polynomial terms - Funneling → Heteroscedasticity - Gaps → Zero-inflation or structural issues\n\n\n3. Derived Residuals\nFrom functional residuals, we can derive point-based residuals:\n\nSurrogate Residuals\nRandom sample from the functional residual distribution:\n\\[r_i^{(s)} \\sim F_i\\]\nUse: Traditional residual plots, quick diagnostics\n\n\nProbability-Scale Residuals\nExpected value of the functional residual:\n\\[r_i^{(p)} = \\mathbb{E}[U_i] - 0.5\\]\nwhere the mean is computed from the endpoints of \\(U_i\\).\nUse: Centered at 0, similar to traditional residuals",
+    "section": "Diagnostic tools",
+    "text": "Diagnostic tools\n\n1. Function-Function (Fn-Fn) Plots\nThe ffplot() function plots the average functional residual against the theoretical CDF:\n\\[\\bar{F}(t) = \\frac{1}{n}\\sum_{i=1}^n F_i(t) \\quad \\text{vs} \\quad t\\]\nInterpretation: - Good fit: \\(\\bar{F}(t) \\approx t\\) (points follow diagonal) - Poor fit: Systematic deviations from diagonal - Analogous to Q-Q plots but for functional residuals\nMathematical Basis: Under correct model specification: \\(\\mathbb{E}[F_i(t)] = t\\) for all \\(t \\in [0,1]\\)\n\n\n2. Functional Residual Density (FRED) Plots\nThe fredplot() function visualizes the density of functional residuals against covariates:\nConstruction: 1. Expand each \\(F_i\\) into dense grid of points 2. Create 2D density plot: covariate vs residual value 3. Add LOESS smoother to detect patterns\nInterpretation: - Good fit: Uniform horizontal band - Poor fit: Patterns indicate: - Curvature → Missing polynomial terms - Funneling → Heteroscedasticity - Gaps → Zero-inflation or structural issues\n\n\n3. Derived residuals\nFrom functional residuals, we can derive point-based residuals:\n\nSurrogate residuals\nRandom sample from the functional residual distribution:\n\\[r_i^{(s)} \\sim F_i\\]\nUse: Traditional residual plots, quick diagnostics\n\n\nProbability-scale residuals\nExpected value of the functional residual:\n\\[r_i^{(p)} = 2\\mathbb{E}[U_i] - 1\\]\nwhich centers the residuals at 0 with range [-1, 1].\nUse: Centered at 0, similar to traditional residuals",
     "crumbs": [
       "Methodology"
     ]
@@ -831,8 +794,8 @@
     "objectID": "methodology.html#advantages-over-traditional-methods",
     "href": "methodology.html#advantages-over-traditional-methods",
     "title": "Methodology",
-    "section": "Advantages Over Traditional Methods",
-    "text": "Advantages Over Traditional Methods\n\n1. Unified Framework\nSingle approach works for: - Binary outcomes (logistic regression) - Count outcomes (Poisson, negative binomial) - Ordinal outcomes (proportional odds models) - Zero-inflated models - Continuous outcomes (as special case)\n\n\n2. Meaningful Interpretation\n\nResiduals have probabilistic interpretation\nUniform(0,1) under null hypothesis\nEasy to communicate to non-statisticians\n\n\n\n3. Better Power\nFunctional residuals can detect departures that traditional methods miss:\n\nMissing interaction terms\nIncorrect link functions\nUnmodeled heterogeneity\n\n\n\n4. Visual Clarity\nFRED plots provide clearer visual diagnostics than traditional residual plots for discrete data.",
+    "section": "Advantages over traditional methods",
+    "text": "Advantages over traditional methods\n\n1. Unified framework\nSingle approach works for: - Binary outcomes (logistic regression) - Count outcomes (Poisson, negative binomial) - Ordinal outcomes (proportional odds models) - Zero-inflated models - Continuous outcomes (as special case)\n\n\n2. Meaningful interpretation\n\nResiduals have probabilistic interpretation\nUniform(0,1) under null hypothesis\nEasy to communicate to non-statisticians\n\n\n\n3. Better power\nFunctional residuals can detect departures that traditional methods miss:\n\nMissing interaction terms\nIncorrect link functions\nUnmodeled heterogeneity\n\n\n\n4. Visual clarity\nFRED plots provide clearer visual diagnostics than traditional residual plots for discrete data.",
     "crumbs": [
       "Methodology"
     ]
@@ -841,8 +804,8 @@
     "objectID": "methodology.html#theoretical-foundation",
     "href": "methodology.html#theoretical-foundation",
     "title": "Methodology",
-    "section": "Theoretical Foundation",
-    "text": "Theoretical Foundation\n\nProbability Integral Transform\nFor continuous random variable \\(X\\) with CDF \\(F\\): \\[F(X) \\sim \\text{Uniform}(0,1)\\]\nFor discrete outcomes, functional residuals extend this via interval representation.\n\n\nAsymptotic Properties\nUnder regularity conditions:\n\nConsistency: \\(\\bar{F}(t) \\xrightarrow{p} t\\) for all \\(t\\)\nAsymptotic Normality: \\(\\sqrt{n}(\\bar{F}(t) - t)\\) is asymptotically normal\nWeak Convergence: Enables formal hypothesis tests for model adequacy",
+    "section": "Theoretical foundation",
+    "text": "Theoretical foundation\n\nProbability integral transform\nFor continuous random variable \\(X\\) with CDF \\(F\\): \\[F(X) \\sim \\text{Uniform}(0,1)\\]\nFor discrete outcomes, functional residuals extend this via interval representation.\n\n\nAsymptotic properties\nUnder regularity conditions:\n\nConsistency: \\(\\bar{F}(t) \\xrightarrow{p} t\\) for all \\(t\\)\nAsymptotic Normality: \\(\\sqrt{n}(\\bar{F}(t) - t)\\) is asymptotically normal\nWeak Convergence: Enables formal hypothesis tests for model adequacy",
     "crumbs": [
       "Methodology"
     ]
@@ -851,8 +814,8 @@
     "objectID": "methodology.html#comparison-to-existing-methods",
     "href": "methodology.html#comparison-to-existing-methods",
     "title": "Methodology",
-    "section": "Comparison to Existing Methods",
-    "text": "Comparison to Existing Methods\n\n\n\n\n\n\n\n\n\n\nMethod\nData Type\nInterpretability\nPower\nVisualization\n\n\n\n\nPearson\nAll\nModerate\nLow for discrete\nPoor for discrete\n\n\nDeviance\nAll\nLow\nModerate\nPoor for discrete\n\n\nQuantile\nContinuous\nHigh\nHigh\nGood\n\n\nRandomized Quantile\nDiscrete\nModerate\nModerate\nModerate\n\n\nFunctional Residuals\nAll\nHigh\nHigh\nExcellent",
+    "section": "Comparison to existing methods",
+    "text": "Comparison to existing methods\n\n\n\n\n\n\n\n\n\n\nMethod\nData Type\nInterpretability\nPower\nVisualization\n\n\n\n\nPearson\nAll\nModerate\nLow for discrete\nPoor for discrete\n\n\nDeviance\nAll\nLow\nModerate\nPoor for discrete\n\n\nQuantile\nContinuous\nHigh\nHigh\nGood\n\n\nRandomized Quantile\nDiscrete\nModerate\nModerate\nModerate\n\n\nFunctional Residuals\nAll\nHigh\nHigh\nExcellent",
     "crumbs": [
       "Methodology"
     ]
@@ -861,8 +824,8 @@
     "objectID": "methodology.html#implementation-details",
     "href": "methodology.html#implementation-details",
     "title": "Methodology",
-    "section": "Implementation Details",
-    "text": "Implementation Details\n\nResolution Parameter\nBoth R and Python implementations use a resolution parameter (default 101):\n\nControls the grid density for expanding functional residuals\nHigher resolution → smoother plots but slower computation\nRecommendation: 51-201 depending on dataset size\n\n\n\nLink Scale vs Probability Scale\nFor surrogate residuals in R:\n\nlink.scale = FALSE: Residuals on probability scale [0,1]\nlink.scale = TRUE: Residuals on link scale (e.g., logit)\n\nDefault is TRUE for consistency with traditional GLM residuals.\n\n\nComputational Complexity\n\nFunctional residuals: \\(O(n)\\) computation\nFn-Fn plot: \\(O(n \\times r)\\) where \\(r\\) is resolution\nFRED plot: \\(O(n \\times r)\\) plus density estimation\n\nFor large datasets (\\(n &gt; 10,000\\)), consider subsampling for visualization.",
+    "section": "Implementation details",
+    "text": "Implementation details\n\nResolution parameter\nBoth R and Python implementations use a resolution parameter (default 101):\n\nControls the grid density for expanding functional residuals\nHigher resolution → smoother plots but slower computation\nRecommendation: 51-201 depending on dataset size\n\n\n\nLink scale vs probability scale\nFor surrogate residuals in R:\n\nlink.scale = FALSE: Residuals on probability scale [0,1]\nlink.scale = TRUE: Residuals on link scale (e.g., logit)\n\nDefault is TRUE for consistency with traditional GLM residuals.\n\n\nComputational complexity\n\nFunctional residuals: \\(O(n)\\) computation\nFn-Fn plot: \\(O(n \\times r)\\) where \\(r\\) is resolution\nFRED plot: \\(O(n \\times r)\\) plus density estimation\n\nFor large datasets (\\(n &gt; 10,000\\)), consider subsampling for visualization.",
     "crumbs": [
       "Methodology"
     ]
@@ -871,8 +834,8 @@
     "objectID": "methodology.html#extended-applications",
     "href": "methodology.html#extended-applications",
     "title": "Methodology",
-    "section": "Extended Applications",
-    "text": "Extended Applications\n\nBeyond GLMs\nThe framework extends to:\n\nGeneralized Additive Models (GAMs) - R package supports mgcv::gam()\nZero-Inflated Models - R package supports pscl::zeroinfl()\nOrdinal Regression - R package supports VGAM::vglm()\n\n\n\nFuture Extensions\nPotential applications include:\n\nSurvival models (censored data)\nMixed effects models\nTime series models\nSpatial models",
+    "section": "Extended applications",
+    "text": "Extended applications\n\nBeyond GLMs\nThe framework extends to:\n\nGeneralized Additive Models (GAMs) - R package supports mgcv::gam()\nZero-Inflated Models - R package supports pscl::zeroinfl()\nOrdinal Regression - R package supports VGAM::vglm()\n\n\n\nFuture extensions\nPotential applications include:\n\nSurvival models (censored data)\nMixed effects models\nTime series models\nSpatial models",
     "crumbs": [
       "Methodology"
     ]
@@ -891,8 +854,8 @@
     "objectID": "methodology.html#mathematical-notation",
     "href": "methodology.html#mathematical-notation",
     "title": "Methodology",
-    "section": "Mathematical Notation",
-    "text": "Mathematical Notation\n\n\n\nSymbol\nMeaning\n\n\n\n\n\\(Y_i\\)\nObserved outcome for observation \\(i\\)\n\n\n\\(\\hat{p}_i\\)\nFitted probability (binary models)\n\n\n\\(\\hat{\\lambda}_i\\)\nFitted rate (count models)\n\n\n\\(F_i(t)\\)\nFunctional residual CDF for observation \\(i\\)\n\n\n\\(U_i\\)\nUniform random variable representing residual\n\n\n\\(r_i^{(s)}\\)\nSurrogate residual\n\n\n\\(r_i^{(p)}\\)\nProbability-scale residual",
+    "section": "Mathematical notation",
+    "text": "Mathematical notation\n\n\n\nSymbol\nMeaning\n\n\n\n\n\\(Y_i\\)\nObserved outcome for observation \\(i\\)\n\n\n\\(\\hat{p}_i\\)\nFitted probability (binary models)\n\n\n\\(\\hat{\\lambda}_i\\)\nFitted rate (count models)\n\n\n\\(F_i(t)\\)\nFunctional residual CDF for observation \\(i\\)\n\n\n\\(U_i\\)\nUniform random variable representing residual\n\n\n\\(r_i^{(s)}\\)\nSurrogate residual\n\n\n\\(r_i^{(p)}\\)\nProbability-scale residual",
     "crumbs": [
       "Methodology"
     ]
@@ -901,8 +864,8 @@
     "objectID": "methodology.html#next-steps",
     "href": "methodology.html#next-steps",
     "title": "Methodology",
-    "section": "Next Steps",
-    "text": "Next Steps\n\nTry the Quick Start examples\nExplore detailed R Examples and Python Examples\nCheck the API reference: R | Python",
+    "section": "Next steps",
+    "text": "Next steps\n\nTry the Quick Start examples\nExplore detailed R Examples and Python Examples\nCheck the API reference: R | Python",
     "crumbs": [
       "Methodology"
     ]

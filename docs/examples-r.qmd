@@ -95,7 +95,7 @@ abline(h = 0.5, col = "red", lty = 2)
 #| message: false
 #| fig-width: 8
 #| fig-height: 5
-library(MASS)  # For rnegbin function
+library(MASS)  # For rnegbin and glm.nb functions
 
 # Generate overdispersed count data
 set.seed(123)
@@ -108,13 +108,13 @@ y <- rnegbin(n, mu = mu, theta = 2)
 # Fit Poisson (wrong)
 fit_pois <- glm(y ~ x, family = poisson)
 
-# Fit Quasi-Poisson (correct)
-fit_qpois <- glm(y ~ x, family = quasipoisson)
+# Fit Negative Binomial (correct)
+fit_nb <- glm.nb(y ~ x)
 
 # Compare
 par(mfrow = c(1, 2))
 ffplot(fit_pois, main = "Poisson")
-ffplot(fit_qpois, main = "Quasi-Poisson")
+ffplot(fit_nb, main = "Negative Binomial")
 ```
 
 ---
@@ -315,6 +315,12 @@ fredplot(fit3, x = x1, type = "hex", main = "M3 FRED")
 #| cache: true
 #| fig-width: 8
 #| fig-height: 5
+# Generate data
+set.seed(123)
+n <- 500
+x <- rnorm(n)
+y <- rbinom(n, size = 1, prob = plogis(x))
+
 # Fit a model
 fit <- glm(y ~ x, family = binomial)
 
@@ -403,6 +409,12 @@ fredplot(fit, x = x[idx], type = "hex")
 #| cache: true
 #| fig-width: 8
 #| fig-height: 5
+# Generate data
+set.seed(42)
+n <- 500
+x <- rnorm(n)
+y <- rpois(n, exp(0.5 + 0.3*x))
+
 # Fit model
 fit <- glm(y ~ x, family = poisson)
 
@@ -461,6 +473,13 @@ ggplot(df, aes(x = x, y = residual)) +
 # Comprehensive diagnostic panel
 par(mfrow = c(2, 3))
 
+# Fit model on smaller dataset
+set.seed(42)
+n <- 500
+x <- rnorm(n)
+y <- rpois(n, exp(0.5 + 0.3*x))
+fit <- glm(y ~ x, family = poisson)
+
 # Functional residual diagnostics
 ffplot(fit, main = "Fn-Fn Plot")
 fredplot(fit, x = x, type = "hex", main = "FRED Plot")
@@ -476,7 +495,7 @@ plot(fit, which = 5)  # Residuals vs Leverage
 
 ## Next steps
 
-- Explore [Python Examples](examples-python.qmd) for Python-specific implementations
+- Explore [Python Examples](examples-python.ipynb) for Python-specific implementations
 - Learn about the [Methodology](methodology.qmd) behind functional residuals
 - Check the [R API Reference](reference_r/index.qmd) for detailed function documentation
 - Read the [Contributing Guide](contributing.qmd) to contribute new examples
