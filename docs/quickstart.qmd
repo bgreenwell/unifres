@@ -10,7 +10,17 @@ execute:
 #| cache: false
 # Ensure reticulate uses the correct Python environment
 library(reticulate)
-use_python("/Users/greenwbm/Dropbox/devel/unifres/python/.venv/bin/python", required = TRUE)
+# Use local venv if it exists, otherwise use system Python
+local_python <- "python/.venv/bin/python"
+if (file.exists(file.path("..", local_python))) {
+  use_python(file.path("..", local_python), required = TRUE)
+} else if (nzchar(Sys.getenv("RETICULATE_PYTHON"))) {
+  # Use environment variable if set (for CI/CD)
+  use_python(Sys.getenv("RETICULATE_PYTHON"), required = TRUE)
+} else {
+  # Auto-detect system Python
+  use_python(Sys.which("python3"), required = FALSE)
+}
 ```
 
 This guide will get you up and running with **unifres** in just a few minutes.
