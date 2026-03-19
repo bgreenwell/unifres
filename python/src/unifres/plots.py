@@ -17,6 +17,7 @@ def fredplot(
     type: str = "kde",
     lowess: bool = False,
     frac: float = 2 / 3,
+    n: Optional[int] = None,
     ax=None,
     **kwargs,
 ) -> plt.Axes:
@@ -40,6 +41,9 @@ def fredplot(
     frac : float, optional
         The fraction of data used when estimating each y-value of the
         LOWESS smooth, by default 2/3.
+    n : int, optional
+        The number of observations to subsample, by default None
+        (use all).
     ax : matplotlib.axes.Axes, optional
         An existing matplotlib Axes object to plot on. If None, a new
         figure and axes are created.
@@ -56,6 +60,23 @@ def fredplot(
         fig, ax = plt.subplots()
 
     endpoints = unifend(model)
+
+    # Subsample if requested
+    if n is not None and n < len(endpoints):
+        if len(x) != len(endpoints):
+             raise ValueError(
+                 f"Length of 'x' ({len(x)}) must match length of model residuals "
+                 f"({len(endpoints)}) when subsampling with 'n'."
+             )
+        indices = np.random.choice(len(endpoints), n, replace=False)
+        endpoints = endpoints[indices]
+        x = x[indices]
+
+    if len(x) != len(endpoints):
+        raise ValueError(
+            f"Length of 'x' ({len(x)}) does not match length of model residuals ({len(endpoints)})."
+        )
+
     df = pd.DataFrame(
         {"x": np.repeat(x, 101), "y": expand_endpoints(endpoints, resolution=101)}
     )

@@ -24,11 +24,18 @@
 #' @param ref.lty Character string or integer specifying the line type to use
 #' for the 45-degree reference line. Default is `"dashed"`.
 #'
+#' @param xlab Character string specifying the label to use for the x-axis.
+#' Default is `"t"`.
+#'
+#' @param ylab Character string specifying the label to use for the y-axis.
+#' Default is `"Mean residual"`.
+#'
 #' @param ... Additional optional arguments pass to [plot()][base::plot].
 #'
 #' @export
 ffplot <- function(object, resolution = 101, n = NULL, ref.col = 2,
-                   ref.lwd = 1, ref.lty = "dashed", ...) {
+                   ref.lwd = 1, ref.lty = "dashed", xlab = "t",
+                   ylab = "Mean residual", ...) {
   UseMethod("ffplot")
 }
 
@@ -36,7 +43,8 @@ ffplot <- function(object, resolution = 101, n = NULL, ref.col = 2,
 #' @rdname ffplot
 #' @export
 ffplot.unifres <- function(object, resolution = 101, n = NULL, ref.col = 2,
-                          ref.lwd = 1, ref.lty = "dashed", ...) {
+                          ref.lwd = 1, ref.lty = "dashed", xlab = "t",
+                          ylab = "Mean residual", ...) {
   tvals <- seq(from = 0, to = 1, length = resolution)
   if (!is.null(n)) {
     idx <- sample.int(length(object), size = n, replace = FALSE)
@@ -45,7 +53,7 @@ ffplot.unifres <- function(object, resolution = 101, n = NULL, ref.col = 2,
   Ft <- vapply(tvals, FUN.VALUE = numeric(1), FUN = function(tval) {
     mean(sapply(object, FUN = do.call, list(tval)))
   })
-  plot(tvals, y = Ft, xlab = "t", ylab = "Mean residual", ...)
+  plot(tvals, y = Ft, xlab = xlab, ylab = ylab, ...)
   abline(0, 1, col = ref.col, lwd = ref.lwd, lty = ref.lty)
 }
 
@@ -53,7 +61,8 @@ ffplot.unifres <- function(object, resolution = 101, n = NULL, ref.col = 2,
 #' @rdname ffplot
 #' @export
 ffplot.default <- function(object, resolution = 101, n = NULL, ref.col = 1,
-                           ref.lwd = 1, ref.lty = "dashed", ...) {
+                           ref.lwd = 1, ref.lty = "dashed", xlab = "t",
+                           ylab = "Mean residual", ...) {
   tvals <- seq(from = 0, to = 1, length = resolution)
   fres <- fresiduals(object, type = "function")
   if (!is.null(n)) {
@@ -63,6 +72,6 @@ ffplot.default <- function(object, resolution = 101, n = NULL, ref.col = 1,
   Ft <- vapply(tvals, FUN.VALUE = numeric(1), FUN = function(tval) {
     mean(sapply(fres, FUN = do.call, list(tval)))
   })
-  plot(tvals, y = Ft, xlab = "t", ylab = "Mean residual", ...)
+  plot(tvals, y = Ft, xlab = xlab, ylab = ylab, ...)
   abline(0, 1, col = ref.col, lwd = ref.lwd, lty = ref.lty)
 }

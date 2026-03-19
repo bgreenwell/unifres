@@ -1,0 +1,17 @@
+{
+  "hash": "618e54cf7a9ad0a27846a650546cbd02",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Test Output Capture\"\n---\n\n## R Test\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# Simple R plot\nx <- 1:10\ny <- x^2\nplot(x, y, main=\"Test Plot\", col=\"blue\", pch=19)\n```\n\n::: {.cell-output-display}\n![](test_output_files/figure-html/unnamed-chunk-1-1.png)\n:::\n:::\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# Another plot\nhist(rnorm(1000), main=\"Histogram Test\", col=\"lightblue\")\n```\n\n::: {.cell-output-display}\n![](test_output_files/figure-html/unnamed-chunk-2-1.png)\n:::\n:::\n\n\n## Test complete\n\nThis is a test to verify output capture is working.\n",
+    "supporting": [
+      "test_output_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

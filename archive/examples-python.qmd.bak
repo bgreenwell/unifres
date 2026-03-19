@@ -1,13 +1,25 @@
 ---
 title: "Python Examples"
+execute:
+  output: true
+  cache: true
+jupyter: unifres
 ---
 
 This page provides comprehensive examples of using **unifres** with various model types in Python.
 
 ```{python}
-#| include: false
 import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+import seaborn as sns
+from unifres import fresiduals, ffplot, fredplot
+
 matplotlib.use('Agg')
+print("Environment check: unifres examples-python starting...")
 ```
 
 ## Example 1: logistic regression
@@ -376,9 +388,8 @@ ffplot(model, n=1000)  # Use only 1000 observations
 plt.title("Subsampled Fn-Fn Plot (n=1000)")
 plt.show()
 
-# For FRED plots, sample the data
-idx = np.random.choice(n, 5000, replace=False)
-fredplot(model, x[idx], type="kde")
+# For FRED plots, use subsampling
+fredplot(model, x, type="kde", n=5000)
 plt.title("FRED Plot (5000 samples)")
 plt.show()
 ```
@@ -661,12 +672,9 @@ For very large datasets, work with subsamples:
 
 ```{python}
 #| warning: false
-# Sample indices
+# Use subsampling with 'n' parameter
 n_sample = 5000
-idx = np.random.choice(len(x), n_sample, replace=False)
-
-# Use sampled data
-fredplot(model, x[idx], type="kde")
+fredplot(model, x, type="kde", n=n_sample)
 ```
 
 ---

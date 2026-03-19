@@ -24,14 +24,18 @@ The R package uses standard `devtools` workflows.
 - **Check Package:** `devtools::check("r/unifres")`
 
 ### Python Package (`python/`)
-The Python package uses `uv` or `pip` for environment management.
+The Python package uses `uv` for environment management.
+- **Setup Environment:** `uv sync --extra docs --extra dev`
 - **Install (Editable):** `pip install -e "python/.[dev]"`
 - **Run Tests:** `pytest python/tests/ -v --cov=unifres`
 - **Build Package:** `hatch build python/`
 
 ### Documentation Site
-- **Render Site:** `quarto render docs`
-- **Preview Site:** `quarto preview docs`
+The documentation site is built with Quarto. To ensure Python output and graphics are captured correctly:
+- **Render Site:** `export QUARTO_PYTHON="python/.venv/bin/python" && quarto render docs --execute`
+- **Python Examples:** Python examples are maintained in `docs/examples-python.ipynb` (Jupyter Notebook) instead of `.qmd` to ensure reliable figure capture by the Jupyter engine.
+- **R/Python Hybrid:** For hybrid files (like `quickstart.qmd`), `reticulate` is used in R to call Python. Ensure `use_python()` points to the `.venv` path.
+- **Subsampling:** When working with large datasets in examples, use the `n` parameter in `ffplot` and `fredplot` (e.g., `n=1000`) to keep rendering times manageable.
 
 ---
 
