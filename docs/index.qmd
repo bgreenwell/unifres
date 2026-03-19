@@ -88,9 +88,9 @@ pip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python
 <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 2rem 0;">
 
 <div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px;">
-<h3>📚 Quick Start</h3>
-<p>Learn the basics in 5 minutes</p>
-<a href="quickstart.qmd">Get Started →</a>
+<h3>📦 Installation</h3>
+<p>Install unifres in R or Python</p>
+<a href="installation.qmd">Install Now →</a>
 </div>
 
 <div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px;">
@@ -187,6 +187,6 @@ Both R and Python packages are licensed under GPL-3 or later.
 
 ### Ready to improve your model diagnostics?
 
-[Get Started](quickstart.qmd){.btn .btn-primary style="font-size: 1.2rem; padding: 0.75rem 2rem;"}
+[View Examples](examples-r.qmd){.btn .btn-primary style="font-size: 1.2rem; padding: 0.75rem 2rem;"}
 
 </div>

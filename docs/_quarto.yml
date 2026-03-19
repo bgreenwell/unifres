@@ -40,8 +40,6 @@ website:
         menu:
           - href: installation.qmd
             text: Installation
-          - href: quickstart.qmd
-            text: Quick Start
       - text: Examples
         menu:
           - href: examples-r.qmd
@@ -65,7 +63,6 @@ website:
     - title: "Get Started"
       contents:
         - installation.qmd
-        - quickstart.qmd
     - title: "Examples"
       contents:
         - examples-r.qmd

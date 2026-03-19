@@ -260,6 +260,6 @@ Liu, D., Lin, Z., & Zhang, H. (2025). A unified framework for residual diagnosti
 
 ## Next steps
 
-- Try the [Quick Start](quickstart.qmd) examples
+- Try the [R Examples](examples-r.qmd) or [Python Examples](examples-python.ipynb)
 - Explore detailed [R Examples](examples-r.qmd) and [Python Examples](examples-python.ipynb)
 - Check the API reference: [R](reference_r/index.qmd) | [Python](reference_python/index.qmd)
