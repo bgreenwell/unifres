@@ -11,8 +11,6 @@
 
 Available in **R** and **Python**, `unifres` implements the functional residual methodology described in [Liu, Lin, & Zhang (2025)](https://doi.org/10.1080/01621459.2025.2504037), providing powerful diagnostic tools that work seamlessly across discrete and continuous outcomes.
 
-**[Documentation Website](https://bgreenwell.github.io/unifres/)**
-
 ---
 
 ## Why functional residuals?
