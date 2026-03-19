@@ -2,8 +2,6 @@
 title: "unifres: Unified Residual Diagnostics"
 ---
 
-## Welcome
-
 **unifres** provides a unified framework for residual diagnostics in generalized linear models (GLMs) and beyond. Available in both **R** and **Python**, the package implements the functional residual methodology described in Liu, Lin, & Zhang (2025), offering powerful diagnostic tools that work seamlessly across discrete and continuous outcomes.
 
 ## Why functional residuals?
