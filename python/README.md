@@ -30,7 +30,7 @@ cd unifres/python
 uv pip install -e .
 ```
 
-## Quick Start
+## Usage
 
 ```python
 import numpy as np
@@ -56,17 +56,17 @@ ffplot(model)  # Function-function plot
 fredplot(model, x)  # Functional residual density plot
 ```
 
-## Key Features
+## Key features
 
-- **Functional Residuals**: Transform residuals into distribution objects that capture full residual randomness
-- **Multiple Residual Types**:
+- **Functional residuals**: Transform residuals into distribution objects that capture full residual randomness
+- **Multiple residual types**:
   - `type="function"`: Full functional residuals as scipy distribution objects
   - `type="surrogate"`: Point residuals via random sampling
   - `type="probscale"`: Probability-scale residuals
-- **Diagnostic Plots**:
+- **Diagnostic plots**:
   - `ffplot()`: Function-function plots for model adequacy assessment
   - `fredplot()`: Functional residual density plots for identifying misspecification
-- **Model Support**: Works with statsmodels GLM, including:
+- **Model support**: Works with statsmodels GLM, including:
   - Binomial/Logistic regression
   - Poisson regression
   - Negative Binomial regression
@@ -77,7 +77,7 @@ fredplot(model, x)  # Functional residual density plot
 For comprehensive documentation, examples, and methodology details, visit:
 [https://bgreenwell.github.io/unifres](https://bgreenwell.github.io/unifres)
 
-## Related Package
+## Related package
 
 An R implementation is also available: [unifres R package](https://github.com/bgreenwell/unifres/tree/main/r/unifres)
 

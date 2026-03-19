@@ -11,11 +11,11 @@
 
 Available in **R** and **Python**, `unifres` implements the functional residual methodology described in [Liu, Lin, & Zhang (2025)](https://doi.org/10.1080/01621459.2025.2504037), providing powerful diagnostic tools that work seamlessly across discrete and continuous outcomes.
 
-📚 **[Documentation Website](https://bgreenwell.github.io/unifres/)**
+**[Documentation Website](https://bgreenwell.github.io/unifres/)**
 
 ---
 
-## Why Functional Residuals?
+## Why functional residuals?
 
 Traditional residual diagnostics struggle with discrete data:
 
@@ -27,16 +27,16 @@ Traditional residual diagnostics struggle with discrete data:
 
 ---
 
-## Key Features
+## Key features
 
-### 🎯 Unified Framework
+### Unified framework
 A single approach for binary, count, ordinal, zero-inflated, and continuous outcomes
 
-### 📊 Powerful Diagnostics
+### Powerful diagnostics
 - **Function-Function (Fn-Fn) Plots**: Assess overall model adequacy
 - **Functional Residual Density (FRED) Plots**: Identify specific model failures
 
-### 🔧 Three Residual Types
+### Three residual types
 - **Functional**: Full distribution objects
 - **Surrogate**: Point residuals for traditional plots
 - **Probability-scale**: Centered residuals for interpretation
@@ -63,7 +63,7 @@ pip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python
 
 ---
 
-## Quick Start
+## Usage
 
 ### R
 
@@ -114,15 +114,13 @@ ffplot(model)
 fredplot(model, x)
 ```
 
-[→ Quick Start Tutorial](https://bgreenwell.github.io/unifres/quickstart.html)
-
 ---
 
-## Supported Models
+## Supported models
 
-### R Package
+### R package
 
-| Model Type | Function | Status |
+| Model type | Function | Status |
 |------------|----------|--------|
 | GLM (binomial, Poisson, quasi-Poisson) | `glm()` | ✅ |
 | Negative Binomial | `MASS::glm.nb()` | ✅ |
@@ -130,9 +128,9 @@ fredplot(model, x)
 | Ordinal Regression | `VGAM::vglm()` | ✅ |
 | Zero-Inflated Poisson | `pscl::zeroinfl()` | ✅ |
 
-### Python Package
+### Python package
 
-| Model Type | Function | Status |
+| Model type | Function | Status |
 |------------|----------|--------|
 | GLM (binomial, Poisson, NegBin) | `statsmodels.GLM` | ✅ |
 | Negative Binomial | `statsmodels.NegativeBinomial` | ✅ |
@@ -142,7 +140,7 @@ fredplot(model, x)
 
 ## Examples
 
-### Detecting Missing Polynomial Terms
+### Detecting missing polynomial terms
 
 <details>
 <summary>Click to expand R example</summary>
@@ -215,16 +213,16 @@ plt.show()
 
 ## Documentation
 
-- 📖 [**Full Documentation**](https://bgreenwell.github.io/unifres/)
-- 🚀 [**Quick Start**](https://bgreenwell.github.io/unifres/quickstart.html)
-- 💡 [**R Examples**](https://bgreenwell.github.io/unifres/examples-r.html)
-- 🐍 [**Python Examples**](https://bgreenwell.github.io/unifres/examples-python.html)
-- 📊 [**Methodology**](https://bgreenwell.github.io/unifres/methodology.html)
-- 🔗 [**API Reference: R**](https://bgreenwell.github.io/unifres/reference_r/index.html) | [**Python**](https://bgreenwell.github.io/unifres/reference_python/index.html)
+- [Full documentation](https://bgreenwell.github.io/unifres/)
+- [Installation guide](https://bgreenwell.github.io/unifres/installation.html)
+- [R examples](https://bgreenwell.github.io/unifres/examples-r.html)
+- [Python examples](https://bgreenwell.github.io/unifres/examples-python.html)
+- [Methodology](https://bgreenwell.github.io/unifres/methodology.html)
+- [API reference: R](https://bgreenwell.github.io/unifres/reference_r/index.html) | [Python](https://bgreenwell.github.io/unifres/reference_python/index.html)
 
 ---
 
-## What's in a Name?
+## What's in a name?
 
 The name `unifres` has multiple layered meanings:
 
@@ -305,6 +303,6 @@ This work implements the methodology described in Liu, Lin, & Zhang (2025). We t
 
 <div align="center">
 
-**[🌐 Visit Documentation](https://bgreenwell.github.io/unifres/)** | **[📦 Installation](https://bgreenwell.github.io/unifres/installation.html)** | **[🚀 Quick Start](https://bgreenwell.github.io/unifres/quickstart.html)**
+**[Visit documentation](https://bgreenwell.github.io/unifres/)** | **[Installation](https://bgreenwell.github.io/unifres/installation.html)** | **[Examples](https://bgreenwell.github.io/unifres/examples-r.html)**
 
 </div>
