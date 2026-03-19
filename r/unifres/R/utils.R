@@ -1,3 +1,56 @@
+#' Compute uniform endpoints for functional residuals
+#'
+#' Computes the lower and upper endpoints of the functional residual intervals
+#' described in Liu et al. (2025). These endpoints define the cumulative
+#' distribution function (CDF) for each functional residual, which follows a
+#' Uniform(0,1) distribution under correct model specification.
+#'
+#' @param object A fitted model object. Currently supported model types include:
+#' * [glm][stats::glm] - generalized linear models from the core __stats__
+#' package.
+#' * [gam][mgcv::gam] - generalized additive models from the
+#' [mgcv](https://cran.r-project.org/package=mgcv) package.
+#' * [zeroinfl][pscl::zeroinfl] - zero-inflated Poisson (ZIP) models from the
+#' [pscl](https://cran.r-project.org/package=pscl) package.
+#' * [vglm][VGAM::vglm]/[vgam][VGAM::vgam] - vector generalized linear/additive
+#' models (VGLMs/VGAMs) from the [VGAM](https://cran.r-project.org/package=VGAM)
+#' package.
+#'
+#' @param y Optional response vector. If `NULL` (the default), the response is
+#' extracted from the fitted model object.
+#'
+#' @param fill Logical indicating whether to expand discrete endpoints to cover
+#' the full \eqn{[0, 1]} range. Default is `FALSE`.
+#'
+#' @param ... Additional optional arguments passed to methods.
+#'
+#' @returns A matrix with two columns: `lwr` (lower endpoint) and `upr` (upper
+#' endpoint) for each observation. Each row defines the bounds of a functional
+#' residual's CDF.
+#'
+#' @references
+#' Liu, D., Lin, Z., & Zhang, H. (2025). A unified framework for residual
+#' diagnostics in generalized linear models and beyond. *Journal of the American
+#' Statistical Association*, 1–29.
+#' \doi{10.1080/01621459.2025.2504037}
+#'
+#' @seealso [fresiduals()], [fredplot()], [ffplot()]
+#'
+#' @examples
+#' # Fit a Poisson regression model
+#' set.seed(42)
+#' n <- 100
+#' x <- rnorm(n)
+#' y <- rpois(n, exp(0.5 + 0.3*x))
+#' fit <- glm(y ~ x, family = poisson)
+#'
+#' # Compute uniform endpoints
+#' endpoints <- unifend(fit)
+#' head(endpoints)
+#'
+#' # The endpoints define the functional residual CDFs
+#' # Under correct specification, each F_i should be uniform on (lwr_i, upr_i)
+#'
 #' @export
 unifend <- function(object, y = NULL, fill = FALSE, ...) {
   UseMethod("unifend")

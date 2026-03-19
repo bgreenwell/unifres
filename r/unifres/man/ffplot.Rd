@@ -13,6 +13,8 @@ ffplot(
   ref.col = 2,
   ref.lwd = 1,
   ref.lty = "dashed",
+  xlab = "t",
+  ylab = "Mean residual",
   ...
 )
 
@@ -23,6 +25,8 @@ ffplot(
   ref.col = 2,
   ref.lwd = 1,
   ref.lty = "dashed",
+  xlab = "t",
+  ylab = "Mean residual",
   ...
 )
 
@@ -33,6 +37,8 @@ ffplot(
   ref.col = 1,
   ref.lwd = 1,
   ref.lty = "dashed",
+  xlab = "t",
+  ylab = "Mean residual",
   ...
 )
 }
@@ -57,6 +63,12 @@ reference line. Default is 1.}
 
 \item{ref.lty}{Character string or integer specifying the line type to use
 for the 45-degree reference line. Default is \code{"dashed"}.}
+
+\item{xlab}{Character string specifying the label to use for the x-axis.
+Default is \code{"t"}.}
+
+\item{ylab}{Character string specifying the label to use for the y-axis.
+Default is \code{"Mean residual"}.}
 
 \item{...}{Additional optional arguments pass to \link[base:plot]{plot()}.}
 }
