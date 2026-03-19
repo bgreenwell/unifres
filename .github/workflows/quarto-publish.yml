@@ -31,7 +31,7 @@ jobs:
 
       - name: Install R dependencies
         run: |
-          install.packages(c("knitr", "rmarkdown", "remotes", "devtools"))
+          install.packages(c("knitr", "rmarkdown", "remotes", "devtools", "reticulate"))
           install.packages(c("MASS", "mgcv", "VGAM", "pscl", "hexbin", "lattice", "ggplot2"))
         shell: Rscript {0}
 
@@ -51,6 +51,13 @@ jobs:
       - name: Install unifres Python package
         run: |
           uv pip install --system ./python
+
+      - name: Configure reticulate to use system Python
+        run: |
+          python_path <- Sys.which("python3")
+          writeLines(sprintf('Sys.setenv(RETICULATE_PYTHON = "%s")', python_path), ".Rprofile")
+          cat("Configured Python path:", python_path, "\n")
+        shell: Rscript {0}
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
