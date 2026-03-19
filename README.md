@@ -52,8 +52,11 @@ remotes::install_github("bgreenwell/unifres", subdir = "r/unifres")
 ### Python
 
 ```bash
-# Install from GitHub
+# Install from GitHub with pip
 pip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python
+
+# Or install with uv (faster)
+uv pip install git+https://github.com/bgreenwell/unifres.git#subdirectory=python
 ```
 
 [→ Full Installation Guide](https://bgreenwell.github.io/unifres/installation.html)

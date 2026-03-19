@@ -125,7 +125,7 @@ ffplot(model)
 - Works on Windows, macOS, and Linux
 
 ### Python
-- Python >= 3.8
+- Python >= 3.9
 - Works on Windows, macOS, and Linux
 
 ---
@@ -189,9 +189,15 @@ devtools::test()
 ### Python development
 
 ```bash
-# Clone and install in editable mode with dev dependencies
+# Clone repository
 git clone https://github.com/bgreenwell/unifres.git
 cd unifres/python
+
+# Option 1: Using uv (recommended)
+uv venv                        # Create virtual environment
+uv pip install -e ".[dev]"    # Install in editable mode with dev dependencies
+
+# Option 2: Using pip
 pip install -e ".[dev]"
 
 # Run tests
