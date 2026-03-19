@@ -17,24 +17,77 @@
 ## Building and Running
 
 ### R Package (`r/unifres`)
-The R package uses standard `devtools` workflows.
-- **Load Package:** `devtools::load_all("r/unifres")`
-- **Run Tests:** `devtools::test("r/unifres")`
-- **Generate Docs:** `devtools::document("r/unifres")`
-- **Check Package:** `devtools::check("r/unifres")`
+The R package uses standard `devtools` workflows. All commands should be run from the project root:
+
+```r
+# Load package for interactive development
+devtools::load_all("r/unifres")
+
+# Run tests
+devtools::test("r/unifres")
+
+# Regenerate documentation from roxygen2 comments
+devtools::document("r/unifres")
+
+# Run R CMD check (includes tests, documentation checks, etc.)
+devtools::check("r/unifres")
+
+# Install package locally
+devtools::install("r/unifres")
+```
 
 ### Python Package (`python/`)
-The Python package uses `uv` for environment management.
-- **Setup Environment:** `uv sync --extra docs --extra dev`
-- **Install (Editable):** `pip install -e "python/.[dev]"`
-- **Run Tests:** `pytest python/tests/ -v --cov=unifres`
-- **Build Package:** `hatch build python/`
+The Python package uses `uv` for environment management. The virtual environment is located at `python/.venv`.
+
+**Initial setup:**
+```bash
+cd python
+uv venv                         # Create virtual environment
+uv pip install -e ".[dev]"      # Install package in editable mode with dev dependencies
+```
+
+**Development workflow:**
+```bash
+# Activate virtual environment (if needed)
+source python/.venv/bin/activate  # On macOS/Linux
+# or
+python\.venv\Scripts\activate     # On Windows
+
+# Run tests
+pytest python/tests/ -v --cov=unifres
+
+# Run tests from project root (without activating venv)
+python/.venv/bin/pytest python/tests/ -v --cov=unifres
+
+# Build package
+cd python
+hatch build
+
+# Update dependencies
+uv pip install -e ".[dev]" --upgrade
+```
 
 ### Documentation Site
-The documentation site is built with Quarto. To ensure Python output and graphics are captured correctly:
-- **Render Site:** `export QUARTO_PYTHON="python/.venv/bin/python" && quarto render docs --execute`
+The documentation site is built with Quarto.
+
+**Render documentation:**
+```bash
+# Render all documentation
+cd docs
+quarto render
+
+# Preview documentation locally
+quarto preview
+
+# Render with specific Python environment
+export QUARTO_PYTHON="python/.venv/bin/python"
+quarto render docs --execute
+```
+
+**Important notes:**
 - **Python Examples:** Python examples are maintained in `docs/examples-python.ipynb` (Jupyter Notebook) instead of `.qmd` to ensure reliable figure capture by the Jupyter engine.
-- **R/Python Hybrid:** For hybrid files (like `quickstart.qmd`), `reticulate` is used in R to call Python. Ensure `use_python()` points to the `.venv` path.
+- **R Examples:** R examples are in `docs/examples-r.qmd` and render using the installed R package.
+- **No hybrid files:** R and Python examples are kept separate. There is no quickstart file mixing both languages.
 - **Subsampling:** When working with large datasets in examples, use the `n` parameter in `ffplot` and `fredplot` (e.g., `n=1000`) to keep rendering times manageable.
 
 ---
