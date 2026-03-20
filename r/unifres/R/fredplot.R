@@ -23,6 +23,10 @@ x <- y <- NULL
 #' for visualizing categorical predictors or for avoiding issues with
 #' [kde2d()][MASS::kde2d] whenever `x` is discrete.
 #'
+#' @param subsample Integer specifying the number of observations to draw at
+#' random, which can help with compute time for very large datasets. Default
+#' is `NULL` which corresponds to no subsampling.
+#'
 #' @param resolution Integer specifying the resolution of the plot. Default
 #' is 101.
 #'
@@ -102,6 +106,7 @@ fredplot <- function(
     object,
     x,
     jitter = FALSE,
+    subsample = NULL,
     resolution = 101,
     scale = c("uniform", "normal"),
     type = c("kde", "hex"),
@@ -129,6 +134,7 @@ fredplot.default <- function(
     object,
     x,
     jitter = FALSE,
+    subsample = NULL,
     resolution = 101,
     scale = c("uniform", "normal"),
     type = c("kde", "hex"),
@@ -147,6 +153,7 @@ fredplot.default <- function(
 ) {
   uend <- unifend(object)  # uniform endpoints for functional residual
   fredplot.matrix(object = uend, x = x, jitter = jitter,
+                  subsample = subsample,
                   resolution = resolution,
                   scale = scale, type = type, h = h, n = n, plot = plot,
                   color.palette = color.palette, colorkey = colorkey,
@@ -162,6 +169,7 @@ fredplot.matrix <- function(
     object,
     x,
     jitter = FALSE,
+    subsample = NULL,
     resolution = 101,
     scale = c("uniform", "normal"),
     type = c("kde", "hex"),
@@ -183,6 +191,19 @@ fredplot.matrix <- function(
   if (ncol(object) != 2) {
     stop("Input matrix should have exactly two columns.", call. = FALSE)
   }
+
+  if (length(x) != nrow(object)) {
+    stop("Length of predictor 'x' must match the number of functional residuals.", call. = FALSE)
+  }
+
+  if (!is.null(subsample)) {
+    if (subsample < nrow(object)) {
+      idx <- sample.int(nrow(object), size = subsample, replace = FALSE)
+      object <- object[idx, , drop = FALSE]
+      x <- x[idx]
+    }
+  }
+
   # TODO: Handle the case where x is qualitative; currently, you hack something
   # by converting to numeric and, potentially, using jittering (e.g.,
   # something like `x = jitter(as.integer(df$x))`)

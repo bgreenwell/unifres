@@ -16,6 +16,7 @@ def fredplot(
     x: Union[np.ndarray, pd.Series],
     type: str = "kde",
     scale: str = "uniform",
+    jitter: bool = False,
     lowess: bool = False,
     frac: float = 2 / 3,
     n: Optional[int] = None,
@@ -40,6 +41,9 @@ def fredplot(
     scale : str, optional
         The scale to use for the functional residuals. One of {"uniform",
         "normal"}, by default "uniform".
+    jitter : bool, optional
+        If True, add a small amount of random noise to the predictor `x`.
+        This is useful for visualizing categorical predictors. By default False.
     lowess : bool, optional
         If True, add a LOWESS smooth to the plot, by default False.
     frac : float, optional
@@ -74,15 +78,26 @@ def fredplot(
              )
         indices = np.random.choice(len(endpoints), n, replace=False)
         endpoints = endpoints[indices]
-        x = x[indices]
+        if isinstance(x, pd.Series):
+            x = x.iloc[indices]
+        else:
+            x = x[indices]
 
     if len(x) != len(endpoints):
         raise ValueError(
             f"Length of 'x' ({len(x)}) does not match length of model residuals ({len(endpoints)})."
         )
 
+    x_arr = np.asarray(x, dtype=float)
+    if jitter:
+        # Add a small amount of random noise to x
+        ptp = np.ptp(x_arr)
+        noise_scale = max(ptp * 0.05, 0.01) if not np.isnan(ptp) else 0.01
+        noise = np.random.normal(0, noise_scale, size=len(x_arr))
+        x_arr = x_arr + noise
+
     y_expanded = expand_endpoints(endpoints, resolution=101)
-    x_repeated = np.repeat(np.asarray(x), 101)
+    x_repeated = np.repeat(x_arr, 101)
 
     df = pd.DataFrame({"x": x_repeated, "y": y_expanded})
 

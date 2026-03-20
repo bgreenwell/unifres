@@ -10,6 +10,7 @@ fredplot(
   object,
   x,
   jitter = FALSE,
+  subsample = NULL,
   resolution = 101,
   scale = c("uniform", "normal"),
   type = c("kde", "hex"),
@@ -31,6 +32,7 @@ fredplot(
   object,
   x,
   jitter = FALSE,
+  subsample = NULL,
   resolution = 101,
   scale = c("uniform", "normal"),
   type = c("kde", "hex"),
@@ -52,6 +54,7 @@ fredplot(
   object,
   x,
   jitter = FALSE,
+  subsample = NULL,
   resolution = 101,
   scale = c("uniform", "normal"),
   type = c("kde", "hex"),
@@ -86,6 +89,10 @@ setting \code{smooth = FALSE}.}
 random noise to the predictor \code{x}. Default is \code{FALSE}. This can be useful
 for visualizing categorical predictors or for avoiding issues with
 \link[MASS:kde2d]{kde2d()} whenever \code{x} is discrete.}
+
+\item{subsample}{Integer specifying the number of observations to draw at
+random, which can help with compute time for very large datasets. Default
+is \code{NULL} which corresponds to no subsampling.}
 
 \item{resolution}{Integer specifying the resolution of the plot. Default
 is 101.}
