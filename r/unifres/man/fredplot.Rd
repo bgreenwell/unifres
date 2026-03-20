@@ -9,6 +9,7 @@
 fredplot(
   object,
   x,
+  jitter = FALSE,
   resolution = 101,
   scale = c("uniform", "normal"),
   type = c("kde", "hex"),
@@ -29,6 +30,7 @@ fredplot(
 \method{fredplot}{default}(
   object,
   x,
+  jitter = FALSE,
   resolution = 101,
   scale = c("uniform", "normal"),
   type = c("kde", "hex"),
@@ -49,6 +51,7 @@ fredplot(
 \method{fredplot}{matrix}(
   object,
   x,
+  jitter = FALSE,
   resolution = 101,
   scale = c("uniform", "normal"),
   type = c("kde", "hex"),
@@ -78,6 +81,11 @@ coerced to integer. Using \code{jitter()} can also be useful. For instance,
 something like \code{x = jitter(as.integer(df$x))} could be useful. If \code{x} is
 categorical in nature, it's also recommended to turn off LOESS smoothing by
 setting \code{smooth = FALSE}.}
+
+\item{jitter}{Logical indicating whether or not to add a small amount of
+random noise to the predictor \code{x}. Default is \code{FALSE}. This can be useful
+for visualizing categorical predictors or for avoiding issues with
+\link[MASS:kde2d]{kde2d()} whenever \code{x} is discrete.}
 
 \item{resolution}{Integer specifying the resolution of the plot. Default
 is 101.}

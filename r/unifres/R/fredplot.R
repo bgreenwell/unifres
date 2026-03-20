@@ -18,6 +18,11 @@ x <- y <- NULL
 #' categorical in nature, it's also recommended to turn off LOESS smoothing by
 #' setting `smooth = FALSE`.
 #'
+#' @param jitter Logical indicating whether or not to add a small amount of
+#' random noise to the predictor `x`. Default is `FALSE`. This can be useful
+#' for visualizing categorical predictors or for avoiding issues with
+#' [kde2d()][MASS::kde2d] whenever `x` is discrete.
+#'
 #' @param resolution Integer specifying the resolution of the plot. Default
 #' is 101.
 #'
@@ -96,6 +101,7 @@ x <- y <- NULL
 fredplot <- function(
     object,
     x,
+    jitter = FALSE,
     resolution = 101,
     scale = c("uniform", "normal"),
     type = c("kde", "hex"),
@@ -122,6 +128,7 @@ fredplot <- function(
 fredplot.default <- function(
     object,
     x,
+    jitter = FALSE,
     resolution = 101,
     scale = c("uniform", "normal"),
     type = c("kde", "hex"),
@@ -139,7 +146,8 @@ fredplot.default <- function(
     ...
 ) {
   uend <- unifend(object)  # uniform endpoints for functional residual
-  fredplot.matrix(object = uend, x = x, resolution = resolution,
+  fredplot.matrix(object = uend, x = x, jitter = jitter,
+                  resolution = resolution,
                   scale = scale, type = type, h = h, n = n, plot = plot,
                   color.palette = color.palette, colorkey = colorkey,
                   smooth = smooth, smooth.col = smooth.col,
@@ -153,6 +161,7 @@ fredplot.default <- function(
 fredplot.matrix <- function(
     object,
     x,
+    jitter = FALSE,
     resolution = 101,
     scale = c("uniform", "normal"),
     type = c("kde", "hex"),
@@ -181,6 +190,11 @@ fredplot.matrix <- function(
     stop("Categorical predictors are not currently supported.", call. = FALSE)
   }
 
+  # Add noise to x if requested
+  if (isTRUE(jitter)) {
+    x <- jitter(x)
+  }
+
   # Construct data frame for plotting
   y <- expand(object, resolution = resolution, flat = TRUE)
   xnew <- rep(x, each = resolution)
@@ -206,7 +220,7 @@ fredplot.matrix <- function(
            "Please install it.", call. = FALSE)
     }
     hexbin::hexbinplot(y ~ x, data = df, xlab = xlab, ylab = ylab, #main = "",
-                       colramp = color.palette, colorkey = colorkey,,
+                       colramp = color.palette, colorkey = colorkey,
                        panel = function(x, y, ...) {
                          hexbin::panel.hexbinplot(x, y, ...)
                          if (isTRUE(smooth)) {

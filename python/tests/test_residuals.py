@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import statsmodels.api as sm
 from unifres import fresiduals, ffplot, fredplot
-from scipy.stats._distn_infrastructure import rv_frozen
+from unifres.residuals import FunctionalResidual
 import matplotlib
 matplotlib.use('Agg')  # Use non-GUI backend for testing
 import matplotlib.pyplot as plt
@@ -27,7 +27,7 @@ class TestResiduals(unittest.TestCase):
         res = fresiduals(model, type="function")
 
         self.assertEqual(len(res), len(self.y))
-        self.assertIsInstance(res[0], rv_frozen)
+        self.assertIsInstance(res[0], FunctionalResidual)
 
         # Test that we can call CDF on the distributions
         test_val = res[0].cdf(0.5)

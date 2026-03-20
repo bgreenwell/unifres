@@ -13,8 +13,9 @@ from .residuals import fresiduals
 
 def fredplot(
     model: Any,
-    x: np.ndarray,
+    x: Union[np.ndarray, pd.Series],
     type: str = "kde",
+    scale: str = "uniform",
     lowess: bool = False,
     frac: float = 2 / 3,
     n: Optional[int] = None,
@@ -31,11 +32,14 @@ def fredplot(
     ----------
     model : object
         A fitted model object from statsmodels.
-    x : np.ndarray
+    x : np.ndarray or pd.Series
         The predictor variable to plot on the x-axis.
     type : str, optional
         The type of density plot to generate. One of {"kde", "hex"},
         by default "kde".
+    scale : str, optional
+        The scale to use for the functional residuals. One of {"uniform",
+        "normal"}, by default "uniform".
     lowess : bool, optional
         If True, add a LOWESS smooth to the plot, by default False.
     frac : float, optional
@@ -77,12 +81,21 @@ def fredplot(
             f"Length of 'x' ({len(x)}) does not match length of model residuals ({len(endpoints)})."
         )
 
-    df = pd.DataFrame(
-        {"x": np.repeat(x, 101), "y": expand_endpoints(endpoints, resolution=101)}
-    )
+    y_expanded = expand_endpoints(endpoints, resolution=101)
+    x_repeated = np.repeat(np.asarray(x), 101)
 
-    df["y"] = np.where(df["y"] <= 0, 1e-10, df["y"])
-    df["y"] = np.where(df["y"] >= 1, 1 - 1e-10, df["y"])
+    df = pd.DataFrame({"x": x_repeated, "y": y_expanded})
+
+    if scale == "normal":
+        from scipy.stats import norm
+        # Clip to avoid infinity with qnorm
+        df["y"] = np.clip(df["y"], 1e-6, 1 - 1e-6)
+        df["y"] = norm.ppf(df["y"])
+        ylabel = "Residual Density (Normal Scale)"
+    elif scale == "uniform":
+        ylabel = "Residual Density (Uniform Scale)"
+    else:
+        raise ValueError("Invalid scale. Choose 'uniform' or 'normal'.")
 
     if type == "kde":
         try:
@@ -114,8 +127,9 @@ def fredplot(
         smooth = sm.nonparametric.lowess(df["y"], df["x"], frac=frac)
         ax.plot(smooth[:, 0], smooth[:, 1], color="white", linewidth=2)
 
-    ax.set_xlabel(x.name if hasattr(x, "name") else "Predictor")
-    ax.set_ylabel("Residual Density")
+    xlabel = x.name if isinstance(x, pd.Series) else "Predictor"
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
 
     return ax
 
