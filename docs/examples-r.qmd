@@ -394,9 +394,8 @@ fit <- glm(y ~ x, family = binomial)
 # Use subsampling for faster plotting
 ffplot(fit, n = 1000)  # Use only 1000 observations
 
-# For FRED plots, sample the data
-idx <- sample(n, 5000)
-fredplot(fit, x = x[idx], type = "hex")
+# Use the new subsampling parameter directly
+fredplot(fit, x = x, subsample = 5000, type = "hex")
 ```
 
 ---
