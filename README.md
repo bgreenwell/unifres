@@ -3,6 +3,7 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/bgreenwell/unifres/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/bgreenwell/unifres/actions/workflows/R-CMD-check.yml)
 [![Python Tests](https://github.com/bgreenwell/unifres/actions/workflows/python-tests.yml/badge.svg)](https://github.com/bgreenwell/unifres/actions/workflows/python-tests.yml)
+[![Documentation](https://img.shields.io/badge/docs-quarto-blue.svg)](https://bgreenwell.github.io/unifres/)
 [![License: GPL-3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <!-- badges: end -->
 
